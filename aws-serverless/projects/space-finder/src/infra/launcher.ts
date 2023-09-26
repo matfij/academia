@@ -1,5 +1,16 @@
 import { App } from 'aws-cdk-lib';
 import { DataStack } from './stacks/data-stack';
+import { LambdaStack } from './stacks/lambda-stack';
+import { ApiStack } from './stacks/api-stack';
 
 const app = new App();
-new DataStack(app, 'DataStack');
+
+const dataStack = new DataStack(app, 'DataStack');
+
+const lambdastack = new LambdaStack(app, 'LambdaStack', {
+    spacesTable: dataStack.spacesTable,
+});
+
+new ApiStack(app, 'ApiStack', {
+    helloLambdaIntegration: lambdastack.helloLambdaIntegration,
+});
