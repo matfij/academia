@@ -1,23 +1,53 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { createSpace } from './handlers/spaces-create';
+import { deleteSpace } from './handlers/spaces-delete';
+import { readSpaces } from './handlers/spaces-read';
+import { updateSpace } from './handlers/spaces-update';
+import { MissingFieldError } from './common/errors';
+
+export const dbClient = DynamoDBDocumentClient.from(new DynamoDBClient());
 
 async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
-    let message = '';
-    switch (event.httpMethod) {
-        case 'GET': {
-            message = 'GET request';
-            break;
+    let data: string;
+    try {
+        switch (event.httpMethod) {
+            case 'GET': {
+                data = await readSpaces(event);
+                break;
+            }
+            case 'POST': {
+                data = await createSpace(event);
+                break;
+            }
+            case 'PUT': {
+                data = await updateSpace(event);
+                break;
+            }
+            case 'DELETE': {
+                data = await deleteSpace(event);
+                break;
+            }
+            default: {
+                data = 'METOD NOT FOUND';
+            }
         }
-        case 'POST': {
-            message = 'POST request';
-            break;
+    } catch (err) {
+        if (err instanceof MissingFieldError) {
+            return {
+                statusCode: 400,
+                body: err.message,
+            };
         }
-        default: {
-            message = 'UNKNOWN request';
-        }
+        return {
+            statusCode: 500,
+            body: JSON.stringify(err),
+        };
     }
     return {
         statusCode: 200,
-        body: message,
+        body: data,
     };
 }
 
