@@ -1,2 +1,5 @@
-GET https://9gfvl61kdl.execute-api.eu-central-1.amazonaws.com/prod/spaces
+GET https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod/spaces
+###
+
+POST https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod/spaces
 ###
