@@ -5,7 +5,7 @@ import { createSpace } from './handlers/spaces-create';
 import { deleteSpace } from './handlers/spaces-delete';
 import { readSpaces } from './handlers/spaces-read';
 import { updateSpace } from './handlers/spaces-update';
-import { MissingFieldError } from './common/errors';
+import { MissingFieldError, ParsingError } from './common/errors';
 
 export const dbClient = DynamoDBDocumentClient.from(new DynamoDBClient());
 
@@ -35,6 +35,12 @@ async function handler(event: APIGatewayProxyEvent, context: Context): Promise<A
         }
     } catch (err) {
         if (err instanceof MissingFieldError) {
+            return {
+                statusCode: 400,
+                body: err.message,
+            };
+        }
+        if (err instanceof ParsingError) {
             return {
                 statusCode: 400,
                 body: err.message,
