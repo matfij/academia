@@ -1,18 +1,22 @@
-GET https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod/spaces
+@base_url = https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod
+@test_login = test
+@test_password = specAA11#
+
+GET {{base_url}}/spaces
 
 ###
 
-POST https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod/spaces
+POST {{base_url}}/spaces
 content-type: application/json
 
 {
-    "location": "Stockholm"
-    "name"
+    "location": "Stockholm",
+    "name": "stock-1"
 }
 
 ###
 
-PUT https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod/spaces?id=ea7a4f66-a42d-4bfb-a9dd-839e9976a993
+PUT {{base_url}}/spaces?id=ea7a4f66-a42d-4bfb-a9dd-839e9976a993
 content-type: application/json
 
 {
@@ -21,5 +25,5 @@ content-type: application/json
 
 ###
 
-DELETE https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod/spaces?id=ea7a4f66-a42d-4bfb-a9dd-839e9976a993
+DELETE {{base_url}}/spaces?id=ea7a4f66-a42d-4bfb-a9dd-839e9976a993
 content-type: application/json
