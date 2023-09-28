@@ -1,8 +1,12 @@
 import { DeleteItemCommand } from '@aws-sdk/client-dynamodb';
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { dbClient } from '../spaces-handler';
+import { isAdmin } from '../common/utils';
 
 export const deleteSpace = async (event: APIGatewayProxyEvent): Promise<string> => {
+    if (!isAdmin(event)) {
+        return 'Unauthorized';
+    }
     if (!event.queryStringParameters || !('id' in event.queryStringParameters)) {
         throw new Error('Space ID required');
     }
