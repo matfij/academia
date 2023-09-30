@@ -6,6 +6,7 @@ import { deleteSpace } from './handlers/spaces-delete';
 import { readSpaces } from './handlers/spaces-read';
 import { updateSpace } from './handlers/spaces-update';
 import { MissingFieldError, ParsingError } from './common/errors';
+import { cors } from './common/utils';
 
 export const dbClient = DynamoDBDocumentClient.from(new DynamoDBClient());
 
@@ -57,4 +58,8 @@ async function handler(event: APIGatewayProxyEvent, context: Context): Promise<A
     };
 }
 
-export { handler };
+const corsHandler = cors(null, null, {
+    value: handler,
+}) as typeof handler;
+
+export { corsHandler as handler };

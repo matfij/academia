@@ -24,7 +24,7 @@ export class AuthStack extends Stack {
         this.createAdminsGroup();
         this.createIdentityPool();
         this.createRoles();
-        this.attachRoles();
+        // this.attachRoles();
     }
 
     private createUserPool() {

@@ -1,24 +1,27 @@
 import { handler as spacesHandler } from '../src/services/spaces-handler';
 
-spacesHandler(
-    {
-        httpMethod: 'POST',
-        body: JSON.stringify({ name: 'tokyo-loc', location: 'Tokyo' }),
-    } as any,
-    {} as any,
-).then((res) => {
-    console.log(res);
-});
+process.env.AWS_REGION = "eu-central-1";
+process.env.TABLE_NAME = "SpaceTable-02e63528725b";
 
 // spacesHandler(
 //     {
-//         httpMethod: 'GET',
-//         // queryStringParameters: {
-//         //     id: 'ea7a4f66-a42d-4bfb-a9dd-839e9976a993',
-//         // },
+//         httpMethod: 'POST',
+//         body: JSON.stringify({ name: 'tokyo-loc', location: 'Tokyo' }),
 //     } as any,
 //     {} as any,
-// );
+// ).then((res) => {
+//     console.log(res);
+// });
+
+spacesHandler(
+    {
+        httpMethod: 'GET',
+        // queryStringParameters: {
+        //     id: 'ea7a4f66-a42d-4bfb-a9dd-839e9976a993',
+        // },
+    } as any,
+    {} as any,
+).then((res) => console.log(res));
 
 // spacesHandler(
 //     {
