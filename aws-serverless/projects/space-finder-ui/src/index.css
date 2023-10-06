@@ -47,6 +47,10 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+input {
+  display: block;
+}
+
 .navbarWrapper {
   overflow: hidden;
   background-color: #1a1a1a;

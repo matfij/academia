@@ -14,12 +14,12 @@ export default function Navbar({ username }: NavbarProps) {
     };
 
     return (
-        <div className="navbarWrapper">
+        <nav className="navbarWrapper">
             <NavLink to="/">Home</NavLink>
             <NavLink to="/profile">Profile</NavLink>
             <NavLink to="/spaces">Spaces</NavLink>
             <NavLink to="/createSpace">Create Space</NavLink>
             {renderLoginOrLogout()}
-        </div>
+        </nav>
     );
 }

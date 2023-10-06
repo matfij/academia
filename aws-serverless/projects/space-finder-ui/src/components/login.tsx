@@ -35,7 +35,7 @@ export default function Login({ authService, setUsernameCb }: LoginProps) {
     };
 
     return (
-        <div role="main">
+        <section role="main">
             {loginSuccess && <Navigate to="/profile" replace={true} />}
             <h2>Login to Space Finder</h2>
             <form onSubmit={(e) => handleSubmit(e)}>
@@ -48,6 +48,6 @@ export default function Login({ authService, setUsernameCb }: LoginProps) {
             </form>
             <hr />
             {renderLoginResult()}
-        </div>
+        </section>
     );
 }
