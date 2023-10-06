@@ -30,7 +30,7 @@ export default function Login({ authService, setUsernameCb }: LoginProps) {
 
     const renderLoginResult = () => {
         if (loginError) {
-            return <label>{loginError}</label>;
+            return <label className='error'>{loginError}</label>;
         }
     };
 
@@ -43,10 +43,8 @@ export default function Login({ authService, setUsernameCb }: LoginProps) {
                 <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" />
                 <label htmlFor="password">Password</label>
                 <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" />
-                <hr />
                 <button type="submit">Login</button>
             </form>
-            <hr />
             {renderLoginResult()}
         </section>
     );
