@@ -32,6 +32,10 @@ export class AuthService {
         }
     }
 
+    public getJwt() {
+        return this.jwt;
+    }
+
     public getUsername() {
         return this.user?.getUsername();
     }

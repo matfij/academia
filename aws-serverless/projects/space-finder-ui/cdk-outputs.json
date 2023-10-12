@@ -1,22 +1,22 @@
 {
-  "AuthStack": {
-    "SpacesIdentityPoolId": "eu-central-1:269425f2-3e7b-42e9-8180-4d08f117d2c2",
-    "ExportsOutputFnGetAttSpacesUserPool5D732F45ArnC2F0FFA7": "arn:aws:cognito-idp:eu-central-1:612716031306:userpool/eu-central-1_i5mnA0EGS",
-    "SpacesUserPoolClientId": "1h4ougfjk5nqlcde4ijsar9j58",
-    "SpacesUserPoolId": "eu-central-1_i5mnA0EGS"
-  },
-  "DataStack": {
-    "ExportsOutputRefSpacesTable8A9973559FB4B87D": "SpaceTable-02e63528725b",
-    "SpaceFinderPhotosBucketName": "space-finder-photos-02e63528725b",
-    "ExportsOutputFnGetAttSpacesTable8A997355Arn242927FE": "arn:aws:dynamodb:eu-central-1:612716031306:table/SpaceTable-02e63528725b"
-  },
-  "UiStack": {
-    "SpacesUiUrl": "d3swd1pxmq315v.cloudfront.net"
-  },
-  "LambdaStack": {
-    "ExportsOutputFnGetAttSpacesLambdaA5F923A4ArnE59FF2BB": "arn:aws:lambda:eu-central-1:612716031306:function:LambdaStack-SpacesLambdaA5F923A4-sGNUghX7lyBI"
-  },
-  "ApiStack": {
-    "SpacesApiEndpoint36C4F3B6": "https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod/"
-  }
+    "AuthStack": {
+        "SpacesIdentityPoolId": "eu-central-1:269425f2-3e7b-42e9-8180-4d08f117d2c2",
+        "ExportsOutputFnGetAttSpacesUserPool5D732F45ArnC2F0FFA7": "arn:aws:cognito-idp:eu-central-1:612716031306:userpool/eu-central-1_i5mnA0EGS",
+        "SpacesUserPoolClientId": "1h4ougfjk5nqlcde4ijsar9j58",
+        "SpacesUserPoolId": "eu-central-1_i5mnA0EGS"
+    },
+    "DataStack": {
+        "ExportsOutputRefSpacesTable8A9973559FB4B87D": "SpaceTable-02e63528725b",
+        "SpaceFinderPhotosBucketName": "space-finder-photos-02e63528725b",
+        "ExportsOutputFnGetAttSpacesTable8A997355Arn242927FE": "arn:aws:dynamodb:eu-central-1:612716031306:table/SpaceTable-02e63528725b"
+    },
+    "UiStack": {
+        "SpacesUiUrl": "d3swd1pxmq315v.cloudfront.net"
+    },
+    "LambdaStack": {
+        "ExportsOutputFnGetAttSpacesLambdaA5F923A4ArnE59FF2BB": "arn:aws:lambda:eu-central-1:612716031306:function:LambdaStack-SpacesLambdaA5F923A4-sGNUghX7lyBI"
+    },
+    "ApiStack": {
+        "SpacesApiEndpoint": "https://94c0s06hze.execute-api.eu-central-1.amazonaws.com/prod/"
+    }
 }
