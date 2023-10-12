@@ -7,7 +7,7 @@ import CreateSpace from './components/create-space';
 import { SpacesService } from './services/spaces-service';
 
 const authService = new AuthService();
-const spacesService = new SpacesService();
+const spacesService = new SpacesService(authService);
 
 export default function App() {
     const [username, setUsername] = useState<string | undefined>();
