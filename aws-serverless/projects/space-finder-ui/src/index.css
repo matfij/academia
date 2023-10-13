@@ -86,3 +86,7 @@ input {
 .error {
   color: #d44;
 }
+
+.spacePhoto {
+  width: 200px;
+}

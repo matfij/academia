@@ -5,6 +5,7 @@ import Login from './components/login';
 import { AuthService } from './services/auth-service';
 import CreateSpace from './components/create-space';
 import { SpacesService } from './services/spaces-service';
+import SpaceList from './components/space-list';
 
 const authService = new AuthService();
 const spacesService = new SpacesService(authService);
@@ -26,7 +27,7 @@ export default function App() {
                 { path: '/login', element: <Login authService={authService} setUsernameCb={setUsername} /> },
                 { path: '/profile', element: <>Profile Page</> },
                 { path: '/createSpace', element: <CreateSpace spacesService={spacesService} /> },
-                { path: '/spaces', element: <>List Space Page</> },
+                { path: '/spaces', element: <SpaceList spacesService={spacesService}/> },
             ],
         },
     ]);

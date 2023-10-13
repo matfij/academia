@@ -2,6 +2,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { AuthService } from './auth-service';
 import { AWS_REGION } from '../common/config';
 import { DataStack, ApiStack } from '../../cdk-outputs.json';
+import { Space } from '../definitions/interfaces';
 
 const SPACES_URL = ApiStack.SpacesApiEndpoint + 'spaces';
 
@@ -47,5 +48,16 @@ export class SpacesService {
         });
         await this.s3Client.send(command);
         return `https://${command.input.Bucket}.s3.${AWS_REGION}.amazonaws.com/${command.input.Key}`;
+    }
+
+    public async readSpaces(): Promise<Space[]> {
+        const res = await fetch(SPACES_URL, {
+            method: 'GET',
+            headers: {
+                Authorization: this.authService.getJwt()!,
+            },
+        });
+        const spaces = await res.json();
+        return spaces;
     }
 }
