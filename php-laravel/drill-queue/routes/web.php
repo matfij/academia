@@ -16,3 +16,23 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/test', function () {
+    return 'PHP for the win!';
+});
+
+Route::get('/legacy', function () {
+    return redirect('/test');
+})->name('legacy');
+
+Route::get('/unknown', function () {
+    return redirect()->route('legacy');
+});
+
+Route::get('/find/{name}', function ($name) {
+    return 'User ' . $name . ' found.';
+});
+
+Route::fallback(function () {
+    return 'No content';
+});
