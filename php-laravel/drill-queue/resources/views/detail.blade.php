@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
 @section('title')
-    <h1>{{ $task->title }}</h1>
+    <h1>{{ $drill->title }}</h1>
 @endsection
 
 @section('content')
     <section>
-        <p>About: {{ $task->description }}</p>
-        @if ($task->long_description)
-            <p>Details: {{ $task->long_description }}</p>
+        <p><b>About:</b> {{ $drill->description }}</p>
+        @if ($drill->hints)
+            <p><b>Hint:</b> {{ $drill->hints }}</p>
         @else
-            <p>Details: ---</p>
+            <p><b>Hint:</b> ---</p>
         @endif
-        <p>Created at: {{ $task->created_at }}</p>
+        <p><b>Created at:</b> {{ $drill->created_at }}</p>
     </section>
 @endsection
