@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Drill extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['title', 'description', 'hints'];
+
+    protected $attributes= [
+        'completed' => false,
+    ];
+
+    public function getRouteKeyName() {
+        return 'id';
+    }
 }

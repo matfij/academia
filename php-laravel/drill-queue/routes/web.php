@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Requests\DrillRequest;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Drill;
@@ -23,8 +24,11 @@ Route::get('/drills', function () {
 Route::view('/drills/create', 'create')
     ->name('drills.create');
 
-Route::get('/drills/{id}', function($id) {
-    $drill = Drill::findOrFail($id);
+Route::get('/drills/{drill}/edit', function(Drill $drill) {
+    return view('edit', ['drill' => $drill]);
+})->name('drills.edit');
+
+Route::get('/drills/{drill}', function(Drill $drill) {
     return view('detail', ['drill' => $drill]);
 })->name('drills.detail');
 
@@ -32,17 +36,12 @@ Route::fallback(function () {
     return redirect()->route('drills.index');
 });
 
-Route::post('/drills', function (Request $request) {
-    $data = $request->validate([
-        'title' => 'required|max:255',
-        'description' => 'required',
-        'hints' => 'required',
-    ]);
-    $drill = new Drill;
-    $drill->title = $data['title'];
-    $drill->description = $data['description'];
-    $drill->hints = $data['hints'];
-    $drill->completed = false;
-    $drill->save();
-    return redirect()->route('drills.detail', ['id' => $drill->id])->with('success','Drill created');
+Route::post('/drills', function (DrillRequest $request) {
+    $drill = Drill::create($request->validated());
+    return redirect()->route('drills.detail', ['drill' => $drill->id])->with('success','Drill created');
 })->name('drills.save');
+
+Route::put('/drills/{drill}', function (DrillRequest $request, Drill $drill) {
+    $drill->update($request->validated());
+    return redirect()->route('drills.detail', ['drill' => $drill->id])->with('success','Drill updated');
+})->name('drills.update');

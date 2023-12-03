@@ -9,7 +9,7 @@
         <div>
             @forelse ($drills as $drill)
                 <p>{{ $drill->id }}. {{ $drill->title }}</p>
-                <a href="{{ route('drills.detail', ['id' => $drill->id]) }}">Detail</a>
+                <a href="{{ route('drills.detail', ['drill' => $drill->id]) }}">Detail</a>
             @empty
                 <p>---</p>
             @endforelse
