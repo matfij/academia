@@ -44,5 +44,5 @@ Route::post('/drills', function (Request $request) {
     $drill->hints = $data['hints'];
     $drill->completed = false;
     $drill->save();
-    return redirect()->route('drills.detail', ['id', $drill->id]);
+    return redirect()->route('drills.detail', ['id' => $drill->id])->with('success','Drill created');
 })->name('drills.save');

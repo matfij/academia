@@ -12,3 +12,7 @@
 -   @csrf - protects agains cross-site request forgery in which attacker tricks the
     authenticated user (active session) to send a request to this website endpoint by generating
     a CSRF token and adding it to form data. Required for secure forms.
+
+## Concepts
+
+-   sessions - stores auth user data, in order to be distributed should be stored in a DB
