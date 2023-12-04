@@ -38,10 +38,15 @@ Route::fallback(function () {
 
 Route::post('/drills', function (DrillRequest $request) {
     $drill = Drill::create($request->validated());
-    return redirect()->route('drills.detail', ['drill' => $drill->id])->with('success','Drill created');
+    return redirect()->route('drills.detail', ['drill' => $drill->id])->with('success', 'Drill created');
 })->name('drills.save');
 
 Route::put('/drills/{drill}', function (DrillRequest $request, Drill $drill) {
     $drill->update($request->validated());
-    return redirect()->route('drills.detail', ['drill' => $drill->id])->with('success','Drill updated');
+    return redirect()->route('drills.detail', ['drill' => $drill->id])->with('success', 'Drill updated');
 })->name('drills.update');
+
+Route::delete('/drills/{drill}', function (Drill $drill) {
+    $drill->delete();
+    return redirect()->route('drills.index')->with('success', 'Drill deleted');
+})->name('drills.destroy');

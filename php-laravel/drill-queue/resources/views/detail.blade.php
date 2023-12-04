@@ -13,5 +13,10 @@
             <p><b>Hint:</b> ---</p>
         @endif
         <p><b>Created at:</b> {{ $drill->created_at }}</p>
+        <form action="{{ route('drills.destroy', ['drill' => $drill->id]) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit">Delete</button>
+        </form>
     </section>
 @endsection
