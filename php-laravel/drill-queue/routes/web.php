@@ -17,7 +17,7 @@ use App\Models\Drill;
 */
 
 Route::get('/drills', function () {
-    $drills = Drill::latest()->where('completed', false)->get();
+    $drills = Drill::latest()->paginate(8);
     return view('index', ['drills' => $drills]);
 })->name('drills.index');
 
@@ -50,3 +50,8 @@ Route::delete('/drills/{drill}', function (Drill $drill) {
     $drill->delete();
     return redirect()->route('drills.index')->with('success', 'Drill deleted');
 })->name('drills.destroy');
+
+Route::put('drills/{drill}/toggle-complete', function (Drill $drill) {
+    $drill->toggleComplete();
+    return redirect()->back()->with('success', 'Drill updated');
+})->name('drills.toggle-complete');

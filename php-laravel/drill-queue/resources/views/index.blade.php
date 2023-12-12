@@ -7,6 +7,9 @@
 @section('content')
     <section>
         <div>
+            <a href="{{ route('drills.create') }}">Create</a>
+        </div>
+        <div>
             @forelse ($drills as $drill)
                 <p>{{ $drill->id }}. {{ $drill->title }}</p>
                 <a href="{{ route('drills.detail', ['drill' => $drill->id]) }}">Detail</a>
@@ -15,4 +18,9 @@
             @endforelse
         </div>
     </section>
+    <nav>
+        @if ($drills->count())
+            {{ $drills->links() }}
+        @endif
+    </nav>
 @endsection

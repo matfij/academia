@@ -11,9 +11,14 @@ class Drill extends Model
 
     protected $fillable = ['title', 'description', 'hints'];
 
-    protected $attributes= [
+    protected $attributes = [
         'completed' => false,
     ];
+
+    public function toggleComplete() {
+        $this->completed = !$this->completed;
+        $this->save();
+    }
 
     public function getRouteKeyName() {
         return 'id';
