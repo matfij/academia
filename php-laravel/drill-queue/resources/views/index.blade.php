@@ -6,19 +6,19 @@
 
 @section('content')
     <section>
-        <div>
-            <a href="{{ route('drills.create') }}">Create</a>
-        </div>
+        <nav class="mb-4">
+            <a href="{{ route('drills.create') }}" class="font-medium text-gray-700 underline decoration-pink-500">Create</a>
+        </nav>
         <div>
             @forelse ($drills as $drill)
-                <p>{{ $drill->id }}. {{ $drill->title }}</p>
+                <p @class(['line-through' => $drill->completed])>{{ $drill->id }}. {{ $drill->title }}</p>
                 <a href="{{ route('drills.detail', ['drill' => $drill->id]) }}">Detail</a>
             @empty
                 <p>---</p>
             @endforelse
         </div>
     </section>
-    <nav>
+    <nav class="mt-4">
         @if ($drills->count())
             {{ $drills->links() }}
         @endif
