@@ -6,6 +6,7 @@ import { WorldManager } from '../state/WorldManager';
 type InteractiveSprite = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
 export class BattleScene extends Scene {
+    private backgroundMusic: Phaser.Sound.BaseSound | null = null;
     private allies: InteractiveSprite[] = [];
     private enemies: InteractiveSprite[] = [];
 
@@ -16,6 +17,7 @@ export class BattleScene extends Scene {
     preload() {
         const mapLevel = WorldManager.getCurrentMap();
         this.load.image('battle-bg', `./images/battle-${mapLevel}.png`);
+        this.load.audio('battle-bg-music', `./music/battle-${mapLevel}.mp3`);
 
         EncounterManager.getEncounter({ mapLevel }).enemies.forEach((enemy) => {
             this.load.image(enemy.id, `./images/${enemy.id}.png`);
@@ -29,6 +31,13 @@ export class BattleScene extends Scene {
     create() {
         const mapLevel = WorldManager.getCurrentMap();
         this.add.image(400, 200, 'battle-bg');
+        this.backgroundMusic = this.sound.add('battle-bg-music', { volume: 0.5, loop: true });
+        this.backgroundMusic.play();
+        this.tweens.add({
+            targets: this.backgroundMusic,
+            volume: 0.5,
+            duration: 1000,
+        });
 
         let xOffset = 0;
         let yOffset = 0;
@@ -37,7 +46,7 @@ export class BattleScene extends Scene {
             xOffset += 50;
             yOffset += 100;
         });
-        
+
         xOffset = 0;
         yOffset = 0;
         PartyManager.getParty().forEach((ally) => {
@@ -53,7 +62,21 @@ export class BattleScene extends Scene {
         }
         const cursors = this.input.keyboard.createCursorKeys();
         if (cursors.space.isDown) {
-            this.scene.start('WorldScene');
+            this.startWorldScene();
         }
+    }
+
+    startWorldScene() {
+        this.tweens.add({
+            targets: this.backgroundMusic,
+            volume: 0,
+            duration: 1000,
+            destroy: false,
+            pause: true,
+            onComplete: () => {
+                // this.backgroundMusic?.stop();
+                this.scene.start('WorldScene');
+            },
+        });
     }
 }

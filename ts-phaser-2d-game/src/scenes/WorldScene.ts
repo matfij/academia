@@ -4,18 +4,35 @@ import { Direction, WorldManager } from '../state/WorldManager';
 export class WorldScene extends Scene {
     private party?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     private extraEncounterChance = 0;
+    private backgroundMusic: Phaser.Sound.BaseSound | null = null;
 
     constructor() {
         super({ key: 'WorldScene' });
     }
 
     preload() {
-        this.load.image('world', './images/adventure-map-1.png');
+        const mapLevel = WorldManager.getCurrentMap();
+        this.load.image('adventure-bg', `./images/adventure-${mapLevel}.png`);
+        this.load.audio('adventure-bg-music', `./music/adventure-${mapLevel}.mp3`);
+
         this.load.image('party', './images/adventure-player-1.png');
     }
 
     create() {
-        this.add.image(400, 200, 'world');
+        this.extraEncounterChance = 0;
+
+        this.add.image(400, 200, 'adventure-bg');
+        if (this.backgroundMusic && !this.backgroundMusic.isPlaying) {
+            this.backgroundMusic.resume();
+        } else if (!this.backgroundMusic || !this.backgroundMusic.isPlaying) {
+            this.backgroundMusic = this.sound.add('adventure-bg-music', { volume: 0.5, loop: true });
+            this.backgroundMusic.play();
+        }
+        this.tweens.add({
+            targets: this.backgroundMusic,
+            volume: 0.5,
+            duration: 1000,
+        });
 
         const partyPosition = WorldManager.getCurrentPosition();
         this.party = this.physics.add.sprite(partyPosition.x, partyPosition.y, 'party');
@@ -48,8 +65,7 @@ export class WorldScene extends Scene {
         this.party.setPosition(partyPosition.x, partyPosition.y);
 
         if (moved && this.shouldTriggerBattle()) {
-            this.scene.start('BattleScene');
-            this.extraEncounterChance = 0;
+            this.startBattleScene();
         } else {
             this.extraEncounterChance -= 0.0000025;
         }
@@ -58,5 +74,19 @@ export class WorldScene extends Scene {
     private shouldTriggerBattle(): boolean {
         const randomChance = Math.random() + this.extraEncounterChance;
         return randomChance < 0.0001;
+    }
+
+    startBattleScene() {
+        this.extraEncounterChance = 0;
+        this.tweens.add({
+            targets: this.backgroundMusic,
+            volume: 0,
+            duration: 1000,
+            destroy: false,
+            pause: true,            
+            onComplete: () => {
+                this.scene.start('BattleScene');
+            },
+        });
     }
 }
