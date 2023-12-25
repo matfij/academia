@@ -17,31 +17,35 @@ export class WorldScene extends Scene {
         this.createPlayer();
     }
 
-    update(): void {
+    update() {
         if (!this.player || !this.input.keyboard) {
             return;
         }
         const cursors = this.input.keyboard.createCursorKeys();
+        const speed = 200;
+        this.player.setVelocity(0, 0);
+        console.log(this.player.x, this.player.y);
+
         if (cursors.left.isDown) {
-            console.log('left');
-            this.player.setPosition(this.player.x - 1, this.player.y);
+            this.player.setVelocityX(-speed);
         } else if (cursors.right.isDown) {
-            console.log('right');
-            this.player.setPosition(this.player.x + 1, this.player.y);
-        } else if (cursors.up.isDown) {
-            console.log('up');
-            this.player.setPosition(this.player.x, this.player.y - 1);
+            this.player.setVelocityX(speed);
+        }
+        if (cursors.up.isDown) {
+            this.player.setVelocityY(-speed);
         } else if (cursors.down.isDown) {
-            console.log('down');
-            this.player.setPosition(this.player.x, this.player.y + 1);
+            this.player.setVelocityY(speed);
         }
     }
 
     private createMap() {
-        this.add.image(0, 0, 'world');
+        this.add.image(400, 200, 'world');
     }
 
     private createPlayer() {
+        if (this.player) {
+            return;
+        }
         this.player = this.physics.add.sprite(100, 100, 'player');
     }
 }
