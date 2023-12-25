@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import Phaser from 'phaser';
 import { WorldScene } from './scenes/WorldScene';
+import { BattleScene } from './scenes/BattleScene';
 
 export const App = () => {
     useEffect(() => {
         const config: Phaser.Types.Core.GameConfig = {
             width: 800,
             height: 400,
-            scene: WorldScene,
+            scene: [WorldScene, BattleScene],
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -15,7 +16,7 @@ export const App = () => {
                     debug: true,
                 },
             },
-            parent: 'phaser-container',
+            parent: 'sceneWrapper',
         };
         const game = new Phaser.Game(config);
         return () => {
@@ -24,9 +25,9 @@ export const App = () => {
     }, []);
 
     return (
-        <>
+        <main className="gameWrapper">
             <h2>Headwind</h2>
-            <div id="phaser-container"></div>
-        </>
+            <div id="sceneWrapper"></div>
+        </main>
     );
 };
