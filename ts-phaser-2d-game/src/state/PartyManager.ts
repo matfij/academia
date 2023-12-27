@@ -2,11 +2,30 @@ import { Ally } from '../shared/types';
 
 export class PartyManager {
     private static allies: Ally[] = [
-        { id: 'player-1', name: 'Gengar II', attacks: [{ name: 'Sword Swing' }, { name: 'Swallow Blade' }] },
+        {
+            id: 'player-1',
+            name: 'Gengar II',
+            statistics: {
+                speed: 100,
+                health: 500,
+            },
+            moves: [
+                { id: 'move-4', name: 'Sword Swing', damage: 10 },
+                { id: 'move-5', name: 'Swallow Blade', damage: 30 },
+            ],
+        },
         {
             id: 'player-2',
             name: 'Astrolfo',
-            attacks: [{ name: 'Lance Strike' }, { name: 'Bolt of Bahamut' }],
+            statistics: {
+                speed: 225,
+                health: 1800,
+            },
+            moves: [
+                { id: 'move-1', name: 'Lance Strike', damage: 10 },
+                { id: 'move-2', name: 'Wind Thrust', damage: 45 },
+                { id: 'move-3', name: 'Bolt of Bahamut', damage: 120 },
+            ],
         },
     ];
 
