@@ -1,3 +1,5 @@
+@import url('../shared/animations.scss');
+
 .battleWrapper {
     width: 1100px;
     height: 600px;
@@ -9,10 +11,6 @@
 .charactersWrapper {
     width: 100%;
     display: flex;
-
-    img {
-        width: 75px;
-    }
 }
 
 .characterItem {
@@ -21,19 +19,45 @@
     opacity: 0.9;
     text-align: center;
     border-bottom: 4px solid transparent;
+    text-shadow: 1px 1px 2px #242424;
 
     &:hover {
         opacity: 1;
         cursor: pointer;
     }
+
+    img {
+        width: 75px;
+        animation: bounceAnimation 5s infinite;
+    }
+
+    progress {
+        width: 80px;
+        margin-top: -10px;
+        background-color: #555;
+    }
+}
+
+.deadCharacterItem {
+    opacity: 0.5;
+    background: black;
+
+    &:hover {
+        opacity: 0.5;
+        cursor: auto;
+    }
+
+    img {
+        animation: deathAnimation 3s forwards;
+    }
 }
 
 .selectedCharacterItem {
-    border-bottom: 4px solid blue;
+    box-shadow: inset 1px 1px 12px 1px #242936;
 }
 
 .targetCharacterItem {
-    border-bottom: 4px solid red;
+    box-shadow: inset 1px 1px 12px 1px #ff544c;
 }
 
 .alliesWrapper {

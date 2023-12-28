@@ -1,11 +1,26 @@
-import { BattleAlly, BattleEnemy, BattleMove } from '../shared/types';
+import { getMoveValueSpread, getRandomItem } from '../shared/math';
+import { BattleCharacter, BattleMove, BattleStatistics } from '../shared/types';
 
 export class BattleManager {
-    private static allies: BattleAlly[] = [];
-    private static enemies: BattleEnemy[] = [];
+    private static allies: BattleCharacter[] = [];
+    private static enemies: BattleCharacter[] = [];
     private static turnNumber = 0;
 
-    public static startBattle({ allies, enemies }: { allies: BattleAlly[]; enemies: BattleEnemy[] }) {
+    public static getBattleStatistics({ character }: { character: BattleCharacter }) {
+        return {
+            health: character.baseStatistics.health,
+            maxHealth: character.baseStatistics.health,
+            speed: character.baseStatistics.speed,
+        } as BattleStatistics;
+    }
+
+    public static startBattle({
+        allies,
+        enemies,
+    }: {
+        allies: BattleCharacter[];
+        enemies: BattleCharacter[];
+    }) {
         this.turnNumber = 0;
         this.allies = allies;
         this.enemies = enemies;
@@ -16,23 +31,43 @@ export class BattleManager {
     }: {
         actions: { allyId: string; moveId: string; targetId: string }[];
     }) {
+        const turnResults: {
+            byAlly: boolean;
+            userId: string;
+            targetId: string;
+            moveValue: number;
+        }[] = [];
         [...this.allies, ...this.enemies]
-            .sort((a, b) => b.statistics.speed - a.statistics.speed)
+            .filter((c) => c.alive)
+            .sort((a, b) => b.baseStatistics.speed - a.baseStatistics.speed)
             .forEach((character) => {
                 const action = actions.find((a) => a.allyId === character.id);
                 if (action) {
                     const move = character.moves.find((m) => m.id === action.moveId);
-                    const target = [...this.allies, ...this.enemies].find((c) => c.id === action.targetId);
-                    if (!move || !target) {
-                        throw new Error('Invalid move');
+                    let target = [...this.allies, ...this.enemies]
+                        .filter((c) => c.alive)
+                        .find((c) => c.id === action.targetId);
+                    if (move && target) {
+                        turnResults.push(...this.executeAllyTurn({ ally: character, move, target }));
+                    } else {
+                        // Invalid move or dead target
                     }
-                    this.executeAllyTurn({ ally: character as BattleAlly, move, target });
                 } else {
-                    this.executeEnemyTurn({ enemy: character });
+                    turnResults.push(...this.executeEnemyTurn({ enemy: character, allies: this.allies }));
                 }
             });
-
         this.turnNumber++;
+        if (!this.enemies.filter(e => e.alive).length) {
+            // victory
+        } else if (!this.allies.filter(a => a.alive).length) {
+            // defeat
+        }
+        return {
+            allies: [...this.allies],
+            enemies: [...this.enemies],
+            turnNumber: this.turnNumber,
+            turnResults,
+        };
     }
 
     private static executeAllyTurn({
@@ -40,10 +75,54 @@ export class BattleManager {
         move,
         target,
     }: {
-        ally: BattleAlly;
+        ally: BattleCharacter;
         move: BattleMove;
-        target: BattleAlly | BattleEnemy;
-    }) {}
+        target: BattleCharacter;
+    }) {
+        if (!ally.alive) {
+            return [];
+        }
+        const inflictedDamage = getMoveValueSpread(0.2) * move.damage;
+        target.battleStatistics.health -= inflictedDamage;
+        if (target.battleStatistics.health <= 0) {
+            target.alive = false;
+        }
+        return [
+            {
+                byAlly: true,
+                userId: ally.id,
+                targetId: target.id,
+                moveName: move.name,
+                moveValue: inflictedDamage,
+            },
+        ];
+    }
 
-    private static executeEnemyTurn({ enemy }: { enemy: BattleEnemy }) {}
+    private static executeEnemyTurn({
+        enemy,
+        allies,
+    }: {
+        enemy: BattleCharacter;
+        allies: BattleCharacter[];
+    }) {
+        if (!enemy.alive) {
+            return [];
+        }
+        const enemyMove = enemy.moves[0];
+        const enemyTarget = getRandomItem(allies.filter((a) => a.alive));
+        const inflictedDamage = getMoveValueSpread(0.2) * enemyMove.damage;
+        enemyTarget.battleStatistics.health -= inflictedDamage;
+        if (enemyTarget.battleStatistics.health <= 0) {
+            enemyTarget.alive = false;
+        }
+        return [
+            {
+                byAlly: false,
+                userId: enemy.id,
+                targetId: enemyTarget.id,
+                moveName: enemyMove.name,
+                moveValue: inflictedDamage,
+            },
+        ];
+    }
 }

@@ -3,21 +3,14 @@ export type Point = {
     y: number;
 };
 
-export type Ally = {
+export type Character = {
     id: string;
     name: string;
-    statistics: Statistics;
+    baseStatistics: BaseStatistics;
     moves: BattleMove[];
 };
 
-export type Enemy = {
-    id: string;
-    name: string;
-    statistics: Statistics;
-    moves: BattleMove[];
-};
-
-export type Statistics = {
+export type BaseStatistics = {
     health: number;
     speed: number;
 };
@@ -28,16 +21,22 @@ export type BattleMove = {
     damage: number;
 };
 
-export type BattleAlly = Ally & {
+export type BattleCharacter = Character & {
     alive: boolean;
     imageUrl: string;
-    moveMenu: BattleAllyMoveMenu;
+    battleStatistics: BattleStatistics;
+};
+
+export type BattleAlly = BattleCharacter & {
     selectedMove: BattleMove;
     selectedTargetId: string;
+    battleStatistics: BattleStatistics;
 };
 
-export type BattleAllyMoveMenu = {
-    moves: BattleMove[];
-};
+export type BattleEnemy = BattleCharacter;
 
-export type BattleEnemy = Enemy & { alive: boolean; imageUrl: string };
+export type BattleStatistics = {
+    maxHealth: number;
+    health: number;
+    speed: number;
+};

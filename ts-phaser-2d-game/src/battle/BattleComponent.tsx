@@ -22,22 +22,28 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
             ...enemy,
             alive: true,
             imageUrl: `./images/${enemy.id}.png`,
+            battleStatistics: BattleManager.getBattleStatistics({ character: enemy }),
         }));
         setBattleEnemies(enemies);
         const allies: BattleAlly[] = PartyManager.getParty().map((ally) => ({
             ...ally,
             alive: true,
-            imageUrl: `./images/${ally.id}.png`,
             selectedMove: ally.moves[0],
             selectedTargetId: enemies[0].id,
-            moveMenu: {
-                moves: ally.moves,
-            },
+            imageUrl: `./images/${ally.id}.png`,
+            battleStatistics: BattleManager.getBattleStatistics({ character: ally }),
         }));
         setBattleAllies(allies);
         setSelectedAlly(allies[0]);
         BattleManager.startBattle({ allies, enemies });
     }, [mapLevel]);
+
+    const onAllySelection = (ally: BattleAlly) => {
+        if (!ally.alive) {
+            return;
+        }
+        setSelectedAlly(ally);
+    };
 
     const onMoveSelection = (move: BattleMove) => {
         if (!selectedAlly) {
@@ -49,7 +55,10 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     };
 
     const onTargetSelection = (targetId: string) => {
-        if (!selectedAlly) {
+        const target = [...battleAllies, ...battleEnemies]
+            .filter((c) => c.alive)
+            .find((c) => c.id === targetId);
+        if (!selectedAlly || !target) {
             return;
         }
         selectedAlly.selectedTargetId = targetId;
@@ -61,11 +70,34 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         const actions: {
             allyId: string;
             moveId: string;
+            targetId: string;
         }[] = battleAllies.map((a) => ({
             allyId: a.id,
             moveId: a.selectedMove.id,
+            targetId: a.selectedTargetId,
         }));
-        BattleManager.executeTurn({ actions });
+        const { allies, enemies, turnResults } = BattleManager.executeTurn({ actions });
+
+        const aliveAllies = battleAllies.filter((a) => a.alive);
+        const newSelectedAlly = aliveAllies.length > 0 ? aliveAllies[0] : null;
+        if (newSelectedAlly) {
+            setSelectedAlly(newSelectedAlly);
+        }
+
+        aliveAllies.forEach((ally) => {
+            const aliveEnemies = battleEnemies.filter((e) => e.alive);
+            const newSelectedEnemy = aliveEnemies.length > 0 ? aliveEnemies[0] : null;
+            if (newSelectedEnemy) {
+                ally.selectedTargetId = newSelectedEnemy.id;
+            }
+        });
+
+        turnResults.forEach((result) => {
+            console.log(`${result.byAlly} | ${result.userId}`);
+        });
+
+        setBattleAllies(allies as BattleAlly[]);
+        setBattleEnemies(enemies);
     };
 
     return (
@@ -77,16 +109,18 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                 <div className={style.alliesWrapper}>
                     {battleAllies.map((ally) => (
                         <div
-                            onClick={() => setSelectedAlly(ally)}
+                            onClick={() => onAllySelection(ally)}
                             key={ally.id}
-                            className={`${style.characterItem} ${
-                                ally.id === selectedAlly?.id ? style.selectedCharacterItem : ''
-                            }`}
+                            className={`${style.characterItem}
+                                ${ally.id === selectedAlly?.id ? style.selectedCharacterItem : ''}
+                                ${!ally.alive ? style.deadCharacterItem : ''}`}
                         >
-                            <p>
-                                {ally.name} ({ally.statistics.health})
-                            </p>
+                            <p>{ally.name}</p>
                             <img src={ally.imageUrl} alt={ally.name} />
+                            <progress
+                                max={ally.battleStatistics.maxHealth}
+                                value={ally.battleStatistics.health}
+                            />
                         </div>
                     ))}
                 </div>
@@ -95,14 +129,21 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                         <div
                             onClick={() => onTargetSelection(enemy.id)}
                             key={enemy.id}
-                            className={`${style.characterItem} ${
-                                enemy.id === selectedAlly?.selectedTargetId ? style.targetCharacterItem : ''
-                            }`}
+                            className={`${style.characterItem}
+                                ${
+                                    enemy.id === selectedAlly?.selectedTargetId
+                                        ? style.targetCharacterItem
+                                        : ''
+                                }
+                                ${!enemy.alive ? style.deadCharacterItem : ''}
+                            `}
                         >
-                            <p>
-                                {enemy.name} ({enemy.statistics.health})
-                            </p>
+                            <p>{enemy.name}</p>
                             <img src={enemy.imageUrl} alt={enemy.name} />
+                            <progress
+                                max={enemy.battleStatistics.maxHealth}
+                                value={enemy.battleStatistics.health}
+                            />
                         </div>
                     ))}
                 </div>

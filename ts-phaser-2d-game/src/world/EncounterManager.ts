@@ -11,7 +11,7 @@ export class EncounterManager {
                 {
                     id: 'enemy-1-1',
                     name: 'Green Goblin',
-                    statistics: {
+                    baseStatistics: {
                         speed: 20,
                         health: 30,
                     },
@@ -20,7 +20,7 @@ export class EncounterManager {
                 {
                     id: 'enemy-1-2',
                     name: 'Tall Ogre',
-                    statistics: {
+                    baseStatistics: {
                         speed: 10,
                         health: 40,
                     },
@@ -29,7 +29,7 @@ export class EncounterManager {
                 {
                     id: 'enemy-1-3',
                     name: 'Cave Troll',
-                    statistics: {
+                    baseStatistics: {
                         speed: 30,
                         health: 60,
                     },

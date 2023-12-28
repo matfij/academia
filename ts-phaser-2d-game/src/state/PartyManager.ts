@@ -5,9 +5,9 @@ export class PartyManager {
         {
             id: 'player-1',
             name: 'Gengar II',
-            statistics: {
+            baseStatistics: {
                 speed: 100,
-                health: 500,
+                health: 100,
             },
             moves: [
                 { id: 'move-4', name: 'Sword Swing', damage: 10 },
@@ -17,7 +17,7 @@ export class PartyManager {
         {
             id: 'player-2',
             name: 'Astrolfo',
-            statistics: {
+            baseStatistics: {
                 speed: 225,
                 health: 1800,
             },
