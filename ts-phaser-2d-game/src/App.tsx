@@ -4,16 +4,11 @@ import { WorldScene } from './scenes/WorldScene';
 import { BattleComponent } from './battle/BattleComponent';
 
 export const App = () => {
-    const [wolrdScene, setWorldScene] = useState<WorldScene | undefined>();
+    const [worldScene, setWorldScene] = useState<WorldScene | undefined>();
     const [inBattle, setInBattle] = useState(false);
 
     useEffect(() => {
-        const scene = new WorldScene({
-            onStartBattle: () => setInBattle(true),
-            onEndBattle: () => {
-                setInBattle(false);
-            },
-        });
+        const scene = new WorldScene({ onStartBattle: () => setInBattle(true) });
         const game = new Phaser.Game({
             width: 800,
             height: 400,
@@ -41,7 +36,7 @@ export const App = () => {
                 <BattleComponent
                     onEndBattle={() => {
                         setInBattle(false);
-                        wolrdScene?.endBattle();
+                        worldScene?.endBattle();
                     }}
                 />
             )}

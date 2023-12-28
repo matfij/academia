@@ -20,7 +20,7 @@ export type Enemy = {
 export type Statistics = {
     health: number;
     speed: number;
-}
+};
 
 export type BattleMove = {
     id: string;
@@ -28,22 +28,16 @@ export type BattleMove = {
     damage: number;
 };
 
-export type InteractiveSprite = Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
-
 export type BattleAlly = Ally & {
     alive: boolean;
-    sprite: InteractiveSprite;
+    imageUrl: string;
     moveMenu: BattleAllyMoveMenu;
-    selectedMoveId: string;
+    selectedMove: BattleMove;
     selectedTargetId: string;
 };
 
 export type BattleAllyMoveMenu = {
-    moveA: InteractiveSprite;
-    moveB: InteractiveSprite;
-    moveC: InteractiveSprite;
-    moveD: InteractiveSprite;
-    container: Phaser.GameObjects.Container;
+    moves: BattleMove[];
 };
 
-export type BattleEnemy = Enemy & { alive: boolean; sprite: InteractiveSprite };
+export type BattleEnemy = Enemy & { alive: boolean; imageUrl: string };
