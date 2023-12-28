@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { Direction, WorldManager } from '../state/WorldManager';
+import { Direction, WorldManager } from './WorldManager';
 import { AudioManager } from '../shared/AudioManager';
 
 export class WorldScene extends Scene {

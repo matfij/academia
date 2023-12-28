@@ -2,8 +2,9 @@ import style from './BattleComponent.module.scss';
 import { useEffect, useState } from 'react';
 import { BattleAlly, BattleEnemy, BattleMove } from '../shared/types';
 import { PartyManager } from '../state/PartyManager';
-import { WorldManager } from '../state/WorldManager';
-import { EncounterManager, MapLevel } from '../state/EncounterManager';
+import { WorldManager } from '../world/WorldManager';
+import { EncounterManager, MapLevel } from '../world/EncounterManager';
+import { BattleManager } from './BattleManager';
 
 type BattleComponentProps = {
     onEndBattle: () => void;
@@ -35,7 +36,8 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         }));
         setBattleAllies(allies);
         setSelectedAlly(allies[0]);
-    }, []);
+        BattleManager.startBattle({ allies, enemies });
+    }, [mapLevel]);
 
     const onMoveSelection = (move: BattleMove) => {
         if (!selectedAlly) {
@@ -56,9 +58,14 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     };
 
     const onAttack = () => {
-        battleAllies.forEach((ally) =>
-            console.log(`${ally.name} uses ${ally.selectedMove.id} on ${ally.selectedTargetId}`),
-        );
+        const actions: {
+            allyId: string;
+            moveId: string;
+        }[] = battleAllies.map((a) => ({
+            allyId: a.id,
+            moveId: a.selectedMove.id,
+        }));
+        BattleManager.executeTurn({ actions });
     };
 
     return (

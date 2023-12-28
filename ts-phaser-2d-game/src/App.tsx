@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Phaser from 'phaser';
-import { WorldScene } from './scenes/WorldScene';
+import { WorldScene } from './world/WorldScene';
 import { BattleComponent } from './battle/BattleComponent';
 
 export const App = () => {
