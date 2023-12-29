@@ -1,7 +1,7 @@
-import { Ally } from '../shared/types';
+import { Character } from '../shared/types';
 
 export class PartyManager {
-    private static allies: Ally[] = [
+    private static allies: Character[] = [
         {
             id: 'player-1',
             name: 'Gengar II',

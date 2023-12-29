@@ -27,6 +27,13 @@ export type BattleCharacter = Character & {
     battleStatistics: BattleStatistics;
 };
 
+export type TurnStatus = {
+    userId: string;
+    targetId: string;
+    moveUsed: string;
+    damageReceived: number;
+};
+
 export type BattleAlly = BattleCharacter & {
     selectedMove: BattleMove;
     selectedTargetId: string;

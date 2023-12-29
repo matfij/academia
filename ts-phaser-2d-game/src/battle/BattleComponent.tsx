@@ -1,6 +1,6 @@
 import style from './BattleComponent.module.scss';
 import { useEffect, useState } from 'react';
-import { BattleAlly, BattleEnemy, BattleMove } from '../shared/types';
+import { BattleAlly, BattleEnemy, BattleMove, TurnStatus } from '../shared/types';
 import { PartyManager } from '../state/PartyManager';
 import { WorldManager } from '../world/WorldManager';
 import { EncounterManager, MapLevel } from '../world/EncounterManager';
@@ -14,7 +14,9 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     const [mapLevel, setMapLevel] = useState<MapLevel>(MapLevel.MapLevel1);
     const [battleAllies, setBattleAllies] = useState<BattleAlly[]>([]);
     const [battleEnemies, setBattleEnemies] = useState<BattleEnemy[]>([]);
+    const [turnStatus, setTurnStatus] = useState<TurnStatus>();
     const [selectedAlly, setSelectedAlly] = useState<BattleAlly>();
+    const [turnAnimating, setTurnAnimating] = useState(false);
 
     useEffect(() => {
         setMapLevel(WorldManager.getCurrentMap());
@@ -67,6 +69,8 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     };
 
     const onAttack = () => {
+        setTurnAnimating(true);
+
         const actions: {
             allyId: string;
             moveId: string;
@@ -85,19 +89,55 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         }
 
         aliveAllies.forEach((ally) => {
-            const aliveEnemies = battleEnemies.filter((e) => e.alive);
-            const newSelectedEnemy = aliveEnemies.length > 0 ? aliveEnemies[0] : null;
-            if (newSelectedEnemy) {
-                ally.selectedTargetId = newSelectedEnemy.id;
+            const oldSelection = [...allies, ...enemies].find((e) => e.id === ally.selectedTargetId);
+            if (!oldSelection || !oldSelection.alive) {
+                const aliveEnemies = battleEnemies.filter((e) => e.alive);
+                const newSelection = aliveEnemies.length > 0 ? aliveEnemies[0] : null;
+                if (newSelection) {
+                    ally.selectedTargetId = newSelection.id;
+                }
             }
         });
 
+        let statusDelay = 0;
+        const delayIncrement = 1500;
+        setTurnStatus(undefined);
         turnResults.forEach((result) => {
-            console.log(`${result.byAlly} | ${result.userId}`);
+            setTimeout(() => {
+                const character = [...allies, ...enemies].find((c) => c.id === result.userId);
+                const target = [...allies, ...enemies].find((c) => c.id === result.targetId);
+                if (!character || !target) {
+                    return;
+                }
+                setTurnStatus({
+                    userId: result.userId,
+                    targetId: target.id,
+                    moveUsed: result.moveName,
+                    damageReceived: result.moveValue,
+                });
+            }, statusDelay);
+
+            statusDelay += delayIncrement;
         });
+
+        setTimeout(() => {
+            setTurnAnimating(false);
+        }, statusDelay);
 
         setBattleAllies(allies as BattleAlly[]);
         setBattleEnemies(enemies);
+    };
+
+    const getMoveUsed = (characterId: string) => {
+        if (turnStatus?.userId === characterId) {
+            return turnStatus.moveUsed;
+        }
+    };
+
+    const getDamageReceived = (characterId: string) => {
+        if (turnStatus?.targetId === characterId) {
+            return turnStatus.damageReceived.toFixed(1);
+        }
     };
 
     return (
@@ -121,6 +161,12 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                                 max={ally.battleStatistics.maxHealth}
                                 value={ally.battleStatistics.health}
                             />
+                            {getMoveUsed(ally.id) && (
+                                <div className={style.statusMoveItem}>{getMoveUsed(ally.id)}</div>
+                            )}
+                            {getDamageReceived(ally.id) && (
+                                <div className={style.statusDamageItem}>{getDamageReceived(ally.id)}</div>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -144,11 +190,17 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                                 max={enemy.battleStatistics.maxHealth}
                                 value={enemy.battleStatistics.health}
                             />
+                            {getMoveUsed(enemy.id) && (
+                                <div className={style.statusMoveItem}>{getMoveUsed(enemy.id)}</div>
+                            )}
+                            {getDamageReceived(enemy.id) && (
+                                <div className={style.statusDamageItem}>{getDamageReceived(enemy.id)}</div>
+                            )}
                         </div>
                     ))}
                 </div>
             </div>
-            <div className={style.actionsWrapper}>
+            <div className={turnAnimating ? style.buttonsWrapperDisabled : style.actionsWrapper}>
                 <div className={style.movesWrapper}>
                     {selectedAlly &&
                         selectedAlly.moves.map((move) => (

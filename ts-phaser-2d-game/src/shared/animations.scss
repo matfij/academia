@@ -22,3 +22,33 @@
         opacity: 0;
     }
 }
+
+@keyframes moveLabelAnimation {
+    0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    80% {
+        transform: translateX(-40%) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-30%) scale(1.2);
+        opacity: 0;
+    }
+}
+
+@keyframes damageLabelAnimation {
+    0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    80% {
+        transform: translateX(-50%) translateY(-15px) scale(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(-25px) scale(2);
+        opacity: 0;
+    }
+}

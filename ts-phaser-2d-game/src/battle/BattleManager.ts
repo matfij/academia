@@ -1,12 +1,12 @@
 import { getMoveValueSpread, getRandomItem } from '../shared/math';
-import { BattleCharacter, BattleMove, BattleStatistics } from '../shared/types';
+import { BattleCharacter, BattleMove, BattleStatistics, Character } from '../shared/types';
 
 export class BattleManager {
     private static allies: BattleCharacter[] = [];
     private static enemies: BattleCharacter[] = [];
     private static turnNumber = 0;
 
-    public static getBattleStatistics({ character }: { character: BattleCharacter }) {
+    public static getBattleStatistics({ character }: { character: Character }) {
         return {
             health: character.baseStatistics.health,
             maxHealth: character.baseStatistics.health,
@@ -35,6 +35,7 @@ export class BattleManager {
             byAlly: boolean;
             userId: string;
             targetId: string;
+            moveName: string;
             moveValue: number;
         }[] = [];
         [...this.allies, ...this.enemies]
@@ -44,7 +45,7 @@ export class BattleManager {
                 const action = actions.find((a) => a.allyId === character.id);
                 if (action) {
                     const move = character.moves.find((m) => m.id === action.moveId);
-                    let target = [...this.allies, ...this.enemies]
+                    const target = [...this.allies, ...this.enemies]
                         .filter((c) => c.alive)
                         .find((c) => c.id === action.targetId);
                     if (move && target) {

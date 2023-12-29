@@ -14,6 +14,7 @@
 }
 
 .characterItem {
+    position: relative;
     width: 90px;
     font-size: 12px;
     opacity: 0.9;
@@ -38,6 +39,32 @@
     }
 }
 
+.statusMoveItem {
+    width: fit-content;
+    max-width: 150px;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    padding: 4px;
+    font-size: 16px;
+    color: white;
+    border-radius: 4px;
+    background: rgba($color: #000, $alpha: 0.7);
+    animation: moveLabelAnimation 1.5s forwards;
+}
+
+.statusDamageItem {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    padding: 8px;
+    font-size: 24px;
+    border-radius: 16px;
+    color: #ff544c;
+    background: rgba($color: #000, $alpha: 0.7);
+    animation: damageLabelAnimation 1.5s forwards;
+}
+
 .deadCharacterItem {
     opacity: 0.5;
     background: black;
@@ -53,10 +80,12 @@
 }
 
 .selectedCharacterItem {
+    opacity: 1;
     box-shadow: inset 1px 1px 12px 1px #242936;
 }
 
 .targetCharacterItem {
+    opacity: 1;
     box-shadow: inset 1px 1px 12px 1px #ff544c;
 }
 
@@ -123,6 +152,10 @@
     justify-content: flex-end;
     gap: 12px;
     padding: 12px;
+}
+
+.buttonsWrapperDisabled {
+    display: none;
 }
 
 .actionButton {
