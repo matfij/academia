@@ -13,27 +13,27 @@ export class EncounterManager {
                     name: 'Green Goblin',
                     baseStatistics: {
                         speed: 20,
-                        health: 300,
+                        health: 950,
                     },
-                    moves: [{ id: 'move-01', name: 'Small Bash', damage: 10 }],
+                    moves: [{ id: 'move-01', name: 'Small Bash', damage: 910 }],
                 },
                 {
                     id: 'enemy-1-2',
                     name: 'Tall Ogre',
                     baseStatistics: {
                         speed: 10,
-                        health: 400,
+                        health: 90,
                     },
-                    moves: [{ id: 'move-02', name: 'Slow Slash', damage: 10 }],
+                    moves: [{ id: 'move-02', name: 'Slow Slash', damage: 20 }],
                 },
                 {
                     id: 'enemy-1-3',
                     name: 'Cave Troll',
                     baseStatistics: {
                         speed: 30,
-                        health: 600,
+                        health: 80,
                     },
-                    moves: [{ id: 'move-03', name: 'Mellow Pierce', damage: 10 }],
+                    moves: [{ id: 'move-03', name: 'Mellow Pierce', damage: 15 }],
                 },
             ],
         },

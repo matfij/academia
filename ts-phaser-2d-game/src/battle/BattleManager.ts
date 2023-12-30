@@ -58,16 +58,26 @@ export class BattleManager {
                 }
             });
         this.turnNumber++;
-        if (!this.enemies.filter(e => e.alive).length) {
-            // victory
-        } else if (!this.allies.filter(a => a.alive).length) {
-            // defeat
+        let battleResult = undefined;
+        if (this.enemies.filter((e) => e.alive).length === 0) {
+            battleResult = {
+                victory: true,
+                experience: this.calculateExperienceGain({ enemies: this.enemies }),
+                gold: this.calculateGoldGain({ enemies: this.enemies }),
+            };
+        } else if (this.allies.filter((a) => a.alive).length === 0) {
+            battleResult = {
+                victory: false,
+                experience: 0,
+                gold: 0,
+            };
         }
         return {
             allies: [...this.allies],
             enemies: [...this.enemies],
             turnNumber: this.turnNumber,
             turnResults,
+            battleResult,
         };
     }
 
@@ -106,7 +116,7 @@ export class BattleManager {
         enemy: BattleCharacter;
         allies: BattleCharacter[];
     }) {
-        if (!enemy.alive) {
+        if (!enemy.alive || !allies.filter((a) => a.alive).length) {
             return [];
         }
         const enemyMove = enemy.moves[0];
@@ -125,5 +135,13 @@ export class BattleManager {
                 moveValue: inflictedDamage,
             },
         ];
+    }
+
+    private static calculateExperienceGain({ enemies }: { enemies: Character[] }) {
+        return +enemies.map((e) => e.baseStatistics.health).reduce((sum, curr) => sum + curr / 10).toFixed(1);
+    }
+
+    private static calculateGoldGain({ enemies }: { enemies: Character[] }) {
+        return +enemies.map((e) => e.baseStatistics.health).reduce((sum, curr) => sum + curr / 30).toFixed(1);
     }
 }

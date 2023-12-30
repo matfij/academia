@@ -47,3 +47,9 @@ export type BattleStatistics = {
     health: number;
     speed: number;
 };
+
+export type BattleResult = {
+    victory: boolean;
+    experience: number;
+    gold: number;
+};
