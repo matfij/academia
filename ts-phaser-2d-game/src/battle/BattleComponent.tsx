@@ -25,7 +25,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         const enemies: BattleEnemy[] = EncounterManager.getEncounter({ mapLevel }).enemies.map((enemy) => ({
             ...enemy,
             alive: true,
-            imageUrl: `./images/${enemy.id}.png`,
+            imageUrl: `./images/${enemy.uid}.png`,
             battleStatistics: BattleManager.getBattleStatistics({ character: enemy }),
         }));
         setBattleEnemies(enemies);

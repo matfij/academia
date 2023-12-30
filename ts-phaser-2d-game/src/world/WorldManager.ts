@@ -24,18 +24,22 @@ export class WorldManager {
         switch (direction) {
             case Direction.Up: {
                 this.currentPosition.y -= MOVEMENT_SPEED;
+                this.currentPosition.y = Math.max(0, this.currentPosition.y);
                 break;
             }
             case Direction.Down: {
                 this.currentPosition.y += MOVEMENT_SPEED;
+                this.currentPosition.y = Math.min(400, this.currentPosition.y);
                 break;
             }
             case Direction.Left: {
                 this.currentPosition.x -= MOVEMENT_SPEED;
+                this.currentPosition.x = Math.max(0, this.currentPosition.x);
                 break;
             }
             case Direction.Right: {
                 this.currentPosition.x += MOVEMENT_SPEED;
+                this.currentPosition.x = Math.min(800, this.currentPosition.x);
                 break;
             }
         }
