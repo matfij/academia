@@ -1,11 +1,11 @@
-import { Enemy } from '../shared/types';
+import { Character } from '../shared/types';
 
 export enum MapLevel {
     MapLevel1 = 'map-1',
 }
 
 export class EncounterManager {
-    private static readonly ENCOUNTERS: Record<MapLevel, { enemies: Enemy[] }> = {
+    private static readonly ENCOUNTERS: Record<MapLevel, { enemies: Character[] }> = {
         'map-1': {
             enemies: [
                 {
@@ -13,7 +13,7 @@ export class EncounterManager {
                     name: 'Green Goblin',
                     baseStatistics: {
                         speed: 20,
-                        health: 30,
+                        health: 300,
                     },
                     moves: [{ id: 'move-01', name: 'Small Bash', damage: 10 }],
                 },
@@ -22,7 +22,7 @@ export class EncounterManager {
                     name: 'Tall Ogre',
                     baseStatistics: {
                         speed: 10,
-                        health: 40,
+                        health: 400,
                     },
                     moves: [{ id: 'move-02', name: 'Slow Slash', damage: 10 }],
                 },
@@ -31,7 +31,7 @@ export class EncounterManager {
                     name: 'Cave Troll',
                     baseStatistics: {
                         speed: 30,
-                        health: 60,
+                        health: 600,
                     },
                     moves: [{ id: 'move-03', name: 'Mellow Pierce', damage: 10 }],
                 },

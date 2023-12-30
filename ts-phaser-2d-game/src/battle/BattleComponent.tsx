@@ -5,6 +5,7 @@ import { PartyManager } from '../state/PartyManager';
 import { WorldManager } from '../world/WorldManager';
 import { EncounterManager, MapLevel } from '../world/EncounterManager';
 import { BattleManager } from './BattleManager';
+import { uuid } from '../shared/utils';
 
 type BattleComponentProps = {
     onEndBattle: () => void;
@@ -69,8 +70,6 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     };
 
     const onAttack = () => {
-        setTurnAnimating(true);
-
         const actions: {
             allyId: string;
             moveId: string;
@@ -87,7 +86,6 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         if (newSelectedAlly) {
             setSelectedAlly(newSelectedAlly);
         }
-
         aliveAllies.forEach((ally) => {
             const oldSelection = [...allies, ...enemies].find((e) => e.id === ally.selectedTargetId);
             if (!oldSelection || !oldSelection.alive) {
@@ -101,6 +99,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
 
         let statusDelay = 0;
         const delayIncrement = 1500;
+        setTurnAnimating(true);
         setTurnStatus(undefined);
         turnResults.forEach((result) => {
             setTimeout(() => {
@@ -119,8 +118,8 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
 
             statusDelay += delayIncrement;
         });
-
         setTimeout(() => {
+            setTurnStatus(undefined);
             setTurnAnimating(false);
         }, statusDelay);
 
@@ -162,10 +161,14 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                                 value={ally.battleStatistics.health}
                             />
                             {getMoveUsed(ally.id) && (
-                                <div className={style.statusMoveItem}>{getMoveUsed(ally.id)}</div>
+                                <div key={uuid()} className={style.statusMoveItem}>
+                                    {getMoveUsed(ally.id)}
+                                </div>
                             )}
                             {getDamageReceived(ally.id) && (
-                                <div className={style.statusDamageItem}>{getDamageReceived(ally.id)}</div>
+                                <div key={uuid()} className={style.statusDamageItem}>
+                                    {getDamageReceived(ally.id)}
+                                </div>
                             )}
                         </div>
                     ))}
@@ -191,10 +194,14 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                                 value={enemy.battleStatistics.health}
                             />
                             {getMoveUsed(enemy.id) && (
-                                <div className={style.statusMoveItem}>{getMoveUsed(enemy.id)}</div>
+                                <div key={uuid()} className={style.statusMoveItem}>
+                                    {getMoveUsed(enemy.id)}
+                                </div>
                             )}
                             {getDamageReceived(enemy.id) && (
-                                <div className={style.statusDamageItem}>{getDamageReceived(enemy.id)}</div>
+                                <div key={uuid()} className={style.statusDamageItem}>
+                                    {getDamageReceived(enemy.id)}
+                                </div>
                             )}
                         </div>
                     ))}
@@ -204,7 +211,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                 <div className={style.movesWrapper}>
                     {selectedAlly &&
                         selectedAlly.moves.map((move) => (
-                            <div
+                            <button
                                 onClick={() => onMoveSelection(move)}
                                 key={move.id}
                                 className={`${style.moveItem} ${
@@ -212,7 +219,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                                 }`}
                             >
                                 <p>{move.name}</p>
-                            </div>
+                            </button>
                         ))}
                 </div>
                 <div className={style.buttonsWrapper}>

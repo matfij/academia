@@ -50,7 +50,7 @@
     color: white;
     border-radius: 4px;
     background: rgba($color: #000, $alpha: 0.7);
-    animation: moveLabelAnimation 1.5s forwards;
+    animation: moveLabelAnimation 1.25s forwards;
 }
 
 .statusDamageItem {
@@ -62,7 +62,7 @@
     border-radius: 16px;
     color: #ff544c;
     background: rgba($color: #000, $alpha: 0.7);
-    animation: damageLabelAnimation 1.5s forwards;
+    animation: damageLabelAnimation 1.25s forwards;
 }
 
 .deadCharacterItem {
@@ -75,7 +75,7 @@
     }
 
     img {
-        animation: deathAnimation 3s forwards;
+        animation: deathAnimation 2s forwards;
     }
 }
 
@@ -127,7 +127,7 @@
 
 .moveItem {
     height: 50px;
-    padding-top: 10px;
+    font-size: 16px;
     color: #eee;
     background: #242424;
     text-align: center;
