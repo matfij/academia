@@ -1,0 +1,66 @@
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
+}
+
+h1 {
+    margin: 4rem 0;
+    text-align: center;
+}
+
+.mainWrapper {
+    width: 100%;
+    text-align: center;
+}
+
+.actionWrapper {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.rangeWrapper {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.actionItem {
+    cursor: pointer;
+}
+
+.printButton {
+    width: 4rem;
+    padding: 8px;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: #eee;
+    color: #111;
+    cursor: pointer;
+}
+
+.green {
+    color: #66ff99;
+}
+
+.gray {
+    color: #808080;
+}
+
+.blue {
+    color: #7cb9e8;
+}
+
+.yellow {
+    color: #ffff00;
+}
+
+.red {
+    color: #ff7f7f;
+}
