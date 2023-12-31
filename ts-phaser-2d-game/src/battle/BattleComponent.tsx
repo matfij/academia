@@ -21,7 +21,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     const [battleResult, setBattleResult] = useState<BattleResult | undefined>();
 
     useEffect(() => {
-        setMapLevel(WorldManager.getCurrentMap());
+        setMapLevel(WorldManager.getCurrentMap().name);
         const enemies: BattleEnemy[] = EncounterManager.getEncounter({ mapLevel }).enemies.map((enemy) => ({
             ...enemy,
             alive: true,

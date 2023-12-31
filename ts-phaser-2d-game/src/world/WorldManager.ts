@@ -1,4 +1,5 @@
 import { MapLevel } from './EncounterManager';
+import { MAP_1 } from './maps/map-1';
 
 export enum Direction {
     Up,
@@ -8,8 +9,11 @@ export enum Direction {
 }
 
 export class WorldManager {
-    private static currentMap: MapLevel = MapLevel.MapLevel1;
-    private static currentPosition: { x: number; y: number } = { x: 100, y: 100 };
+    private static currentMap = {
+        name: MapLevel.MapLevel1,
+        data: MAP_1,
+    };
+    private static currentPosition = { x: 100, y: 100 };
 
     public static getCurrentMap() {
         return this.currentMap;
@@ -29,7 +33,7 @@ export class WorldManager {
             }
             case Direction.Down: {
                 this.currentPosition.y += MOVEMENT_SPEED;
-                this.currentPosition.y = Math.min(400, this.currentPosition.y);
+                this.currentPosition.y = Math.min(600, this.currentPosition.y);
                 break;
             }
             case Direction.Left: {
@@ -39,7 +43,7 @@ export class WorldManager {
             }
             case Direction.Right: {
                 this.currentPosition.x += MOVEMENT_SPEED;
-                this.currentPosition.x = Math.min(800, this.currentPosition.x);
+                this.currentPosition.x = Math.min(1100, this.currentPosition.x);
                 break;
             }
         }

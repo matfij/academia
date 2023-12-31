@@ -10,8 +10,8 @@ export const App = () => {
     useEffect(() => {
         const scene = new WorldScene({ onStartBattle: () => setInBattle(true) });
         const game = new Phaser.Game({
-            width: 800,
-            height: 400,
+            width: 1100,
+            height: 600,
             scene: scene,
             physics: {
                 default: 'arcade',
