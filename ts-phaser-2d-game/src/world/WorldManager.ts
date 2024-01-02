@@ -64,7 +64,6 @@ export class WorldManager {
     }
 
     private static checkCollisionTile({ x, y }: { x: number; y: number }) {
-        console.log(x, y);
         const tile = this.currentMap.data.find((t) => t.position.x === x && t.position.y === y);
         return tile?.type === TileType.Wall;
     }

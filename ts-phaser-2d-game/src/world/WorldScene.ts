@@ -24,33 +24,32 @@ export class WorldScene extends Scene {
 
     create() {
         this.extraEncounterChance = 0;
-        // this.add.image(400, 200, 'adventure-bg');
         const mapData = WorldManager.getCurrentMap();
         AudioManager.play({ url: `./music/adventure-${mapData.name}.mp3`, volume: 0.1, progress: 0 });
-        const partyPosition = WorldManager.getCurrentPosition();
+        this.add.image(550, 300, 'adventure-bg');
         mapData.data.forEach((tile) => {
-            const { x, y } = tile.position;
-            const color = this.getColorForTile(tile.type);
-            const rect = this.add.rectangle(x, y, 9, 9, color, 0.9).setOrigin(0, 0);
+            const rect = this.getTileRect({ tile });
             this.tiles.push({ rect, ...tile });
         });
+        const partyPosition = WorldManager.getCurrentPosition();
         this.party = this.physics.add.sprite(partyPosition.x, partyPosition.y, 'party');
+        this.cameras.main.setSize(this.scale.width, this.scale.height);
+        this.cameras.main.startFollow(this.party, true, 0.1, 0.1);
+        this.cameras.main.setZoom(2);
     }
 
-    private getColorForTile(tileType: TileType) {
-        switch (tileType) {
+    private getTileRect({ tile }: { tile: Tile }) {
+        switch (tile.type) {
             case TileType.Route:
-                return 0x22dd22;
+                return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0x22dd22, 0.3).setOrigin(0, 0);
             case TileType.Wall:
-                return 0x424242;
+                return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0x424242, 0.6).setOrigin(0, 0);
             case TileType.Passage:
-                return 0x2211dd;
+                return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0x2211dd).setOrigin(0, 0);
             case TileType.Quest:
-                return 0xffff00;
+                return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0xffff00).setOrigin(0, 0);
             case TileType.Boss:
-                return 0xdd1122;
-            default:
-                return 0xffffff77;
+                return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0xdd1122).setOrigin(0, 0);
         }
     }
 
