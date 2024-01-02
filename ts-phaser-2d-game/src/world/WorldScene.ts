@@ -24,7 +24,7 @@ export class WorldScene extends Scene {
 
     create() {
         this.extraEncounterChance = 0;
-        this.add.image(400, 200, 'adventure-bg');
+        // this.add.image(400, 200, 'adventure-bg');
         const mapData = WorldManager.getCurrentMap();
         AudioManager.play({ url: `./music/adventure-${mapData.name}.mp3`, volume: 0.1, progress: 0 });
         const partyPosition = WorldManager.getCurrentPosition();
