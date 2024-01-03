@@ -1,9 +1,9 @@
 import { getMoveValueSpread, getRandomItem } from '../shared/math';
-import { BattleCharacter, BattleMove, BattleStatistics, Character } from '../shared/types';
+import { DisplayCharacter, BattleMove, BattleStatistics, Character } from '../shared/types';
 
 export class BattleManager {
-    private static allies: BattleCharacter[] = [];
-    private static enemies: BattleCharacter[] = [];
+    private static allies: DisplayCharacter[] = [];
+    private static enemies: DisplayCharacter[] = [];
     private static turnNumber = 0;
 
     public static getBattleStatistics({ character }: { character: Character }) {
@@ -18,8 +18,8 @@ export class BattleManager {
         allies,
         enemies,
     }: {
-        allies: BattleCharacter[];
-        enemies: BattleCharacter[];
+        allies: DisplayCharacter[];
+        enemies: DisplayCharacter[];
     }) {
         this.turnNumber = 0;
         this.allies = allies;
@@ -86,9 +86,9 @@ export class BattleManager {
         move,
         target,
     }: {
-        ally: BattleCharacter;
+        ally: DisplayCharacter;
         move: BattleMove;
-        target: BattleCharacter;
+        target: DisplayCharacter;
     }) {
         if (!ally.alive) {
             return [];
@@ -113,8 +113,8 @@ export class BattleManager {
         enemy,
         allies,
     }: {
-        enemy: BattleCharacter;
-        allies: BattleCharacter[];
+        enemy: DisplayCharacter;
+        allies: DisplayCharacter[];
     }) {
         if (!enemy.alive || !allies.filter((a) => a.alive).length) {
             return [];

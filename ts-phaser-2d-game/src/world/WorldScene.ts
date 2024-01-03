@@ -18,21 +18,21 @@ export class WorldScene extends Scene {
 
     preload() {
         const mapData = WorldManager.getCurrentMap();
-        this.load.image('adventure-bg', `./images/adventure-${mapData.name}.png`);
-        this.load.image('party', './images/adventure-player-1.png');
+        this.load.image('adventure-bg', `./images/adventure-${mapData.uid}.png`);
+        this.load.image('party', './images/adventure-player.png');
     }
 
     create() {
         this.extraEncounterChance = 0;
         const mapData = WorldManager.getCurrentMap();
-        AudioManager.play({ url: `./music/adventure-${mapData.name}.mp3`, volume: 0.1, progress: 0 });
+        AudioManager.play({ url: `./music/adventure-${mapData.uid}.mp3`, volume: 0.1, progress: 0 });
         this.add.image(550, 300, 'adventure-bg');
-        mapData.data.forEach((tile) => {
+        mapData.tiles.forEach((tile) => {
             const rect = this.getTileRect({ tile });
             this.tiles.push({ rect, ...tile });
         });
         const partyPosition = WorldManager.getCurrentPosition();
-        this.party = this.physics.add.sprite(partyPosition.x, partyPosition.y, 'party');
+        this.party = this.physics.add.sprite(partyPosition.x, partyPosition.y, 'party').setOrigin(0, 0);
         this.cameras.main.setSize(this.scale.width, this.scale.height);
         this.cameras.main.startFollow(this.party, true, 0.1, 0.1);
         this.cameras.main.setZoom(2);
@@ -41,9 +41,13 @@ export class WorldScene extends Scene {
     private getTileRect({ tile }: { tile: Tile }) {
         switch (tile.type) {
             case TileType.Route:
-                return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0x22dd22, 0.3).setOrigin(0, 0);
+                return this.add
+                    .rectangle(tile.position.x, tile.position.y, 9, 9, 0x22dd22, 0.3)
+                    .setOrigin(0, 0);
             case TileType.Wall:
-                return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0x424242, 0.6).setOrigin(0, 0);
+                return this.add
+                    .rectangle(tile.position.x, tile.position.y, 9, 9, 0x424242, 0.6)
+                    .setOrigin(0, 0);
             case TileType.Passage:
                 return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0x2211dd).setOrigin(0, 0);
             case TileType.Quest:
@@ -57,11 +61,9 @@ export class WorldScene extends Scene {
         if (this.inBattle || !this.party || !this.input.keyboard) {
             return;
         }
-
         const cursors = this.input.keyboard.createCursorKeys();
         let partyPosition = WorldManager.getCurrentPosition();
         let moved = false;
-
         if (cursors.left.isDown) {
             partyPosition = WorldManager.moveParty({ direction: Direction.Left });
             moved = true;
@@ -76,9 +78,8 @@ export class WorldScene extends Scene {
             partyPosition = WorldManager.moveParty({ direction: Direction.Down });
             moved = true;
         }
-
         this.party.setPosition(partyPosition.x, partyPosition.y);
-
+        // TODO - move to manager
         if (moved && this.shouldTriggerBattle()) {
             this.startBattle();
         } else {
@@ -95,16 +96,16 @@ export class WorldScene extends Scene {
         this.inBattle = true;
         this.extraEncounterChance = 0;
         this.adventureMusicProgress = 0.9 * AudioManager.getProgress();
-        const mapLevel = WorldManager.getCurrentMap().name;
-        AudioManager.play({ url: `./music/battle-${mapLevel}.mp3`, volume: 0.1, progress: 0 });
+        const mapLevel = WorldManager.getCurrentMap();
+        AudioManager.play({ url: `./music/battle-${mapLevel.uid}.mp3`, volume: 0.1, progress: 0 });
         this.onStartBattle();
     }
 
     public endBattle() {
         this.inBattle = false;
-        const mapLevel = WorldManager.getCurrentMap().name;
+        const mapLevel = WorldManager.getCurrentMap();
         AudioManager.play({
-            url: `./music/adventure-${mapLevel}.mp3`,
+            url: `./music/adventure-${mapLevel.uid}.mp3`,
             volume: 0.1,
             progress: this.adventureMusicProgress,
         });

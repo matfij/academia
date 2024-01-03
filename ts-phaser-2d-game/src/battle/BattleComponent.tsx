@@ -1,28 +1,30 @@
 import style from './BattleComponent.module.scss';
 import { useEffect, useState } from 'react';
-import { BattleAlly, BattleEnemy, BattleMove, BattleResult, TurnStatus } from '../shared/types';
+import { BattleAlly, DisplayEnemy, BattleMove, BattleResult, TurnStatus } from '../shared/types';
 import { PartyManager } from '../state/PartyManager';
 import { WorldManager } from '../world/WorldManager';
-import { EncounterManager, MapLevel } from '../world/EncounterManager';
+import { EncounterManager } from '../world/EncounterManager';
 import { BattleManager } from './BattleManager';
 import { uuid } from '../shared/utils';
+import { AdventureMap } from '../world/types';
+import { ALL_MAPS } from '../world/all-maps';
 
 type BattleComponentProps = {
     onEndBattle: () => void;
 };
 
 export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
-    const [mapLevel, setMapLevel] = useState<MapLevel>(MapLevel.MapLevel1);
+    const [adventureMap, setAdventureMap] = useState<AdventureMap>(ALL_MAPS[0]);
     const [battleAllies, setBattleAllies] = useState<BattleAlly[]>([]);
-    const [battleEnemies, setBattleEnemies] = useState<BattleEnemy[]>([]);
+    const [battleEnemies, setBattleEnemies] = useState<DisplayEnemy[]>([]);
     const [turnStatus, setTurnStatus] = useState<TurnStatus>();
     const [selectedAlly, setSelectedAlly] = useState<BattleAlly>();
     const [turnAnimating, setTurnAnimating] = useState(false);
     const [battleResult, setBattleResult] = useState<BattleResult | undefined>();
 
     useEffect(() => {
-        setMapLevel(WorldManager.getCurrentMap().name);
-        const enemies: BattleEnemy[] = EncounterManager.getEncounter({ mapLevel }).enemies.map((enemy) => ({
+        setAdventureMap(WorldManager.getCurrentMap());
+        const enemies: DisplayEnemy[] = EncounterManager.getEncounter({ map: adventureMap }).map((enemy) => ({
             ...enemy,
             alive: true,
             imageUrl: `./images/${enemy.uid}.png`,
@@ -40,7 +42,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         setBattleAllies(allies);
         setSelectedAlly(allies[0]);
         BattleManager.startBattle({ allies, enemies });
-    }, [mapLevel]);
+    }, [adventureMap]);
 
     const onAllySelection = (ally: BattleAlly) => {
         if (!ally.alive || turnAnimating) {
@@ -148,7 +150,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         <main>
             <section
                 className={style.battleWrapper}
-                style={{ backgroundImage: `url(./images/battle-${mapLevel}.png)` }}
+                style={{ backgroundImage: `url(./images/battle-${adventureMap}.png)` }}
             >
                 <div className={style.charactersWrapper}>
                     <div className={style.alliesWrapper}>

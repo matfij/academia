@@ -1,4 +1,3 @@
-import { MapLevel } from './EncounterManager';
 import { MAP_1 } from './maps/map-1';
 import { TileType } from './types';
 
@@ -10,11 +9,8 @@ export enum Direction {
 }
 
 export class WorldManager {
-    private static currentMap = {
-        name: MapLevel.MapLevel1,
-        data: MAP_1,
-    };
-    private static currentPosition = { x: 10, y: 590 };
+    private static currentMap = MAP_1;
+    private static currentPosition = { x: 750, y: 490 };
     private static lastPositionUpdate = Date.now();
     private static readonly MAP_WIDTH = 1100;
     private static readonly MAP_HEIGHT = 600;
@@ -64,7 +60,7 @@ export class WorldManager {
     }
 
     private static checkCollisionTile({ x, y }: { x: number; y: number }) {
-        const tile = this.currentMap.data.find((t) => t.position.x === x && t.position.y === y);
+        const tile = this.currentMap.tiles.find((t) => t.position.x === x && t.position.y === y);
         return tile?.type === TileType.Wall;
     }
 }

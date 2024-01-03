@@ -21,7 +21,7 @@ export type BattleMove = {
     damage: number;
 };
 
-export type BattleCharacter = Character & {
+export type DisplayCharacter = Character & {
     alive: boolean;
     imageUrl: string;
     battleStatistics: BattleStatistics;
@@ -34,13 +34,11 @@ export type TurnStatus = {
     damageReceived: number;
 };
 
-export type BattleAlly = BattleCharacter & {
+export type BattleAlly = DisplayCharacter & {
     selectedMove: BattleMove;
     selectedTargetId: string;
     battleStatistics: BattleStatistics;
 };
-
-export type BattleEnemy = BattleCharacter;
 
 export type BattleStatistics = {
     maxHealth: number;
