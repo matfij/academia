@@ -1,13 +1,9 @@
-import { BattleMove } from '../moves/types';
-import { BaseStatistics } from '../shared/types';
+import { BattleCharacter } from '../battle/types';
+import { Character } from '../shared/types';
 
-export type Enemy = {
-    uid: string;
-    name: string;
-    baseStatistics: BaseStatistics;
-    moves: BattleMove[];
-};
+export type Enemy = Character; // & { loots: [] ... };
 
-export type BattleEnemy = Enemy & {
-    id: string;
-};
+export type BattleEnemy = Enemy &
+    BattleCharacter & {
+        id: string;
+    };

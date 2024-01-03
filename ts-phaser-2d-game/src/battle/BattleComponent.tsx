@@ -1,13 +1,16 @@
 import style from './BattleComponent.module.scss';
 import { useEffect, useState } from 'react';
-import { BattleAlly, DisplayEnemy, BattleMove, BattleResult, TurnStatus } from '../shared/types';
-import { PartyManager } from '../state/PartyManager';
+import { PartyManager } from '../party/PartyManager';
 import { WorldManager } from '../world/WorldManager';
 import { EncounterManager } from '../world/EncounterManager';
 import { BattleManager } from './BattleManager';
 import { uuid } from '../shared/utils';
 import { AdventureMap } from '../world/types';
 import { ALL_MAPS } from '../world/all-maps';
+import { BattleAction, BattleResult, DisplayAlly, DisplayEnemy, TurnStatus } from './types';
+import { BattleMove } from '../moves/types';
+import { BattleEnemy } from '../enemies/types';
+import { BattleAlly } from '../party/types';
 
 type BattleComponentProps = {
     onEndBattle: () => void;
@@ -15,36 +18,31 @@ type BattleComponentProps = {
 
 export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     const [adventureMap, setAdventureMap] = useState<AdventureMap>(ALL_MAPS[0]);
-    const [battleAllies, setBattleAllies] = useState<BattleAlly[]>([]);
-    const [battleEnemies, setBattleEnemies] = useState<DisplayEnemy[]>([]);
+    const [displayAllies, setDisplayAllies] = useState<DisplayAlly[]>([]);
+    const [displayEnemies, setDisplayEnemies] = useState<DisplayEnemy[]>([]);
     const [turnStatus, setTurnStatus] = useState<TurnStatus>();
-    const [selectedAlly, setSelectedAlly] = useState<BattleAlly>();
+    const [selectedAlly, setSelectedAlly] = useState<DisplayAlly>();
     const [turnAnimating, setTurnAnimating] = useState(false);
     const [battleResult, setBattleResult] = useState<BattleResult | undefined>();
 
     useEffect(() => {
         setAdventureMap(WorldManager.getCurrentMap());
-        const enemies: DisplayEnemy[] = EncounterManager.getEncounter({ map: adventureMap }).map((enemy) => ({
-            ...enemy,
-            alive: true,
-            imageUrl: `./images/${enemy.uid}.png`,
-            battleStatistics: BattleManager.getBattleStatistics({ character: enemy }),
-        }));
-        setBattleEnemies(enemies);
-        const allies: BattleAlly[] = PartyManager.getParty().map((ally) => ({
-            ...ally,
-            alive: true,
-            selectedMove: ally.moves[0],
-            selectedTargetId: enemies[0].id,
-            imageUrl: `./images/${ally.id}.png`,
-            battleStatistics: BattleManager.getBattleStatistics({ character: ally }),
-        }));
-        setBattleAllies(allies);
-        setSelectedAlly(allies[0]);
-        BattleManager.startBattle({ allies, enemies });
+        const battleAllies = PartyManager.getBattleParty();
+        const battleEnemies = EncounterManager.getEncounter({ map: adventureMap });
+        const displayEnemies = mapToDisplayEnemies({
+            enemies: battleEnemies,
+        });
+        const displayAllies: DisplayAlly[] = mapToDisplayAllies({
+            allies: battleAllies,
+            enemies: battleEnemies,
+        });
+        setDisplayEnemies(displayEnemies);
+        setDisplayAllies(displayAllies);
+        setSelectedAlly(displayAllies[0]);
+        BattleManager.startBattle({ allies: displayAllies, enemies: displayEnemies });
     }, [adventureMap]);
 
-    const onAllySelection = (ally: BattleAlly) => {
+    const onAllySelection = (ally: DisplayAlly) => {
         if (!ally.alive || turnAnimating) {
             return;
         }
@@ -56,19 +54,19 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
             return;
         }
         selectedAlly.selectedMove = move;
-        battleAllies.find((a) => a.id === selectedAlly.id)!.selectedMove = move;
+        displayAllies.find((a) => a.id === selectedAlly.id)!.selectedMove = move;
         setSelectedAlly({ ...selectedAlly });
     };
 
     const onTargetSelection = (targetId: string) => {
-        const target = [...battleAllies, ...battleEnemies]
+        const target = [...displayAllies, ...displayEnemies]
             .filter((c) => c.alive)
             .find((c) => c.id === targetId);
         if (!selectedAlly || !target || turnAnimating) {
             return;
         }
         selectedAlly.selectedTargetId = targetId;
-        battleAllies.find((a) => a.id === selectedAlly.id)!.selectedTargetId = targetId;
+        displayAllies.find((a) => a.id === selectedAlly.id)!.selectedTargetId = targetId;
         setSelectedAlly({ ...selectedAlly });
     };
 
@@ -76,18 +74,17 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         if (turnAnimating) {
             return;
         }
-        const actions: {
-            allyId: string;
-            moveId: string;
-            targetId: string;
-        }[] = battleAllies.map((a) => ({
-            allyId: a.id,
-            moveId: a.selectedMove.id,
-            targetId: a.selectedTargetId,
+
+        // calculating turn resutls
+        const actions: BattleAction[] = displayAllies.map((ally) => ({
+            allyId: ally.id,
+            moveUid: ally.selectedMove.uid,
+            targetId: ally.selectedTargetId,
         }));
         const { allies, enemies, turnResults, battleResult } = BattleManager.executeTurn({ actions });
 
-        const aliveAllies = battleAllies.filter((a) => a.alive);
+        // re-selecting targets
+        const aliveAllies = displayAllies.filter((a) => a.alive);
         const newSelectedAlly = aliveAllies.length > 0 ? aliveAllies[0] : null;
         if (newSelectedAlly) {
             setSelectedAlly(newSelectedAlly);
@@ -95,7 +92,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         aliveAllies.forEach((ally) => {
             const oldSelection = [...allies, ...enemies].find((e) => e.id === ally.selectedTargetId);
             if (!oldSelection || !oldSelection.alive) {
-                const aliveEnemies = battleEnemies.filter((e) => e.alive);
+                const aliveEnemies = displayEnemies.filter((e) => e.alive);
                 const newSelection = aliveEnemies.length > 0 ? aliveEnemies[0] : null;
                 if (newSelection) {
                     ally.selectedTargetId = newSelection.id;
@@ -103,6 +100,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
             }
         });
 
+        // animating moves
         let statusDelay = 0;
         const delayIncrement = 1500;
         setTurnAnimating(true);
@@ -121,7 +119,6 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                     damageReceived: result.moveValue,
                 });
             }, statusDelay);
-
             statusDelay += delayIncrement;
         });
         setTimeout(() => {
@@ -130,8 +127,9 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
             setBattleResult(battleResult);
         }, statusDelay);
 
-        setBattleAllies(allies as BattleAlly[]);
-        setBattleEnemies(enemies);
+        // TODO - update state while animating turnStatus
+        // setDisplayAllies(mapToDisplayAllies({ allies, enemies }));
+        // setDisplayEnemies(mapToDisplayEnemies({ enemies }));
     };
 
     const getMoveUsed = (characterId: string) => {
@@ -146,15 +144,33 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         }
     };
 
+    const mapToDisplayEnemies = ({ enemies }: { enemies: BattleEnemy[] }) => {
+        return enemies.map((enemy) => ({
+            ...enemy,
+            alive: true,
+            imageUrl: `./images/${enemy.uid}.png`,
+        }));
+    };
+
+    const mapToDisplayAllies = ({ allies, enemies }: { allies: BattleAlly[]; enemies: BattleEnemy[] }) => {
+        return allies.map((ally) => ({
+            ...ally,
+            alive: true,
+            selectedMove: ally.moves[0],
+            selectedTargetId: enemies[0].id,
+            imageUrl: `./images/${ally.uid}.png`,
+        }));
+    };
+
     return (
         <main>
             <section
                 className={style.battleWrapper}
-                style={{ backgroundImage: `url(./images/battle-${adventureMap}.png)` }}
+                style={{ backgroundImage: `url(./images/battle-${adventureMap.uid}.png)` }}
             >
                 <div className={style.charactersWrapper}>
                     <div className={style.alliesWrapper}>
-                        {battleAllies.map((ally) => (
+                        {displayAllies.map((ally) => (
                             <div
                                 onClick={() => onAllySelection(ally)}
                                 key={ally.id}
@@ -182,7 +198,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                         ))}
                     </div>
                     <div className={style.enemiesWrapper}>
-                        {battleEnemies.map((enemy) => (
+                        {displayEnemies.map((enemy) => (
                             <div
                                 onClick={() => onTargetSelection(enemy.id)}
                                 key={enemy.id}
@@ -221,9 +237,9 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
                             selectedAlly.moves.map((move) => (
                                 <button
                                     onClick={() => onMoveSelection(move)}
-                                    key={move.id}
+                                    key={move.uid}
                                     className={`${style.moveItem} ${
-                                        move.id === selectedAlly?.selectedMove.id
+                                        move.uid === selectedAlly?.selectedMove.uid
                                             ? style.selectedMoveItem
                                             : ''
                                     }`}

@@ -1,3 +1,4 @@
+import { BattleManager } from '../battle/BattleManager';
 import { ALL_ENEMEIS } from '../enemies/all-enemies';
 import { BattleEnemy } from '../enemies/types';
 import { uuid } from '../shared/utils';
@@ -15,6 +16,8 @@ export class EncounterManager {
             const enemy = ALL_ENEMEIS.find((e) => e.uid === encounter.enemyUid) || ALL_ENEMEIS[0];
             return {
                 id: uuid(),
+                alive: true,
+                battleStatistics: BattleManager.getBattleStatistics({ character: enemy }),
                 ...enemy,
             };
         });
@@ -22,17 +25,14 @@ export class EncounterManager {
     }
 
     private static calculateGroupSize({ probabilities }: { probabilities: number[] }) {
-        const cumulativeProbabilities = probabilities.reduce((acc, prob) => {
-            acc.push(acc.length === 0 ? prob : acc[acc.length - 1] + prob);
-            return acc;
-        }, [] as number[]);
-        const randomValue = Math.random();
         let groupSize = 0;
-        for (let i = 0; i < cumulativeProbabilities.length; i++) {
-            if (randomValue < cumulativeProbabilities[i]) {
-                groupSize = i;
-                break;
+        for (let i = 0; i < probabilities.length; i++) {
+            const chance = Math.random();
+            if (probabilities[i] >= chance) {
+                groupSize++;
+                continue;
             }
+            break;
         }
         return groupSize;
     }

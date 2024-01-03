@@ -1,6 +1,6 @@
 ## Headwind POC
 
-2D RPG Browser game with React and Pixi.js
+2D RPG Browser game with React and Phaser
 
 ### Requirements
 

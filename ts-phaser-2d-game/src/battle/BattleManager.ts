@@ -1,10 +1,14 @@
+import { BattleEnemy } from '../enemies/types';
+import { BattleMove } from '../moves/types';
+import { BattleAlly } from '../party/types';
 import { getMoveValueSpread, getRandomItem } from '../shared/math';
-import { DisplayCharacter, BattleMove, BattleStatistics, Character } from '../shared/types';
+import { Character } from '../shared/types';
+import { BattleAction, BattleStatistics } from './types';
 
 export class BattleManager {
-    private static allies: DisplayCharacter[] = [];
-    private static enemies: DisplayCharacter[] = [];
     private static turnNumber = 0;
+    private static allies: BattleAlly[] = [];
+    private static enemies: BattleEnemy[] = [];
 
     public static getBattleStatistics({ character }: { character: Character }) {
         return {
@@ -14,23 +18,13 @@ export class BattleManager {
         } as BattleStatistics;
     }
 
-    public static startBattle({
-        allies,
-        enemies,
-    }: {
-        allies: DisplayCharacter[];
-        enemies: DisplayCharacter[];
-    }) {
+    public static startBattle({ allies, enemies }: { allies: BattleAlly[]; enemies: BattleEnemy[] }) {
         this.turnNumber = 0;
         this.allies = allies;
         this.enemies = enemies;
     }
 
-    public static executeTurn({
-        actions,
-    }: {
-        actions: { allyId: string; moveId: string; targetId: string }[];
-    }) {
+    public static executeTurn({ actions }: { actions: BattleAction[] }) {
         const turnResults: {
             byAlly: boolean;
             userId: string;
@@ -44,7 +38,7 @@ export class BattleManager {
             .forEach((character) => {
                 const action = actions.find((a) => a.allyId === character.id);
                 if (action) {
-                    const move = character.moves.find((m) => m.id === action.moveId);
+                    const move = character.moves.find((m) => m.uid === action.moveUid);
                     const target = [...this.allies, ...this.enemies]
                         .filter((c) => c.alive)
                         .find((c) => c.id === action.targetId);
@@ -86,9 +80,9 @@ export class BattleManager {
         move,
         target,
     }: {
-        ally: DisplayCharacter;
+        ally: BattleAlly;
         move: BattleMove;
-        target: DisplayCharacter;
+        target: BattleAlly | BattleEnemy;
     }) {
         if (!ally.alive) {
             return [];
@@ -113,8 +107,8 @@ export class BattleManager {
         enemy,
         allies,
     }: {
-        enemy: DisplayCharacter;
-        allies: DisplayCharacter[];
+        enemy: BattleEnemy;
+        allies: BattleAlly[]; // TODO - enemy may target enemy
     }) {
         if (!enemy.alive || !allies.filter((a) => a.alive).length) {
             return [];
@@ -138,10 +132,16 @@ export class BattleManager {
     }
 
     private static calculateExperienceGain({ enemies }: { enemies: Character[] }) {
-        return +enemies.map((e) => e.baseStatistics.health).reduce((sum, curr) => sum + curr / 10).toFixed(1);
+        return +enemies
+            .map((e) => e.baseStatistics.health)
+            .reduce((sum, curr) => sum + curr / 10)
+            .toFixed(1);
     }
 
     private static calculateGoldGain({ enemies }: { enemies: Character[] }) {
-        return +enemies.map((e) => e.baseStatistics.health).reduce((sum, curr) => sum + curr / 30).toFixed(1);
+        return +enemies
+            .map((e) => e.baseStatistics.health)
+            .reduce((sum, curr) => sum + curr / 30)
+            .toFixed(1);
     }
 }
