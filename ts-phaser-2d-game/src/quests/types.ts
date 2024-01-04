@@ -2,7 +2,7 @@ import { MapLocation } from '../world/types';
 
 export type Quest = {
     uid: string;
-    state: QuestState,
+    state: QuestState;
     steps: QuestSetp[];
     currentStep: number;
     questsRequired: Quest[];
@@ -13,18 +13,22 @@ export enum QuestState {
     Locked = 'Locked',
     NotStarted = 'NotStarted',
     Stated = 'Started',
-    Completed = 'Completed'
+    Completed = 'Completed',
 }
 
 export type QuestSetp = {
     message: string;
     location: MapLocation;
-    killsRequired: {
-        enemyUid: string;
-        amount: number;
-    }[];
-    itemsRequired: {
-        itemUid: string;
-        amount: number;
-    }[];
+    killsRequired: QuestStepKillProgress[];
+    itemsRequired: QuestStepItemProgress[];
+}
+
+export type QuestStepKillProgress = {
+    enemyUid: string;
+    amount: number;
+};
+
+export type QuestStepItemProgress = {
+    itemUid: string;
+    amount: number;
 };

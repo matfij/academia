@@ -1,12 +1,8 @@
+import { QuestManager } from '../quests/QuestManager';
+import { chance } from '../shared/math';
+import { comparePositions } from '../shared/utils';
 import { MAP_1 } from './maps/map-1';
-import { TileType } from './types';
-
-export enum Direction {
-    Up,
-    Down,
-    Left,
-    Right,
-}
+import { Direction, Point, TileType } from './types';
 
 export class WorldManager {
     private static currentMap = MAP_1;
@@ -18,16 +14,29 @@ export class WorldManager {
     private static readonly MOVEMENT_INTERVAL_MS = 100;
 
     public static getCurrentMap() {
-        return this.currentMap;
+        const map = this.currentMap;
+        const quests = QuestManager.getQuestsForMap({ mapUid: map.uid });
+
+        quests.forEach((quest) => {
+            map.tiles = map.tiles.map((tile) =>
+                tile.position.x === quest.position.x && tile.position.y === quest.position.y
+                    ? { ...tile, type: TileType.Quest, questData: { questUid: quest.questUid } }
+                    : tile,
+            );
+        });
+        console.log(map.tiles.filter((t) => t.type === TileType.Quest));
+        return map;
     }
 
     public static getCurrentPosition() {
         return this.currentPosition;
     }
 
-    public static moveParty({ direction }: { direction: Direction }) {
-        if (Date.now() < this.lastPositionUpdate + this.MOVEMENT_INTERVAL_MS) {
-            return this.currentPosition;
+    public static moveParty({ direction }: { direction: Direction | undefined }) {
+        if (!direction || Date.now() < this.lastPositionUpdate + this.MOVEMENT_INTERVAL_MS) {
+            return {
+                position: this.currentPosition,
+            };
         }
         this.lastPositionUpdate = Date.now();
         const oldPosition = { ...this.currentPosition };
@@ -53,14 +62,39 @@ export class WorldManager {
                 break;
             }
         }
+        let encounter = false;
         if (this.checkCollisionTile(this.currentPosition)) {
             this.currentPosition = oldPosition;
         }
-        return this.currentPosition;
+        const questStatus = this.checkQuestTile(this.currentPosition);
+        if (!comparePositions(oldPosition, this.currentPosition) && !questStatus) {
+            encounter = this.checkEncounter();
+        }
+        return {
+            position: this.currentPosition,
+            questStatus: questStatus,
+            encounter: encounter,
+        };
     }
 
-    private static checkCollisionTile({ x, y }: { x: number; y: number }) {
+    // private static getQuestData({ mapUid }: { mapUid: string }) {
+    //     const quests = QuestManager.getQuestsForMap({ mapUid });
+    // }
+
+    private static checkEncounter() {
+        return chance(this.currentMap.encounterRate);
+    }
+
+    private static checkCollisionTile({ x, y }: Point) {
         const tile = this.currentMap.tiles.find((t) => t.position.x === x && t.position.y === y);
         return tile?.type === TileType.Wall;
+    }
+
+    private static checkQuestTile({ x, y }: Point) {
+        const tile = this.currentMap.tiles.find((t) => t.position.x === x && t.position.y === y);
+        if (tile?.type === TileType.Quest && tile.questData) {
+            const { status } = QuestManager.getQuestStatus({ questUid: tile.questData.questUid });
+            return status;
+        }
     }
 }

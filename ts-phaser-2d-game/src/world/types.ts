@@ -6,6 +6,13 @@ export type AdventureMap = {
     groupSizeRate: number[];
 };
 
+export enum Direction {
+    Up = 'Up',
+    Down = 'Down',
+    Left = 'Left',
+    Right = 'Right',
+}
+
 export type Tile = {
     position: Point;
     type: TileType;

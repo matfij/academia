@@ -9,7 +9,7 @@ export const QUEST_1: Quest = {
     questsRequired: [],
     startLocation: {
         mapUid: MAP_1.uid,
-        position: { x: 100, y: 200 },
+        position: { x: 770, y: 490 },
     },
     steps: [
         {
