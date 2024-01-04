@@ -9,3 +9,7 @@ export const uuid = () => {
 export const comparePositions = (a: Point, b: Point) => {
     return a.x === b.x && a.y === b.y;
 };
+
+export const createMarkup = (markup: string) => {
+    return { __html: markup };
+};

@@ -16,7 +16,6 @@ export class WorldManager {
     public static getCurrentMap() {
         const map = this.currentMap;
         const quests = QuestManager.getQuestsForMap({ mapUid: map.uid });
-
         quests.forEach((quest) => {
             map.tiles = map.tiles.map((tile) =>
                 tile.position.x === quest.position.x && tile.position.y === quest.position.y
@@ -24,7 +23,6 @@ export class WorldManager {
                     : tile,
             );
         });
-        console.log(map.tiles.filter((t) => t.type === TileType.Quest));
         return map;
     }
 
@@ -93,8 +91,10 @@ export class WorldManager {
     private static checkQuestTile({ x, y }: Point) {
         const tile = this.currentMap.tiles.find((t) => t.position.x === x && t.position.y === y);
         if (tile?.type === TileType.Quest && tile.questData) {
-            const { status } = QuestManager.getQuestStatus({ questUid: tile.questData.questUid });
-            return status;
+            const { description, state } = QuestManager.getQuestDescription({
+                questUid: tile.questData.questUid,
+            });
+            return { uid: tile.questData.questUid, description: description, state: state };
         }
     }
 }

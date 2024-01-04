@@ -16,13 +16,13 @@ export const MAP_1: AdventureMap = {
             enemyUid: ENEMY_2.uid,
             rate: 0.5,
         },
-        {
-            enemyUid: ENEMY_3.uid,
-            rate: 0.3,
-        },
-        {
-            enemyUid: ENEMY_4.uid,
-            rate: 0.1,
-        },
+        // {
+        //     enemyUid: ENEMY_3.uid,
+        //     rate: 0.3,
+        // },
+        // {
+        //     enemyUid: ENEMY_4.uid,
+        //     rate: 0.1,
+        // },
     ],
 };

@@ -2,17 +2,26 @@ import { Scene } from 'phaser';
 import { WorldManager } from './WorldManager';
 import { AudioManager } from '../shared/AudioManager';
 import { Direction, Tile, TileType } from './types';
+import { QuestStatus } from '../quests/types';
 
 export class WorldScene extends Scene {
     private tiles: (Tile & { rect: Phaser.GameObjects.Rectangle })[] = [];
     private party?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-    private inBattle = false;
+    private blockMovement = false;
     private onStartBattle: () => void;
+    private onShowQuest: ({ uid, description }: QuestStatus) => void;
     private adventureMusicProgress = 0;
 
-    constructor({ onStartBattle }: { onStartBattle: () => void }) {
+    constructor({
+        onStartBattle,
+        onShowQuest,
+    }: {
+        onStartBattle: () => void;
+        onShowQuest: ({ uid, description }: QuestStatus) => void;
+    }) {
         super({ key: 'WorldScene' });
         this.onStartBattle = onStartBattle;
+        this.onShowQuest = onShowQuest;
     }
 
     preload() {
@@ -37,7 +46,7 @@ export class WorldScene extends Scene {
     }
 
     update() {
-        if (this.inBattle || !this.party || !this.input.keyboard) {
+        if (this.blockMovement || !this.party || !this.input.keyboard) {
             return;
         }
         const cursors = this.input.keyboard.createCursorKeys();
@@ -54,6 +63,13 @@ export class WorldScene extends Scene {
         });
         if (moveResult.encounter) {
             this.startBattle();
+        }
+        if (moveResult.questStatus) {
+            this.showQuest({
+                uid: moveResult.questStatus.uid,
+                description: moveResult.questStatus.description,
+                state: moveResult.questStatus.state,
+            });
         }
 
         this.party.setPosition(moveResult.position.x, moveResult.position.y);
@@ -79,7 +95,7 @@ export class WorldScene extends Scene {
     }
 
     private startBattle() {
-        this.inBattle = true;
+        this.blockMovement = true;
         this.adventureMusicProgress = 0.9 * AudioManager.getProgress();
         const mapLevel = WorldManager.getCurrentMap();
         AudioManager.play({ url: `./music/battle-${mapLevel.uid}.mp3`, volume: 0.1, progress: 0 });
@@ -87,12 +103,21 @@ export class WorldScene extends Scene {
     }
 
     public endBattle() {
-        this.inBattle = false;
+        this.blockMovement = false;
         const mapLevel = WorldManager.getCurrentMap();
         AudioManager.play({
             url: `./music/adventure-${mapLevel.uid}.mp3`,
             volume: 0.1,
             progress: this.adventureMusicProgress,
         });
+    }
+
+    private showQuest({ uid, description, state }: QuestStatus) {
+        this.blockMovement = true;
+        this.onShowQuest({ uid, description, state });
+    }
+
+    public hideQuest() {
+        this.blockMovement = false;
     }
 }

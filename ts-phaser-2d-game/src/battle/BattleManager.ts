@@ -1,6 +1,7 @@
 import { BattleEnemy } from '../enemies/types';
 import { BattleMove } from '../moves/types';
 import { BattleAlly } from '../party/types';
+import { QuestManager } from '../quests/QuestManager';
 import { getMoveValueSpread, getRandomItem } from '../shared/math';
 import { Character } from '../shared/types';
 import { BattleAction, BattleStatistics } from './types';
@@ -59,6 +60,9 @@ export class BattleManager {
                 experience: this.calculateExperienceGain({ enemies: this.enemies }),
                 gold: this.calculateGoldGain({ enemies: this.enemies }),
             };
+            this.enemies.forEach((e) => {
+                QuestManager.updateKillQuestProgress({ enemyUid: e.uid, amount: 1 });
+            });
         } else if (this.allies.filter((a) => a.alive).length === 0) {
             battleResult = {
                 victory: false,

@@ -1,0 +1,46 @@
+.questWrapper {
+    position: absolute;
+    top: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 400px;
+    background: rgba($color: #000000, $alpha: 0.8);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    border: 2px solid white;
+
+    pre {
+        font-size: 16px;
+    }
+
+    hr {
+        width: 80%;
+        color: white;
+    }
+}
+
+.descriptionWrapper {
+    width: 80%;
+    margin: 0px auto;
+}
+
+.buttonsWrapper {
+    display: flex;
+    justify-content: space-around;
+}
+
+.questButton {
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: white;
+    background: none;
+    border: none;
+
+    &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}
