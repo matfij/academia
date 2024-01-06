@@ -1,15 +1,16 @@
 import { QuestManager } from '../quests/QuestManager';
 import { chance } from '../shared/math';
 import { comparePositions } from '../shared/utils';
+import { getMap } from './all-maps';
 import { MAP_1 } from './maps/map-1';
 import { Direction, Point, TileType } from './types';
 
 export class WorldManager {
     private static currentMap = MAP_1;
-    private static currentPosition = { x: 750, y: 490 };
+    private static currentPosition = { x: 10, y: 180 };
     private static lastPositionUpdate = Date.now();
-    private static readonly MAP_WIDTH = 1100;
-    private static readonly MAP_HEIGHT = 600;
+    private static readonly MAP_WIDTH = 1090;
+    private static readonly MAP_HEIGHT = 590;
     private static readonly MOVEMENT_SPEED = 10;
     private static readonly MOVEMENT_INTERVAL_MS = 100;
 
@@ -60,6 +61,10 @@ export class WorldManager {
                 break;
             }
         }
+        const newMap = this.checkPassageTile(this.currentPosition);
+        if (newMap) {
+            this.lastPositionUpdate = Date.now();
+        }
         let encounter = false;
         if (this.checkCollisionTile(this.currentPosition)) {
             this.currentPosition = oldPosition;
@@ -72,6 +77,7 @@ export class WorldManager {
             position: { ...this.currentPosition },
             questStatus: questStatus,
             encounter: encounter,
+            newMap: newMap,
         };
     }
 
@@ -79,18 +85,38 @@ export class WorldManager {
         return chance(this.getCurrentMap().encounterRate);
     }
 
-    private static checkCollisionTile({ x, y }: Point) {
-        const tile = this.getCurrentMap().tiles.find((t) => t.position.x === x && t.position.y === y);
+    private static checkCollisionTile(position: Point) {
+        const tile = this.getTile(position);
         return tile?.type === TileType.Wall;
     }
 
-    private static checkQuestTile({ x, y }: Point) {
-        const tile = this.getCurrentMap().tiles.find((t) => t.position.x === x && t.position.y === y);
-        if (tile?.type === TileType.Quest && tile.questData) {
-            const { description, state } = QuestManager.getQuestDescription({
-                questUid: tile.questData.questUid,
-            });
-            return { uid: tile.questData.questUid, description: description, state: state };
+    private static checkQuestTile(position: Point) {
+        const tile = this.getTile(position);
+        if (!tile.questData) {
+            return;
         }
+        const { description, state } = QuestManager.getQuestDescription({
+            questUid: tile.questData.questUid,
+        });
+        return { uid: tile.questData.questUid, description: description, state: state };
+    }
+
+    private static checkPassageTile(position: Point) {
+        const tile = this.getTile(position);
+        if (!tile.passageData) {
+            return;
+        }
+        const newMap = getMap({ uid: tile.passageData.mapUid });
+        this.currentMap = newMap;
+        this.currentPosition = { ...tile.passageData.position };
+        return { ...newMap };
+    }
+
+    private static getTile(position: Point) {
+        const tile = this.getCurrentMap().tiles.find((t) => comparePositions(t.position, position));
+        if (!tile) {
+            throw new Error('Invalid position');
+        }
+        return tile;
     }
 }

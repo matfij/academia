@@ -32,7 +32,6 @@ export const QuestComponent = ({
         const questData = QuestManager.proceedQuest({ questUid });
         setDescription(questData.description);
         setState(questData.state);
-        console.log(questData)
         if (questData.updateMap) {
             onUpdateMap();
         }

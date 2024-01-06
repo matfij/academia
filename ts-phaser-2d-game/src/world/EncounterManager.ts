@@ -1,5 +1,5 @@
 import { BattleManager } from '../battle/BattleManager';
-import { ALL_ENEMEIS } from '../enemies/all-enemies';
+import { getEnemy } from '../enemies/all-enemies';
 import { BattleEnemy } from '../enemies/types';
 import { uuid } from '../shared/utils';
 import { AdventureMap, Encounter } from './types';
@@ -13,7 +13,7 @@ export class EncounterManager {
             encounters.push({ ...map.encounters[randomIndex] });
         }
         const enemies: BattleEnemy[] = encounters.map((encounter) => {
-            const enemy = ALL_ENEMEIS.find((e) => e.uid === encounter.enemyUid) || ALL_ENEMEIS[0];
+            const enemy = getEnemy({ uid: encounter.enemyUid });
             return {
                 id: uuid(),
                 alive: true,

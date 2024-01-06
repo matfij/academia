@@ -16,7 +16,7 @@ export enum Direction {
 export type Tile = {
     position: Point;
     type: TileType;
-    passageData?: { mapUid: string };
+    passageData?: { mapUid: string; position: Point };
     questData?: { questUid: string };
     bossData?: { bossUid: string };
 };

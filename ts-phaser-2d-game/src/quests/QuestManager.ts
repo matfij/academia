@@ -1,4 +1,4 @@
-import { ALL_ENEMEIS } from '../enemies/all-enemies';
+import { getEnemy } from '../enemies/all-enemies';
 import { Point } from '../shared/types';
 import { comparePositions } from '../shared/utils';
 import { ALL_QUESTS, getQuest } from './all-quests';
@@ -48,7 +48,7 @@ export class QuestManager {
         let description = `<h2>${quest.name}</h2><p>${quest.steps[progress.questStep].message}</p>`;
         // kills-related progress
         quest.steps[progress.questStep].killsRequired.forEach((killRequired) => {
-            const enemy = ALL_ENEMEIS.find((e) => e.uid === killRequired.enemyUid);
+            const enemy = getEnemy({ uid: killRequired.enemyUid });
             const enemyKillsProgress = progress.killsProgress.find(
                 (kp) => kp.enemyUid === killRequired.enemyUid,
             )?.amount;

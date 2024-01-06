@@ -25,24 +25,12 @@ export class WorldScene extends Scene {
     }
 
     preload() {
-        const mapData = WorldManager.getCurrentMap();
-        this.load.image('adventure-bg', `./images/adventure-${mapData.uid}.png`);
+        // map-agnostic assets
         this.load.image('party', './images/adventure-player.png');
     }
 
     create() {
-        const mapData = WorldManager.getCurrentMap();
-        AudioManager.play({ url: `./music/adventure-${mapData.uid}.mp3`, volume: 0.1, progress: 0 });
-        this.add.image(550, 300, 'adventure-bg');
-        this.drawTiles({ tiles: mapData.tiles });
-        const partyPosition = WorldManager.getCurrentPosition();
-        this.party = this.physics.add
-            .sprite(partyPosition.x, partyPosition.y, 'party')
-            .setOrigin(0, 0)
-            .setDepth(1);
-        this.cameras.main.setSize(this.scale.width, this.scale.height);
-        this.cameras.main.startFollow(this.party, true, 0.1, 0.1);
-        this.cameras.main.setZoom(2);
+        this.loadMap();
     }
 
     update() {
@@ -61,6 +49,9 @@ export class WorldScene extends Scene {
                 ? Direction.Down
                 : undefined,
         });
+        if (moveResult.newMap) {
+            this.loadMap();
+        }
         if (moveResult.encounter) {
             this.startBattle();
         }
@@ -72,6 +63,27 @@ export class WorldScene extends Scene {
             });
         }
         this.party.setPosition(moveResult.position.x, moveResult.position.y);
+    }
+
+    public loadMap() {
+        const mapData = WorldManager.getCurrentMap();
+        this.load.image(`adventure-bg-${mapData.uid}`, `./images/adventure-${mapData.uid}.png`);
+        this.load.start();
+        setTimeout(() => {
+            this.add.image(550, 300, `adventure-bg-${mapData.uid}`);
+            AudioManager.play({ url: `./music/adventure-${mapData.uid}.mp3`, volume: 0.1, progress: 0 });
+            this.adventureMusicProgress = 0;
+            this.drawTiles({ tiles: mapData.tiles });
+            const partyPosition = WorldManager.getCurrentPosition();
+            this.party?.destroy();
+            this.party = this.physics.add
+                .sprite(partyPosition.x, partyPosition.y, 'party')
+                .setOrigin(0, 0)
+                .setDepth(1);
+            this.cameras.main.setSize(this.scale.width, this.scale.height);
+            this.cameras.main.startFollow(this.party, true, 0.1, 0.1);
+            this.cameras.main.setZoom(2);
+        }, 10);
     }
 
     public drawTiles({ tiles }: { tiles: Tile[] }) {
@@ -86,11 +98,11 @@ export class WorldScene extends Scene {
         switch (tile.type) {
             case TileType.Route:
                 return this.add
-                    .rectangle(tile.position.x, tile.position.y, 9, 9, 0x22dd22, 0.3)
+                    .rectangle(tile.position.x, tile.position.y, 9, 9, 0x22dd22, 0.2)
                     .setOrigin(0, 0);
             case TileType.Wall:
                 return this.add
-                    .rectangle(tile.position.x, tile.position.y, 9, 9, 0x424242, 0.6)
+                    .rectangle(tile.position.x, tile.position.y, 9, 9, 0x424242, 0.4)
                     .setOrigin(0, 0);
             case TileType.Passage:
                 return this.add.rectangle(tile.position.x, tile.position.y, 9, 9, 0x2211dd).setOrigin(0, 0);

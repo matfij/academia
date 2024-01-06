@@ -28,7 +28,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     useEffect(() => {
         setAdventureMap(WorldManager.getCurrentMap());
         const battleAllies = PartyManager.getBattleParty();
-        const battleEnemies = EncounterManager.getEncounter({ map: adventureMap });
+        const battleEnemies = EncounterManager.getEncounter({ map: WorldManager.getCurrentMap() });
         const displayEnemies = mapToDisplayEnemies({
             enemies: battleEnemies,
         });
