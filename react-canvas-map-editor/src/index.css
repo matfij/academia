@@ -13,18 +13,34 @@ h1 {
 }
 
 .mainWrapper {
+    position: relative;
     width: 100%;
     text-align: center;
 }
 
+.canvasWrapper {
+    position: absolute;
+    top: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.5;
+}
+
 .actionWrapper {
+    position: absolute;
+    top: 620px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     gap: 2rem;
 }
 
 .rangeWrapper {
-    margin-top: 1rem;
+    position: absolute;
+    top: 660px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;

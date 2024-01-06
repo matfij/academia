@@ -8,6 +8,7 @@ const COLUMNS = 110;
 
 export const MapEditorComponent = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [blueprint, setBlueprint] = useState('');
     const [tileType, setTileType] = useState(TileType.Route);
     const [map, setMap] = useState(MapManager.createEmptyMap(ROWS, COLUMNS));
     const [isPainting, setIsPainting] = useState(false);
@@ -76,18 +77,21 @@ export const MapEditorComponent = () => {
 
     return (
         <div className="mainWrapper">
-            <canvas
-                ref={canvasRef}
-                width={COLUMNS * TILE_SIZE}
-                height={ROWS * TILE_SIZE}
-                style={{ border: '1px solid black' }}
-                onClick={handleCanvasClick}
-                onMouseDown={() => setIsPainting(true)}
-                onMouseUp={() => setIsPainting(false)}
-                onMouseMove={(e) => {
-                    if (isPainting) handleCanvasClick(e);
-                }}
-            />
+            <div className="canvasWrapper">
+                <canvas
+                    ref={canvasRef}
+                    width={COLUMNS * TILE_SIZE}
+                    height={ROWS * TILE_SIZE}
+                    style={{ border: '1px solid black' }}
+                    onClick={handleCanvasClick}
+                    onMouseDown={() => setIsPainting(true)}
+                    onMouseUp={() => setIsPainting(false)}
+                    onMouseMove={(e) => {
+                        if (isPainting) handleCanvasClick(e);
+                    }}
+                />
+            </div>
+            <div className="blueprintWrapper">{blueprint && <img src={blueprint} />}</div>
             <div className="actionWrapper">
                 <div onClick={() => setTileType(TileType.Route)} className="actionItem green">
                     ∎ Route
@@ -106,6 +110,16 @@ export const MapEditorComponent = () => {
                 </div>
             </div>
             <div className="rangeWrapper">
+                <div>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                            const file = e.target.files ? e.target.files[0] : null;
+                            if (file) setBlueprint(URL.createObjectURL(file));
+                        }}
+                    />
+                </div>
                 <label>Cursor Size:</label>
                 <input
                     type="range"

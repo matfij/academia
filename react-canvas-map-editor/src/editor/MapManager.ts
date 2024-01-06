@@ -21,7 +21,12 @@ export class MapManager {
                     position: { x: scale * col, y: scale * row },
                     type: map[row][col],
                 };
-                printedMap += `${JSON.stringify(tile)},`;
+                printedMap += `${JSON.stringify(tile)},`
+                    .replace('"Wall"', 'TileType.Wall')
+                    .replace('"Route"', 'TileType.Route')
+                    .replace('"Passage"', 'TileType.Passage')
+                    .replace('"Quest"', 'TileType.Quest')
+                    .replace('"Boss"', 'TileType.Boss');
             }
         }
         printedMap += ']';
