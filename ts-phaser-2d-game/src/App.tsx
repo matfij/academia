@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import Phaser from 'phaser';
 import { WorldScene } from './world/WorldScene';
 import { BattleComponent } from './battle/BattleComponent';
 import { QuestStatus } from './quests/types';
 import { QuestComponent } from './quests/QuestComponent';
+import { WorldManager } from './world/WorldManager';
 
 export const App = () => {
     const [worldScene, setWorldScene] = useState<WorldScene | undefined>();
@@ -40,6 +40,9 @@ export const App = () => {
             <div id="sceneWrapper" className={inBattle ? 'hidden' : ''}>
                 {inQuest && (
                     <QuestComponent
+                        onUpdateMap={() => {
+                            worldScene?.drawTiles({ tiles: WorldManager.getCurrentMap().tiles });
+                        }}
                         onHideQuest={() => {
                             setInQuest(undefined);
                             worldScene?.hideQuest();

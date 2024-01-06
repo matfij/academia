@@ -9,9 +9,16 @@ type QuestComponentProps = {
     questDescription: string;
     questState: QuestState;
     onHideQuest: () => void;
+    onUpdateMap: () => void;
 };
 
-export const QuestComponent = ({ questUid, questDescription, questState, onHideQuest }: QuestComponentProps) => {
+export const QuestComponent = ({
+    questUid,
+    questDescription,
+    questState,
+    onHideQuest,
+    onUpdateMap,
+}: QuestComponentProps) => {
     const [description, setDescription] = useState(questDescription);
     const [state, setState] = useState(questState);
 
@@ -25,6 +32,10 @@ export const QuestComponent = ({ questUid, questDescription, questState, onHideQ
         const questData = QuestManager.proceedQuest({ questUid });
         setDescription(questData.description);
         setState(questData.state);
+        console.log(questData)
+        if (questData.updateMap) {
+            onUpdateMap();
+        }
     };
 
     return (

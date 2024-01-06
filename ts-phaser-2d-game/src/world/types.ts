@@ -40,3 +40,7 @@ export type Encounter = {
     enemyUid: string;
     rate: number;
 };
+
+export type DisplayTile = Tile & {
+    spriteRef: Phaser.GameObjects.Rectangle | undefined;
+};

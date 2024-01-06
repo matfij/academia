@@ -1,6 +1,6 @@
-import { QUEST_1 } from './quests/quest-1';
+import { QUEST_1, QUEST_2 } from './quests/quest-1';
 
-export const ALL_QUESTS = [QUEST_1];
+export const ALL_QUESTS = [QUEST_1, QUEST_2];
 
 export const getQuest = ({ uid }: { uid: string }) => {
     const quest = ALL_QUESTS.find((q) => q.uid === uid);

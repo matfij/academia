@@ -40,7 +40,7 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         setDisplayAllies(displayAllies);
         setSelectedAlly(displayAllies[0]);
         BattleManager.startBattle({ allies: displayAllies, enemies: displayEnemies });
-    }, [adventureMap]);
+    }, []);
 
     const onAllySelection = (ally: DisplayAlly) => {
         if (!ally.alive || turnAnimating) {

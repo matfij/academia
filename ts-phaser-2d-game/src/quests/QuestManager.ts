@@ -1,5 +1,6 @@
 import { ALL_ENEMEIS } from '../enemies/all-enemies';
 import { Point } from '../shared/types';
+import { comparePositions } from '../shared/utils';
 import { ALL_QUESTS, getQuest } from './all-quests';
 import { QuestState, QuestStepItemProgress, QuestStepKillProgress } from './types';
 
@@ -30,7 +31,7 @@ export class QuestManager {
                 quests.push({ questUid: quest.uid, position: quest.startLocation.position });
             }
         });
-        return quests;
+        return [...quests];
     }
 
     public static getQuestDescription({ questUid }: { questUid: string }) {
@@ -100,28 +101,46 @@ export class QuestManager {
             throw new Error('Requirements missing!');
         }
         progress.questStep += 1;
-        progress.killsProgress = quest.steps[progress.questStep].killsRequired.map((k) => ({ enemyUid: k.enemyUid, amount: 0 }));
-        progress.itemsProgress = quest.steps[progress.questStep].itemsRequired.map((i) => ({ itemUid: i.itemUid, amount: 0 }));
+        progress.killsProgress = quest.steps[progress.questStep].killsRequired.map((k) => ({
+            enemyUid: k.enemyUid,
+            amount: 0,
+        }));
+        progress.itemsProgress = quest.steps[progress.questStep].itemsRequired.map((i) => ({
+            itemUid: i.itemUid,
+            amount: 0,
+        }));
         if (quest.steps.length - 1 === progress.questStep) {
+            // TODO - add awards, notify user
             progress.questState = QuestState.Completed;
         }
         const newDescription = this.getQuestDescription({ questUid });
-        return newDescription;
+        const updateMap = !comparePositions(
+            quest.steps[progress.questStep].location.position,
+            quest.steps[progress.questStep - 1].location.position,
+        );
+        return {
+            description: newDescription.description,
+            state: newDescription.state,
+            updateMap,
+        };
     }
 
     public static updateKillQuestProgress({ enemyUid, amount }: { enemyUid: string; amount: number }) {
-        this.questProgress.forEach((progress) => {
+        for (const progress of this.questProgress) {
             const quest = getQuest({ uid: progress.questUid });
-            const killRequirement = quest.steps[progress.questStep].killsRequired.find((k) => k.enemyUid === enemyUid);
-            if (killRequirement) {
-                const currentProgress = progress.killsProgress.find((kp) => kp.enemyUid === enemyUid);
+            const killRequirement = quest.steps[progress.questStep].killsRequired.find(
+                (k) => k.enemyUid === enemyUid,
+            );
+            const currentProgress = progress.killsProgress.find((kp) => kp.enemyUid === enemyUid);
+            if (killRequirement && (currentProgress?.amount || 0) < killRequirement.amount) {
                 if (currentProgress) {
                     currentProgress.amount += amount;
                     currentProgress.amount = Math.min(currentProgress.amount, killRequirement.amount);
                 } else {
                     progress.killsProgress.push({ enemyUid, amount });
                 }
+                break;
             }
-        });
+        }
     }
 }

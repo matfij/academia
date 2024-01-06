@@ -1,11 +1,11 @@
 import { Scene } from 'phaser';
 import { WorldManager } from './WorldManager';
 import { AudioManager } from '../shared/AudioManager';
-import { Direction, Tile, TileType } from './types';
+import { Direction, DisplayTile, Tile, TileType } from './types';
 import { QuestStatus } from '../quests/types';
 
 export class WorldScene extends Scene {
-    private tiles: (Tile & { rect: Phaser.GameObjects.Rectangle })[] = [];
+    private tiles: DisplayTile[] = [];
     private party?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     private blockMovement = false;
     private onStartBattle: () => void;
@@ -34,12 +34,12 @@ export class WorldScene extends Scene {
         const mapData = WorldManager.getCurrentMap();
         AudioManager.play({ url: `./music/adventure-${mapData.uid}.mp3`, volume: 0.1, progress: 0 });
         this.add.image(550, 300, 'adventure-bg');
-        mapData.tiles.forEach((tile) => {
-            const rect = this.getTileRect({ tile });
-            this.tiles.push({ rect, ...tile });
-        });
+        this.drawTiles({ tiles: mapData.tiles });
         const partyPosition = WorldManager.getCurrentPosition();
-        this.party = this.physics.add.sprite(partyPosition.x, partyPosition.y, 'party').setOrigin(0, 0);
+        this.party = this.physics.add
+            .sprite(partyPosition.x, partyPosition.y, 'party')
+            .setOrigin(0, 0)
+            .setDepth(1);
         this.cameras.main.setSize(this.scale.width, this.scale.height);
         this.cameras.main.startFollow(this.party, true, 0.1, 0.1);
         this.cameras.main.setZoom(2);
@@ -71,8 +71,15 @@ export class WorldScene extends Scene {
                 state: moveResult.questStatus.state,
             });
         }
-
         this.party.setPosition(moveResult.position.x, moveResult.position.y);
+    }
+
+    public drawTiles({ tiles }: { tiles: Tile[] }) {
+        this.tiles.forEach((t) => t.spriteRef?.destroy());
+        tiles.forEach((tile) => {
+            const rect = this.getTileRect({ tile });
+            this.tiles.push({ ...tile, spriteRef: rect });
+        });
     }
 
     private getTileRect({ tile }: { tile: Tile }) {

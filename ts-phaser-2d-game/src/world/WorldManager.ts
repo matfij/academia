@@ -14,7 +14,7 @@ export class WorldManager {
     private static readonly MOVEMENT_INTERVAL_MS = 100;
 
     public static getCurrentMap() {
-        const map = this.currentMap;
+        const map = { ...this.currentMap };
         const quests = QuestManager.getQuestsForMap({ mapUid: map.uid });
         quests.forEach((quest) => {
             map.tiles = map.tiles.map((tile) =>
@@ -27,13 +27,13 @@ export class WorldManager {
     }
 
     public static getCurrentPosition() {
-        return this.currentPosition;
+        return { ...this.currentPosition };
     }
 
     public static moveParty({ direction }: { direction: Direction | undefined }) {
         if (!direction || Date.now() < this.lastPositionUpdate + this.MOVEMENT_INTERVAL_MS) {
             return {
-                position: this.currentPosition,
+                position: { ...this.currentPosition },
             };
         }
         this.lastPositionUpdate = Date.now();
@@ -69,27 +69,23 @@ export class WorldManager {
             encounter = this.checkEncounter();
         }
         return {
-            position: this.currentPosition,
+            position: { ...this.currentPosition },
             questStatus: questStatus,
             encounter: encounter,
         };
     }
 
-    // private static getQuestData({ mapUid }: { mapUid: string }) {
-    //     const quests = QuestManager.getQuestsForMap({ mapUid });
-    // }
-
     private static checkEncounter() {
-        return chance(this.currentMap.encounterRate);
+        return chance(this.getCurrentMap().encounterRate);
     }
 
     private static checkCollisionTile({ x, y }: Point) {
-        const tile = this.currentMap.tiles.find((t) => t.position.x === x && t.position.y === y);
+        const tile = this.getCurrentMap().tiles.find((t) => t.position.x === x && t.position.y === y);
         return tile?.type === TileType.Wall;
     }
 
     private static checkQuestTile({ x, y }: Point) {
-        const tile = this.currentMap.tiles.find((t) => t.position.x === x && t.position.y === y);
+        const tile = this.getCurrentMap().tiles.find((t) => t.position.x === x && t.position.y === y);
         if (tile?.type === TileType.Quest && tile.questData) {
             const { description, state } = QuestManager.getQuestDescription({
                 questUid: tile.questData.questUid,

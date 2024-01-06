@@ -54,3 +54,56 @@ export const QUEST_1: Quest = {
         },
     ],
 };
+
+export const QUEST_2: Quest = {
+    uid: 'quest-002',
+    name: 'Goblin Killer II',
+    questsRequired: [],
+    startLocation: {
+        mapUid: MAP_1.uid,
+        position: { x: 770, y: 450 },
+    },
+    steps: [
+        {
+            message: 'Welcome traveller, get rid of these filthy goblins for me!',
+            location: {
+                mapUid: MAP_1.uid,
+                position: { x: 770, y: 450 },
+            },
+            killsRequired: [
+                {
+                    enemyUid: ENEMY_1.uid,
+                    amount: 1,
+                },
+            ],
+            itemsRequired: [],
+        },
+        {
+            message: 'Peg your pardon, there are some more!',
+            location: {
+                mapUid: MAP_1.uid,
+                position: { x: 700, y: 450 },
+            },
+            killsRequired: [
+                {
+                    enemyUid: ENEMY_1.uid,
+                    amount: 2,
+                },
+                {
+                    enemyUid: ENEMY_2.uid,
+                    amount: 1,
+                },
+            ],
+            itemsRequired: [],
+        },
+        {
+            message: 'Thanks for helping me back then, good luck on your jurney!',
+            location: {
+                mapUid: MAP_1.uid,
+                position: { x: 770, y: 490 },
+            },
+            killsRequired: [],
+            itemsRequired: [],
+        },
+    ],
+};
