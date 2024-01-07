@@ -1,4 +1,4 @@
-import { ENEMY_2, ENEMY_4, ENEMY_5, ENEMY_6 } from '../../enemies/enemies/map-1';
+import { ENEMY_2, ENEMY_4, ENEMY_5, ENEMY_6 } from '../../enemies/enemies/enemies';
 import { AdventureMap } from '../types';
 import { MAP_2_TILES } from './map-2-tiles';
 

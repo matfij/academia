@@ -5,6 +5,17 @@ import { uuid } from '../shared/utils';
 import { AdventureMap, Encounter } from './types';
 
 export class EncounterManager {
+    public static getBossEncounter({ bossUid }: { bossUid: string }) {
+        const bossEncounter = getEnemy({ uid: bossUid });
+        const boss: BattleEnemy = {
+            ...bossEncounter,
+            id: uuid(),
+            alive: true,
+            battleStatistics: BattleManager.getBattleStatistics({ character: bossEncounter }),
+        };
+        return [boss];
+    }
+
     public static getEncounter({ map }: { map: AdventureMap }) {
         const groupSize = this.calculateGroupSize({ probabilities: map.groupSizeRate });
         const encounters: Encounter[] = [];
@@ -15,10 +26,10 @@ export class EncounterManager {
         const enemies: BattleEnemy[] = encounters.map((encounter) => {
             const enemy = getEnemy({ uid: encounter.enemyUid });
             return {
+                ...enemy,
                 id: uuid(),
                 alive: true,
                 battleStatistics: BattleManager.getBattleStatistics({ character: enemy }),
-                ...enemy,
             };
         });
         return enemies;

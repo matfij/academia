@@ -18,8 +18,14 @@ export type Tile = {
     type: TileType;
     passageData?: { mapUid: string; position: Point };
     questData?: { questUid: string };
-    bossData?: { bossUid: string };
+    bossData?: TileBossData;
 };
+
+export type TileBossData = {
+    bossUid: string;
+    backgroundPath: string;
+    musicPath: string;
+}
 
 export enum TileType {
     Route = 'Route',

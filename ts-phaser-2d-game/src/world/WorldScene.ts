@@ -1,14 +1,14 @@
 import { Scene } from 'phaser';
 import { WorldManager } from './WorldManager';
 import { AudioManager } from '../shared/AudioManager';
-import { Direction, DisplayTile, Tile, TileType } from './types';
+import { Direction, DisplayTile, Tile, TileBossData, TileType } from './types';
 import { QuestStatus } from '../quests/types';
 
 export class WorldScene extends Scene {
     private tiles: DisplayTile[] = [];
     private party?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     private blockMovement = false;
-    private onStartBattle: () => void;
+    private onStartBattle: ({ bossData }: { bossData?: TileBossData }) => void;
     private onShowQuest: ({ uid, description }: QuestStatus) => void;
     private adventureMusicProgress = 0;
 
@@ -16,7 +16,7 @@ export class WorldScene extends Scene {
         onStartBattle,
         onShowQuest,
     }: {
-        onStartBattle: () => void;
+        onStartBattle: ({ bossData }: { bossData?: TileBossData }) => void;
         onShowQuest: ({ uid, description }: QuestStatus) => void;
     }) {
         super({ key: 'WorldScene' });
@@ -49,18 +49,16 @@ export class WorldScene extends Scene {
                 ? Direction.Down
                 : undefined,
         });
-        if (moveResult.newMap) {
+        if (moveResult.newMapData) {
             this.loadMap();
-        }
-        if (moveResult.encounter) {
-            this.startBattle();
-        }
-        if (moveResult.questStatus) {
+        } else if (moveResult.questData) {
             this.showQuest({
-                uid: moveResult.questStatus.uid,
-                description: moveResult.questStatus.description,
-                state: moveResult.questStatus.state,
+                uid: moveResult.questData.uid,
+                description: moveResult.questData.description,
+                state: moveResult.questData.state,
             });
+        } else if (moveResult.encounter || moveResult.bossData) {
+            this.startBattle({ bossData: moveResult.bossData });
         }
         this.party.setPosition(moveResult.position.x, moveResult.position.y);
     }
@@ -83,7 +81,7 @@ export class WorldScene extends Scene {
             this.cameras.main.setSize(this.scale.width, this.scale.height);
             this.cameras.main.startFollow(this.party, true, 0.1, 0.1);
             this.cameras.main.setZoom(2);
-        }, 10);
+        }, 100);
     }
 
     public drawTiles({ tiles }: { tiles: Tile[] }) {
@@ -113,12 +111,15 @@ export class WorldScene extends Scene {
         }
     }
 
-    private startBattle() {
+    private startBattle({ bossData }: { bossData?: TileBossData }) {
         this.blockMovement = true;
         this.adventureMusicProgress = 0.9 * AudioManager.getProgress();
         const mapLevel = WorldManager.getCurrentMap();
-        AudioManager.play({ url: `./music/battle-${mapLevel.uid}.mp3`, volume: 0.1, progress: 0 });
-        this.onStartBattle();
+        const musicUrl = bossData?.musicPath
+            ? `./music/${bossData.musicPath}`
+            : `./music/battle-${mapLevel.uid}.mp3`;
+        AudioManager.play({ url: musicUrl, volume: 0.1, progress: 0 });
+        this.onStartBattle({ bossData });
     }
 
     public endBattle() {

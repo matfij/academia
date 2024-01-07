@@ -4,15 +4,20 @@ import { BattleComponent } from './battle/BattleComponent';
 import { QuestStatus } from './quests/types';
 import { QuestComponent } from './quests/QuestComponent';
 import { WorldManager } from './world/WorldManager';
+import { TileBossData } from './world/types';
 
 export const App = () => {
     const [worldScene, setWorldScene] = useState<WorldScene | undefined>();
     const [inBattle, setInBattle] = useState(false);
+    const [bossBattleData, setBossBattleData] = useState<TileBossData | undefined>();
     const [inQuest, setInQuest] = useState<QuestStatus | undefined>();
 
     useEffect(() => {
         const scene = new WorldScene({
-            onStartBattle: () => setInBattle(true),
+            onStartBattle: ({ bossData }) => {
+                setInBattle(true);
+                setBossBattleData(bossData);
+            },
             onShowQuest: (questDescription) => setInQuest(questDescription),
         });
         const game = new Phaser.Game({
@@ -55,6 +60,7 @@ export const App = () => {
             </div>
             {inBattle && (
                 <BattleComponent
+                    bossData={bossBattleData}
                     onEndBattle={() => {
                         setInBattle(false);
                         worldScene?.endBattle();

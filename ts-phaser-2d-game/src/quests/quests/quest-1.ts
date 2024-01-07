@@ -1,4 +1,4 @@
-import { ENEMY_1, ENEMY_2 } from '../../enemies/enemies/map-1';
+import { ENEMY_1, ENEMY_2 } from '../../enemies/enemies/enemies';
 import { MAP_1 } from '../../world/maps/map-1';
 import { Quest } from '../types';
 

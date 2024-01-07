@@ -1,6 +1,21 @@
 import { Tile, TileType } from '../types';
 
 export const MAP_2_TILES: Tile[] = [
+    {
+        position: { x: 0, y: 30 },
+        type: TileType.Passage,
+        passageData: { mapUid: 'map-1', position: { x: 130, y: 0 } },
+    },
+    {
+        position: { x: 0, y: 40 },
+        type: TileType.Passage,
+        passageData: { mapUid: 'map-1', position: { x: 130, y: 0 } },
+    },
+    {
+        position: { x: 0, y: 50 },
+        type: TileType.Passage,
+        passageData: { mapUid: 'map-1', position: { x: 130, y: 0 } },
+    },
     { position: { x: 0, y: 0 }, type: TileType.Route },
     { position: { x: 10, y: 0 }, type: TileType.Route },
     { position: { x: 20, y: 0 }, type: TileType.Route },
@@ -441,11 +456,6 @@ export const MAP_2_TILES: Tile[] = [
     { position: { x: 1070, y: 30 }, type: TileType.Route },
     { position: { x: 1080, y: 30 }, type: TileType.Route },
     { position: { x: 1090, y: 30 }, type: TileType.Route },
-    {
-        position: { x: 0, y: 40 },
-        type: TileType.Passage,
-        passageData: { mapUid: 'map-1', position: { x: 110, y: 0 } },
-    },
     { position: { x: 10, y: 40 }, type: TileType.Route },
     { position: { x: 20, y: 40 }, type: TileType.Route },
     { position: { x: 30, y: 40 }, type: TileType.Route },
@@ -555,11 +565,6 @@ export const MAP_2_TILES: Tile[] = [
     { position: { x: 1070, y: 40 }, type: TileType.Route },
     { position: { x: 1080, y: 40 }, type: TileType.Route },
     { position: { x: 1090, y: 40 }, type: TileType.Route },
-    {
-        position: { x: 0, y: 50 },
-        type: TileType.Passage,
-        passageData: { mapUid: 'map-1', position: { x: 110, y: 0 } },
-    },
     { position: { x: 10, y: 50 }, type: TileType.Route },
     { position: { x: 20, y: 50 }, type: TileType.Route },
     { position: { x: 30, y: 50 }, type: TileType.Route },

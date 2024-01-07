@@ -61,23 +61,25 @@ export class WorldManager {
                 break;
             }
         }
-        const newMap = this.checkPassageTile(this.currentPosition);
-        if (newMap) {
-            this.lastPositionUpdate = Date.now();
+        const newMapData = this.checkPassageTile(this.currentPosition);
+        if (newMapData) {
+            this.lastPositionUpdate = Date.now() + 10 * this.MOVEMENT_INTERVAL_MS;
         }
         let encounter = false;
         if (this.checkCollisionTile(this.currentPosition)) {
             this.currentPosition = oldPosition;
         }
-        const questStatus = this.checkQuestTile(this.currentPosition);
-        if (!comparePositions(oldPosition, this.currentPosition) && !questStatus) {
+        const questData = this.checkQuestTile(this.currentPosition);
+        const bossData = this.checkBossTile(this.currentPosition);
+        if (!comparePositions(oldPosition, this.currentPosition) && !questData && !bossData) {
             encounter = this.checkEncounter();
         }
         return {
             position: { ...this.currentPosition },
-            questStatus: questStatus,
-            encounter: encounter,
-            newMap: newMap,
+            questData,
+            bossData,
+            newMapData,
+            encounter,
         };
     }
 
@@ -110,6 +112,14 @@ export class WorldManager {
         this.currentMap = newMap;
         this.currentPosition = { ...tile.passageData.position };
         return { ...newMap };
+    }
+
+    private static checkBossTile(position: Point) {
+        const tile = this.getTile(position);
+        if (!tile.bossData) {
+            return;
+        }
+        return tile.bossData;
     }
 
     private static getTile(position: Point) {

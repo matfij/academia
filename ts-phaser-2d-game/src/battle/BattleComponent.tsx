@@ -5,7 +5,7 @@ import { WorldManager } from '../world/WorldManager';
 import { EncounterManager } from '../world/EncounterManager';
 import { BattleManager } from './BattleManager';
 import { uuid } from '../shared/utils';
-import { AdventureMap } from '../world/types';
+import { AdventureMap, TileBossData } from '../world/types';
 import { ALL_MAPS } from '../world/all-maps';
 import { BattleAction, BattleResult, DisplayAlly, DisplayEnemy, TurnStatus } from './types';
 import { BattleMove } from '../moves/types';
@@ -13,10 +13,11 @@ import { BattleEnemy } from '../enemies/types';
 import { BattleAlly } from '../party/types';
 
 type BattleComponentProps = {
+    bossData?: TileBossData;
     onEndBattle: () => void;
 };
 
-export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
+export const BattleComponent = ({ bossData, onEndBattle }: BattleComponentProps) => {
     const [adventureMap, setAdventureMap] = useState<AdventureMap>(ALL_MAPS[0]);
     const [displayAllies, setDisplayAllies] = useState<DisplayAlly[]>([]);
     const [displayEnemies, setDisplayEnemies] = useState<DisplayEnemy[]>([]);
@@ -28,7 +29,9 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
     useEffect(() => {
         setAdventureMap(WorldManager.getCurrentMap());
         const battleAllies = PartyManager.getBattleParty();
-        const battleEnemies = EncounterManager.getEncounter({ map: WorldManager.getCurrentMap() });
+        const battleEnemies = bossData
+            ? EncounterManager.getBossEncounter({ bossUid: bossData.bossUid })
+            : EncounterManager.getEncounter({ map: WorldManager.getCurrentMap() });
         const displayEnemies = mapToDisplayEnemies({
             enemies: battleEnemies,
         });
@@ -166,7 +169,11 @@ export const BattleComponent = ({ onEndBattle }: BattleComponentProps) => {
         <main>
             <section
                 className={style.battleWrapper}
-                style={{ backgroundImage: `url(./images/battle-${adventureMap.uid}.png)` }}
+                style={{
+                    backgroundImage: bossData
+                        ? `url(./images/${bossData.backgroundPath})`
+                        : `url(./images/battle-${adventureMap.uid}.png)`,
+                }}
             >
                 <div className={style.charactersWrapper}>
                     <div className={style.alliesWrapper}>
