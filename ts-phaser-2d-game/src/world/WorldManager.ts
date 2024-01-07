@@ -1,6 +1,7 @@
 import { QuestManager } from '../quests/QuestManager';
 import { chance } from '../shared/math';
-import { comparePositions } from '../shared/utils';
+import { comparePositions, currentDate } from '../shared/utils';
+import { EncounterManager } from './EncounterManager';
 import { getMap } from './all-maps';
 import { MAP_1 } from './maps/map-1';
 import { Direction, Point, TileType } from './types';
@@ -8,7 +9,7 @@ import { Direction, Point, TileType } from './types';
 export class WorldManager {
     private static currentMap = MAP_1;
     private static currentPosition = { x: 10, y: 180 };
-    private static lastPositionUpdate = Date.now();
+    private static lastPositionUpdate = currentDate();
     private static readonly MAP_WIDTH = 1090;
     private static readonly MAP_HEIGHT = 590;
     private static readonly MOVEMENT_SPEED = 10;
@@ -32,12 +33,12 @@ export class WorldManager {
     }
 
     public static moveParty({ direction }: { direction: Direction | undefined }) {
-        if (!direction || Date.now() < this.lastPositionUpdate + this.MOVEMENT_INTERVAL_MS) {
+        if (!direction || currentDate() < this.lastPositionUpdate + this.MOVEMENT_INTERVAL_MS) {
             return {
                 position: { ...this.currentPosition },
             };
         }
-        this.lastPositionUpdate = Date.now();
+        this.lastPositionUpdate = currentDate();
         const oldPosition = { ...this.currentPosition };
         switch (direction) {
             case Direction.Up: {
@@ -63,7 +64,7 @@ export class WorldManager {
         }
         const newMapData = this.checkPassageTile(this.currentPosition);
         if (newMapData) {
-            this.lastPositionUpdate = Date.now() + 10 * this.MOVEMENT_INTERVAL_MS;
+            this.lastPositionUpdate = currentDate() + 10 * this.MOVEMENT_INTERVAL_MS;
         }
         let encounter = false;
         if (this.checkCollisionTile(this.currentPosition)) {
@@ -117,6 +118,10 @@ export class WorldManager {
     private static checkBossTile(position: Point) {
         const tile = this.getTile(position);
         if (!tile.bossData) {
+            return;
+        }
+        const cooldown = EncounterManager.getBossCooldown({ bossUid: tile.bossData.bossUid });
+        if (currentDate() < cooldown) {
             return;
         }
         return tile.bossData;

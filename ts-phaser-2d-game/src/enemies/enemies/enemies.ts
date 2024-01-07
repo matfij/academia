@@ -59,3 +59,23 @@ export const ENEMY_6: Enemy = {
     },
     moves: [{ uid: 'move-01', name: 'Brave Bird', damage: 50 }],
 }
+
+export const ENEMY_7: Enemy = {
+    uid: 'enemy-1-7',
+    name: 'Bronze Construct',
+    baseStatistics: {
+        speed: 25,
+        health: 350,
+    },
+    moves: [{ uid: 'move-01', name: 'Spiral Slash', damage: 30 }],
+}
+
+export const ENEMY_X_1: Enemy = {
+    uid: 'enemy-x-1',
+    name: 'Deus Cras',
+    baseStatistics: {
+        speed: 100,
+        health: 2500,
+    },
+    moves: [{ uid: 'move-01', name: 'Daybreak', damage: 150 }],
+};

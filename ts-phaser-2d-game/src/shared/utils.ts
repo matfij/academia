@@ -6,6 +6,8 @@ export const uuid = () => {
         .substring(2)}-${Math.random().toString(36).substring(2)}`;
 };
 
+export const currentDate = () => Date.now();
+
 export const comparePositions = (a: Point, b: Point) => {
     return a.x === b.x && a.y === b.y;
 };

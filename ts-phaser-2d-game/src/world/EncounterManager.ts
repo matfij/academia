@@ -1,19 +1,28 @@
 import { BattleManager } from '../battle/BattleManager';
-import { getEnemy } from '../enemies/all-enemies';
+import { getBoss, getEnemy } from '../enemies/all-enemies';
 import { BattleEnemy } from '../enemies/types';
-import { uuid } from '../shared/utils';
+import { currentDate, uuid } from '../shared/utils';
 import { AdventureMap, Encounter } from './types';
 
 export class EncounterManager {
+    private static bossCooldown: Record<string, number> = {};
+
+    public static getBossCooldown({ bossUid }: { bossUid: string }) {
+        return this.bossCooldown[bossUid] || 0;
+    }
+
     public static getBossEncounter({ bossUid }: { bossUid: string }) {
-        const bossEncounter = getEnemy({ uid: bossUid });
-        const boss: BattleEnemy = {
-            ...bossEncounter,
-            id: uuid(),
-            alive: true,
-            battleStatistics: BattleManager.getBattleStatistics({ character: bossEncounter }),
-        };
-        return [boss];
+        const bossData = getBoss({ uid: bossUid });
+        const enemies = bossData.enemies.map((enemy) => {
+            return {
+                ...enemy,
+                id: uuid(),
+                alive: true,
+                battleStatistics: BattleManager.getBattleStatistics({ character: enemy }),
+            };
+        });
+        this.bossCooldown[bossData.uid] = currentDate() + bossData.cooldownMS;
+        return enemies;
     }
 
     public static getEncounter({ map }: { map: AdventureMap }) {

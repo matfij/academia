@@ -50,3 +50,4 @@ export type Encounter = {
 export type DisplayTile = Tile & {
     spriteRef: Phaser.GameObjects.Rectangle | undefined;
 };
+

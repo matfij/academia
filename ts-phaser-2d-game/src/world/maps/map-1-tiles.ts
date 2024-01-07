@@ -2,9 +2,9 @@ import { Tile, TileType } from '../types';
 
 export const MAP_1_TILES: Tile[] = [
     {
-        position: { x: 50, y: 200 },
+        position: { x: 50, y: 180 },
         type: TileType.Boss,
-        bossData: { bossUid: 'enemy-x-1', backgroundPath: 'battle-map-x-1.png', musicPath: 'boss-1.mp3' },
+        bossData: { bossUid: 'boss-1', backgroundPath: 'battle-map-x-1.png', musicPath: 'boss-1.mp3' },
     },
     {
         position: { x: 120, y: 0 },

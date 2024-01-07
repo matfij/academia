@@ -1,11 +1,8 @@
-import { Enemy } from '../types';
+import { Boss } from '../types';
+import { ENEMY_7, ENEMY_X_1 } from './enemies';
 
-export const BOSS_1: Enemy = {
-    uid: 'enemy-x-1',
-    name: 'Deus Cras',
-    baseStatistics: {
-        speed: 100,
-        health: 2500,
-    },
-    moves: [{ uid: 'move-01', name: 'Daybreak', damage: 333 }],
+export const BOSS_1: Boss = {
+    uid: 'boss-1',
+    cooldownMS: 1 * 1 * 60 * 1000, // 1min
+    enemies: [ENEMY_7, ENEMY_X_1, ENEMY_7],
 };
