@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Ally } from './types';
 import { PartyManager } from './PartyManager';
 import { PARTY_INDEXES, PARTY_SIZE_MAX, PARTY_SIZE_MIN } from '../config';
+import { TooltipComponent } from '../shared/TooltipComponent';
 
 export const PartyComponent = () => {
     const [party, setParty] = useState<Ally[]>([]);
@@ -35,6 +36,21 @@ export const PartyComponent = () => {
         return party.find((a) => a.partyIndex === partyIndex);
     };
 
+    const getAllyDescription = (ally: Ally) => {
+        return (
+            <>
+                <h2>{ally.name}</h2>
+                <p>Health: {ally.baseStatistics.health}</p>
+                <p>Speed: {ally.baseStatistics.speed}</p>
+                <hr />
+                <p>Moves:</p>
+                {ally.moves.map((move) => (
+                    <li key={move.uid}>{move.name}</li>
+                ))}
+            </>
+        );
+    };
+
     return (
         <main>
             <section className={style.partyWrapper}>
@@ -47,15 +63,21 @@ export const PartyComponent = () => {
                                 {ally ? (
                                     <>
                                         <img src={`./images/${ally.uid}.png`} />
-                                        <p>
-                                            <b>{ally.name}</b> | <span className="action">👁️</span> |{' '}
+                                        <div>
+                                            <b>{ally.name}</b> |{' '}
+                                            <TooltipComponent
+                                                content={<span className="action">👁️</span>}
+                                                hint={getAllyDescription(ally)}
+                                                config={{ hintWidth: '300px' }}
+                                            />{' '}
+                                            |{' '}
                                             <span
                                                 onClick={() => removeFromParty(ally.uid)}
                                                 className="action"
                                             >
                                                 ➖
                                             </span>
-                                        </p>
+                                        </div>
                                     </>
                                 ) : (
                                     <span className={style.placeholderTitle}>➕</span>
@@ -70,12 +92,18 @@ export const PartyComponent = () => {
                     {roster.map((character) => (
                         <div key={character.id} className={style.characterItem}>
                             <img src={`./images/${character.uid}.png`} />
-                            <p>
-                                <b>{character.name}</b> | <span className="action">👁️</span> |{' '}
+                            <div>
+                                <b>{character.name}</b> |{' '}
+                                <TooltipComponent
+                                    content={<span className="action">👁️</span>}
+                                    hint={getAllyDescription(character)}
+                                    config={{ hintWidth: '300px' }}
+                                />{' '}
+                                |{' '}
                                 <span onClick={() => addToParty(character.uid)} className="action">
                                     ➕
                                 </span>
-                            </p>
+                            </div>
                         </div>
                     ))}
                 </div>

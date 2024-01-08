@@ -11,6 +11,7 @@ import { BattleAction, BattleResult, DisplayAlly, DisplayEnemy, TurnStatus } fro
 import { BattleMove } from '../moves/types';
 import { BattleEnemy } from '../enemies/types';
 import { BattleAlly } from '../party/types';
+import { TooltipComponent } from '../shared/TooltipComponent';
 
 type BattleComponentProps = {
     bossData?: TileBossData;
@@ -165,6 +166,15 @@ export const BattleComponent = ({ bossData, onEndBattle }: BattleComponentProps)
         }));
     };
 
+    const getMoveDescription = (move: BattleMove) => {
+        return (
+            <>
+                <h2>{move.name}</h2>
+                <p>Damage: {move.damage}</p>
+            </>
+        );
+    };
+
     return (
         <main>
             <section
@@ -242,17 +252,23 @@ export const BattleComponent = ({ bossData, onEndBattle }: BattleComponentProps)
                     <div className={style.movesWrapper}>
                         {selectedAlly &&
                             selectedAlly.moves.map((move) => (
-                                <button
-                                    onClick={() => onMoveSelection(move)}
-                                    key={move.uid}
-                                    className={`${style.moveItem} ${
-                                        move.uid === selectedAlly?.selectedMove.uid
-                                            ? style.selectedMoveItem
-                                            : ''
-                                    }`}
-                                >
-                                    <p>{move.name}</p>
-                                </button>
+                                <TooltipComponent
+                                    content={
+                                        <button
+                                            onClick={() => onMoveSelection(move)}
+                                            key={move.uid}
+                                            className={`${style.moveItem} ${
+                                                move.uid === selectedAlly?.selectedMove.uid
+                                                    ? style.selectedMoveItem
+                                                    : ''
+                                            }`}
+                                        >
+                                            <p>{move.name}</p>
+                                        </button>
+                                    }
+                                    hint={getMoveDescription(move)}
+                                    config={{ containerWidth: '100%' }}
+                                />
                             ))}
                     </div>
                     <div className={style.buttonsWrapper}>
