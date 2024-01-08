@@ -1,42 +1,79 @@
 import { Character } from '../../shared/types';
 
 export const CHARACTER_1: Character = {
-    uid: 'player-1',
-    name: 'Gengar II',
+    uid: 'character-1',
+    name: 'Maillard',
     baseStatistics: {
-        speed: 1000,
-        health: 100,
+        speed: 20,
+        health: 400,
     },
     moves: [
-        { uid: 'move-4', name: 'Sword Swing', damage: 1000 },
-        { uid: 'move-5', name: 'Swallow Blade', damage: 30 },
+        { uid: 'move-4', name: 'Fist Strike', damage: 15 },
+        { uid: 'move-5', name: 'Akrylamid Synthesis', damage: 30 },
     ],
 };
 
 export const CHARACTER_2: Character = {
-    uid: 'player-2',
-    name: 'Astrolfo',
+    uid: 'character-2',
+    name: 'Partitio',
     baseStatistics: {
-        speed: 2250,
-        health: 180,
+        speed: 30,
+        health: 360,
     },
     moves: [
-        { uid: 'move-1', name: 'Lance Strike', damage: 1000 },
-        { uid: 'move-2', name: 'Wind Thrust', damage: 45 },
-        { uid: 'move-3', name: 'Bolt of Bahamut', damage: 75 },
+        { uid: 'move-1', name: 'Bow Shot', damage: 10 },
+        { uid: 'move-2', name: 'Luckty Strike', damage: 45 },
     ],
 };
+
 export const CHARACTER_3: Character = {
-    uid: 'player-3',
-    name: 'Arabella',
+    uid: 'character-3',
+    name: 'Amerika',
     baseStatistics: {
-        speed: 1000,
-        health: 1000,
+        speed: 25,
+        health: 250,
     },
     moves: [
-        { uid: 'move-6', name: 'Regular Swing', damage: 1000 },
-        { uid: 'move-7', name: 'Piercing Strike', damage: 30 },
-        { uid: 'move-8', name: 'Fervent Qilin Slash', damage: 90 },
-        { uid: 'move-9', name: 'Black Dragon', damage: 200 },
+        { uid: 'move-6', name: 'Staff Bash', damage: 5 },
+        { uid: 'move-7', name: 'Flash Bolt', damage: 50 },
+    ],
+};
+
+export const CHARACTER_4: Character = {
+    uid: 'character-4',
+    name: 'Antoha',
+    baseStatistics: {
+        speed: 40,
+        health: 300,
+    },
+    moves: [
+        { uid: 'move-6', name: 'Low Kick', damage: 20 },
+        { uid: 'move-7', name: 'High Kick', damage: 40 },
+    ],
+};
+
+export const CHARACTER_5: Character = {
+    uid: 'character-5',
+    name: 'Oshikko',
+    baseStatistics: {
+        speed: 30,
+        health: 200,
+    },
+    moves: [
+        { uid: 'move-6', name: 'Regular Swing', damage: 10 },
+        { uid: 'move-7', name: 'Todomeda', damage: 100 },
+    ],
+};
+
+export const CHARACTER_6: Character = {
+    uid: 'character-6',
+    name: 'Nikka',
+    baseStatistics: {
+        speed: 45,
+        health: 300,
+    },
+    moves: [
+        { uid: 'move-6', name: 'Piercing Strike', damage: 15 },
+        { uid: 'move-7', name: 'Arrow Rain', damage: 40 },
     ],
 };

@@ -5,12 +5,14 @@ import { QuestStatus } from './quests/types';
 import { QuestComponent } from './quests/QuestComponent';
 import { WorldManager } from './world/WorldManager';
 import { TileBossData } from './world/types';
+import { PartyComponent } from './party/PartyComponent';
 
 export const App = () => {
     const [worldScene, setWorldScene] = useState<WorldScene | undefined>();
     const [inBattle, setInBattle] = useState(false);
     const [bossBattleData, setBossBattleData] = useState<TileBossData | undefined>();
     const [inQuest, setInQuest] = useState<QuestStatus | undefined>();
+    const [inParty, setInParty] = useState(false);
 
     useEffect(() => {
         const scene = new WorldScene({
@@ -40,33 +42,50 @@ export const App = () => {
     }, []);
 
     return (
-        <main className="gameWrapper">
-            <h2>Headwind</h2>
-            <div id="sceneWrapper" className={inBattle ? 'hidden' : ''}>
-                {inQuest && (
-                    <QuestComponent
-                        onUpdateMap={() => {
-                            worldScene?.drawTiles({ tiles: WorldManager.getCurrentMap().tiles });
+        <>
+            <main className="gameWrapper">
+                <h2>Headwind</h2>
+                <div id="sceneWrapper" className={inBattle || inParty ? 'hidden' : ''}>
+                    {inQuest && (
+                        <QuestComponent
+                            onUpdateMap={() => {
+                                worldScene?.drawTiles({ tiles: WorldManager.getCurrentMap().tiles });
+                            }}
+                            onHideQuest={() => {
+                                setInQuest(undefined);
+                                worldScene?.hideQuest();
+                            }}
+                            questUid={inQuest.uid}
+                            questDescription={inQuest.description}
+                            questState={inQuest.state}
+                        />
+                    )}
+                </div>
+                {inBattle && (
+                    <BattleComponent
+                        bossData={bossBattleData}
+                        onEndBattle={() => {
+                            setInBattle(false);
+                            worldScene?.endBattle();
                         }}
-                        onHideQuest={() => {
-                            setInQuest(undefined);
-                            worldScene?.hideQuest();
-                        }}
-                        questUid={inQuest.uid}
-                        questDescription={inQuest.description}
-                        questState={inQuest.state}
                     />
                 )}
-            </div>
-            {inBattle && (
-                <BattleComponent
-                    bossData={bossBattleData}
-                    onEndBattle={() => {
-                        setInBattle(false);
-                        worldScene?.endBattle();
-                    }}
-                />
-            )}
-        </main>
+                {inParty && !inBattle && <PartyComponent />}
+            </main>
+            <nav className="navWrapper">
+                <div onClick={() => setInParty(false)} className="navItem">
+                    World
+                </div>
+                <div onClick={() => setInParty(!inParty)} className="navItem">
+                    Party
+                </div>
+                <div onClick={() => console.log('TODO - inventory')} className="navItem">
+                    Inventory
+                </div>
+                <div onClick={() => console.log('TODO - inventory')} className="navItem">
+                    Account
+                </div>
+            </nav>
+        </>
     );
 };

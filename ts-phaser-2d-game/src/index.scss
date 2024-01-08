@@ -23,10 +23,20 @@ body {
 
 * {
     box-sizing: border-box;
+    user-select: none;
+    pointer-events: fill;
 }
 
 p {
     margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.action {
+    cursor: pointer;
 }
 
 .gameWrapper {
@@ -37,6 +47,30 @@ p {
     align-items: center;
 }
 
-.hidden {
-    display: none;
+.navWrapper {
+    margin: 1rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.navItem {
+    width: 120px;
+    text-align: center;
+    font-size: 22px;
+    color: #242424;
+    background: rgba(255, 255, 255, 0.87);
+    border-radius: 4px;
+    opacity: 0.8;
+    transition: all 1s;
+
+    &:hover {
+        cursor: pointer;
+        opacity: 1;
+    }
+}
+
+#sceneWrapper {
+    height: 600px;
 }
