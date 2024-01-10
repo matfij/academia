@@ -1,8 +1,9 @@
-import { Character } from '../../shared/types';
+import { Character, CharacterClass } from '../../shared/types';
 
 export const CHARACTER_1: Character = {
     uid: 'character-1',
     name: 'Maillard',
+    class: CharacterClass.Warrior,
     baseStatistics: {
         speed: 20,
         health: 400,
@@ -16,6 +17,7 @@ export const CHARACTER_1: Character = {
 export const CHARACTER_2: Character = {
     uid: 'character-2',
     name: 'Partitio',
+    class: CharacterClass.Hunter,
     baseStatistics: {
         speed: 30,
         health: 360,
@@ -29,6 +31,7 @@ export const CHARACTER_2: Character = {
 export const CHARACTER_3: Character = {
     uid: 'character-3',
     name: 'Amerika',
+    class: CharacterClass.Wizzard,
     baseStatistics: {
         speed: 25,
         health: 250,
@@ -42,6 +45,7 @@ export const CHARACTER_3: Character = {
 export const CHARACTER_4: Character = {
     uid: 'character-4',
     name: 'Antoha',
+    class: CharacterClass.Hunter,
     baseStatistics: {
         speed: 40,
         health: 300,
@@ -55,6 +59,7 @@ export const CHARACTER_4: Character = {
 export const CHARACTER_5: Character = {
     uid: 'character-5',
     name: 'Oshikko',
+    class: CharacterClass.Warrior,
     baseStatistics: {
         speed: 30,
         health: 200,
@@ -68,6 +73,7 @@ export const CHARACTER_5: Character = {
 export const CHARACTER_6: Character = {
     uid: 'character-6',
     name: 'Nikka',
+    class: CharacterClass.Hunter,
     baseStatistics: {
         speed: 45,
         health: 300,

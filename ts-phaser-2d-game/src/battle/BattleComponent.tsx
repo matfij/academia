@@ -253,10 +253,10 @@ export const BattleComponent = ({ bossData, onEndBattle }: BattleComponentProps)
                         {selectedAlly &&
                             selectedAlly.moves.map((move) => (
                                 <TooltipComponent
+                                    key={move.uid}
                                     content={
                                         <button
                                             onClick={() => onMoveSelection(move)}
-                                            key={move.uid}
                                             className={`${style.moveItem} ${
                                                 move.uid === selectedAlly?.selectedMove.uid
                                                     ? style.selectedMoveItem
