@@ -1,3 +1,4 @@
+import { ITEM_CONSUMABLE_1, ITEM_MATERIAL_1, ITEM_WEAPON_1 } from '../../items/items';
 import { CharacterClass } from '../../shared/types';
 import { Enemy } from '../types';
 
@@ -10,6 +11,7 @@ export const ENEMY_1: Enemy = {
         health: 50,
     },
     moves: [{ uid: 'move-01', name: 'Small Bash', damage: 10 }],
+    loots: [{ itemUid: ITEM_MATERIAL_1.uid, itemName: ITEM_MATERIAL_1.name, chance: 0.3 }],
 };
 
 export const ENEMY_2: Enemy = {
@@ -21,6 +23,7 @@ export const ENEMY_2: Enemy = {
         health: 90,
     },
     moves: [{ uid: 'move-02', name: 'Slow Slash', damage: 20 }],
+    loots: [{ itemUid: ITEM_MATERIAL_1.uid, itemName: ITEM_MATERIAL_1.name, chance: 0.4 }],
 };
 
 export const ENEMY_3: Enemy = {
@@ -32,6 +35,7 @@ export const ENEMY_3: Enemy = {
         health: 80,
     },
     moves: [{ uid: 'move-03', name: 'Mellow Pierce', damage: 15 }],
+    loots: [{ itemUid: ITEM_MATERIAL_1.uid, itemName: ITEM_MATERIAL_1.name, chance: 0.4 }],
 };
 
 export const ENEMY_4: Enemy = {
@@ -43,6 +47,7 @@ export const ENEMY_4: Enemy = {
         health: 500,
     },
     moves: [{ uid: 'move-04', name: 'Carpe Diem', damage: 200 }],
+    loots: [{ itemUid: ITEM_WEAPON_1.uid, itemName: ITEM_WEAPON_1.name, chance: 0.1 }],
 };
 
 export const ENEMY_5: Enemy = {
@@ -54,7 +59,8 @@ export const ENEMY_5: Enemy = {
         health: 70,
     },
     moves: [{ uid: 'move-01', name: 'Small Bash', damage: 15 }],
-}
+    loots: [{ itemUid: ITEM_MATERIAL_1.uid, itemName: ITEM_MATERIAL_1.name, chance: 0.3 }],
+};
 
 export const ENEMY_6: Enemy = {
     uid: 'enemy-1-6',
@@ -65,7 +71,8 @@ export const ENEMY_6: Enemy = {
         health: 300,
     },
     moves: [{ uid: 'move-01', name: 'Brave Bird', damage: 50 }],
-}
+    loots: [{ itemUid: ITEM_MATERIAL_1.uid, itemName: ITEM_MATERIAL_1.name, chance: 0.5 }],
+};
 
 export const ENEMY_7: Enemy = {
     uid: 'enemy-1-7',
@@ -76,7 +83,8 @@ export const ENEMY_7: Enemy = {
         health: 350,
     },
     moves: [{ uid: 'move-01', name: 'Spiral Slash', damage: 30 }],
-}
+    loots: [],
+};
 
 export const ENEMY_X_1: Enemy = {
     uid: 'enemy-x-1',
@@ -87,4 +95,5 @@ export const ENEMY_X_1: Enemy = {
         health: 2500,
     },
     moves: [{ uid: 'move-01', name: 'Daybreak', damage: 150 }],
+    loots: [{ itemUid: ITEM_CONSUMABLE_1.uid, itemName: ITEM_CONSUMABLE_1.name, chance: 1 }],
 };

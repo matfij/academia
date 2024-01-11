@@ -1,4 +1,4 @@
-import { BattleEnemy } from '../enemies/types';
+import { BattleEnemy, Loot } from '../enemies/types';
 import { BattleMove } from '../moves/types';
 import { BattleAlly } from '../party/types';
 
@@ -41,4 +41,5 @@ export type BattleResult = {
     victory: boolean;
     experience: number;
     gold: number;
+    loots: Loot[];
 };

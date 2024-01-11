@@ -291,6 +291,16 @@ export const BattleComponent = ({ bossData, onEndBattle }: BattleComponentProps)
                             <hr />
                             <p className={style.lootLabel}>Experience: {battleResult.experience}</p>
                             <p className={style.lootLabel}>Gold: {battleResult.gold}</p>
+                            {battleResult.loots.length && (
+                                <p className={style.lootLabel} style={{ marginTop: '10px' }}>
+                                    Obtained items:
+                                </p>
+                            )}
+                            {battleResult.loots.map((loot, lootIndex) => (
+                                <li key={lootIndex} className={style.lootLabelSmall}>
+                                    {loot.itemName}
+                                </li>
+                            ))}
                         </>
                     ) : (
                         <>

@@ -4,6 +4,7 @@ import { BattleAlly } from '../party/types';
 import { QuestManager } from '../quests/QuestManager';
 import { getMoveValueSpread, getRandomItem } from '../shared/math';
 import { Character } from '../shared/types';
+import { BattleResultsManager } from './BattleResultsManager';
 import { BattleAction, BattleStatistics } from './types';
 
 export class BattleManager {
@@ -44,12 +45,16 @@ export class BattleManager {
                         .filter((c) => c.alive)
                         .find((c) => c.id === action.targetId);
                     if (move && target) {
-                        turnResults.push(...this.executeAllyTurn({ ally: character, move, target }));
+                        turnResults.push(
+                            ...this.executeAllyTurn({ ally: character as BattleAlly, move, target }),
+                        );
                     } else {
                         // Invalid move or dead target
                     }
                 } else {
-                    turnResults.push(...this.executeEnemyTurn({ enemy: character, allies: this.allies }));
+                    turnResults.push(
+                        ...this.executeEnemyTurn({ enemy: character as BattleEnemy, allies: this.allies }),
+                    );
                 }
             });
         this.turnNumber++;
@@ -57,8 +62,9 @@ export class BattleManager {
         if (this.enemies.filter((e) => e.alive).length === 0) {
             battleResult = {
                 victory: true,
-                experience: this.calculateExperienceGain({ enemies: this.enemies }),
-                gold: this.calculateGoldGain({ enemies: this.enemies }),
+                experience: BattleResultsManager.calculateExperienceGain({ enemies: this.enemies }),
+                gold: BattleResultsManager.calculateGoldGain({ enemies: this.enemies }),
+                loots: BattleResultsManager.getLoots({ enemies: this.enemies }),
             };
             this.enemies.forEach((e) => {
                 QuestManager.updateKillQuestProgress({ enemyUid: e.uid, amount: 1 });
@@ -68,6 +74,7 @@ export class BattleManager {
                 victory: false,
                 experience: 0,
                 gold: 0,
+                loots: [],
             };
         }
         return {
@@ -133,19 +140,5 @@ export class BattleManager {
                 moveValue: inflictedDamage,
             },
         ];
-    }
-
-    private static calculateExperienceGain({ enemies }: { enemies: Character[] }) {
-        return +enemies
-            .map((e) => e.baseStatistics.health)
-            .reduce((sum, curr) => sum + curr / 10)
-            .toFixed(1);
-    }
-
-    private static calculateGoldGain({ enemies }: { enemies: Character[] }) {
-        return +enemies
-            .map((e) => e.baseStatistics.health)
-            .reduce((sum, curr) => sum + curr / 30)
-            .toFixed(1);
     }
 }

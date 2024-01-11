@@ -44,4 +44,18 @@ export class InventoryManager {
             });
         return [...items];
     }
+
+    public static appendItem({ uid, quantity = 1 }: { uid: string; quantity?: number }) {
+        const item = this.items.find((i) => i.itemUid === uid);
+        // should all items be stackable?
+        if (item) {
+            item.quantity += quantity;
+        } else {
+            this.items.push({
+                id: uuid(),
+                itemUid: uid,
+                quantity: quantity,
+            });
+        }
+    }
 }
