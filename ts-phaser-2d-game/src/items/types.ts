@@ -29,3 +29,14 @@ export type ItemStatistics = {
     criticalChance?: number;
     criticalPower?: number;
 };
+
+export type UserItem = {
+    id: string;
+    itemUid: string;
+    quantity: number;
+};
+
+export type DisplayItem = Item & {
+    id: string;
+    quantity: number;
+};

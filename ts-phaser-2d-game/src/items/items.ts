@@ -16,7 +16,7 @@ export const ITEM_MATERIAL_1: Item = {
 };
 
 export const ITEM_CONSUMABLE_1: Item = {
-    uid: 'item-c-1',
+    uid: 'item-con-1',
     name: 'Ultra Divine Water',
     description: 'Permanently increases all base statistics by 10',
     type: ItemType.Consumable,
@@ -65,7 +65,7 @@ export const ITEM_WEAPON_3: Item = {
 export const ITEM_ARMOR_1: Item = {
     uid: 'item-a-1',
     name: 'Plate Armor',
-    type: ItemType.Weapon,
+    type: ItemType.Armor,
     imageUrl: 'armor-icon.png',
     levelRequired: 3,
     statistics: {
@@ -77,11 +77,11 @@ export const ITEM_ARMOR_1: Item = {
 export const ITEM_CHARM_1: Item = {
     uid: 'item-c-1',
     name: 'Ring of Brilliance',
-    type: ItemType.Weapon,
+    type: ItemType.Charm,
     imageUrl: 'charm-icon.png',
     levelRequired: 3,
     statistics: {
         mana: 25,
-        criticalChance: 5
+        speed: 5
     },
 };

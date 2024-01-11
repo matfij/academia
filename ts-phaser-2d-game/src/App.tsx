@@ -6,6 +6,7 @@ import { QuestComponent } from './quests/QuestComponent';
 import { WorldManager } from './world/WorldManager';
 import { TileBossData } from './world/types';
 import { PartyComponent } from './party/PartyComponent';
+import { InventoryComponent } from './items/InventoryComponent';
 
 export const App = () => {
     const [worldScene, setWorldScene] = useState<WorldScene | undefined>();
@@ -13,6 +14,7 @@ export const App = () => {
     const [bossBattleData, setBossBattleData] = useState<TileBossData | undefined>();
     const [inQuest, setInQuest] = useState<QuestStatus | undefined>();
     const [inParty, setInParty] = useState(false);
+    const [inInventory, setInInventory] = useState(false);
 
     useEffect(() => {
         const scene = new WorldScene({
@@ -45,7 +47,7 @@ export const App = () => {
         <>
             <main className="gameWrapper">
                 <h2>Headwind</h2>
-                <div id="sceneWrapper" className={inBattle || inParty ? 'hidden' : ''}>
+                <div id="sceneWrapper" className={inBattle || inParty || inInventory ? 'hidden' : ''}>
                     {inQuest && (
                         <QuestComponent
                             onUpdateMap={() => {
@@ -71,15 +73,22 @@ export const App = () => {
                     />
                 )}
                 {inParty && !inBattle && <PartyComponent />}
+                {inInventory && !inBattle && <InventoryComponent />}
             </main>
             <nav className="navWrapper">
-                <div onClick={() => setInParty(false)} className="navItem">
+                <div
+                    onClick={() => {
+                        setInParty(false);
+                        setInInventory(false);
+                    }}
+                    className="navItem"
+                >
                     World
                 </div>
                 <div onClick={() => setInParty(!inParty)} className="navItem">
                     Party
                 </div>
-                <div onClick={() => console.log('TODO - inventory')} className="navItem">
+                <div onClick={() => setInInventory(!inInventory)} className="navItem">
                     Inventory
                 </div>
                 <div onClick={() => console.log('TODO - inventory')} className="navItem">
