@@ -1,3 +1,5 @@
+
+import { Loot } from '../items/types';
 import { MapLocation } from '../world/types';
 
 export type Quest = {
@@ -6,6 +8,10 @@ export type Quest = {
     steps: QuestSetp[];
     questsRequired: Quest[];
     startLocation: MapLocation;
+    awards: {
+        gold: number;
+        loots: Loot[];
+    }
 };
 
 export enum QuestState {

@@ -1,0 +1,15 @@
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\bin\Debug\net8.0\CSBasics.exe
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\bin\Debug\net8.0\CSBasics.deps.json
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\bin\Debug\net8.0\CSBasics.runtimeconfig.json
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\bin\Debug\net8.0\CSBasics.dll
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\bin\Debug\net8.0\CSBasics.pdb
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\CSBasics.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\CSBasics.AssemblyInfoInputs.cache
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\CSBasics.AssemblyInfo.cs
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\CSBasics.csproj.CoreCompileInputs.cache
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\CSBasics.sourcelink.json
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\CSBasics.dll
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\refint\CSBasics.dll
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\CSBasics.pdb
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\CSBasics.genruntimeconfig.cache
+C:\Users\mateu\Desktop\Code\academia\adsk-cs-dot-net\CSBasics\CSBasics\obj\Debug\net8.0\ref\CSBasics.dll

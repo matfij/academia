@@ -7,7 +7,7 @@ import {
     ITEM_WEAPON_1,
     ITEM_WEAPON_2,
     ITEM_WEAPON_3,
-} from './items';
+} from './items/items';
 
 export const ALL_ITEM_QUEST = [ITEM_QUEST_1];
 

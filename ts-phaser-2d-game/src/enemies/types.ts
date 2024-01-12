@@ -1,15 +1,11 @@
 import { BattleCharacter } from '../battle/types';
+import { Loot } from '../items/types';
 import { Character } from '../shared/types';
 
 export type Enemy = Character & {
     loots: Loot[];
 };
 
-export type Loot = {
-    itemUid: string;
-    itemName: string;
-    chance: number;
-};
 
 export type Boss = {
     uid: string;

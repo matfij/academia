@@ -1,5 +1,6 @@
-import { Enemy, Loot } from '../enemies/types';
+import { Enemy } from '../enemies/types';
 import { InventoryManager } from '../items/InventoryManager';
+import { Loot } from '../items/types';
 import { chance } from '../shared/math';
 
 export class BattleResultsManager {

@@ -1,4 +1,5 @@
 import { ENEMY_1, ENEMY_2 } from '../../enemies/enemies/enemies';
+import { ITEM_ARMOR_1 } from '../../items/items/items';
 import { MAP_1 } from '../../world/maps/map-1';
 import { Quest } from '../types';
 
@@ -53,4 +54,8 @@ export const QUEST_1: Quest = {
             itemsRequired: [],
         },
     ],
+    awards: {
+        gold: 100,
+        loots: [{ itemUid: ITEM_ARMOR_1.uid, itemName: ITEM_ARMOR_1.name, chance: 1 }],
+    },
 };

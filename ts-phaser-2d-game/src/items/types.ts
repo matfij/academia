@@ -30,6 +30,12 @@ export type ItemStatistics = {
     criticalPower?: number;
 };
 
+export type Loot = {
+    itemUid: string;
+    itemName: string;
+    chance: number;
+};
+
 export type UserItem = {
     id: string;
     itemUid: string;

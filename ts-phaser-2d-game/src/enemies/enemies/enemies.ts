@@ -1,4 +1,4 @@
-import { ITEM_CONSUMABLE_1, ITEM_MATERIAL_1, ITEM_WEAPON_1 } from '../../items/items';
+import { ITEM_CONSUMABLE_1, ITEM_MATERIAL_1, ITEM_WEAPON_1 } from '../../items/items/items';
 import { CharacterClass } from '../../shared/types';
 import { Enemy } from '../types';
 

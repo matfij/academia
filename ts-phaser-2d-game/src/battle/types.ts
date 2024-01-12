@@ -1,4 +1,5 @@
-import { BattleEnemy, Loot } from '../enemies/types';
+import { BattleEnemy } from '../enemies/types';
+import { Loot } from '../items/types';
 import { BattleMove } from '../moves/types';
 import { BattleAlly } from '../party/types';
 
