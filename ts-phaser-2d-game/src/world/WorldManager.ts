@@ -1,6 +1,6 @@
 import { QuestManager } from '../quests/QuestManager';
-import { chance } from '../shared/math';
-import { comparePositions, currentDate } from '../shared/utils';
+import { chance } from '../.shared/math';
+import { comparePositions, currentDate } from '../.shared/utils';
 import { EncounterManager } from './EncounterManager';
 import { getMap } from './all-maps';
 import { MAP_1 } from './maps/map-1';

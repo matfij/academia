@@ -4,14 +4,14 @@ import { PartyManager } from '../party/PartyManager';
 import { WorldManager } from '../world/WorldManager';
 import { EncounterManager } from '../world/EncounterManager';
 import { BattleManager } from './BattleManager';
-import { uuid } from '../shared/utils';
+import { uuid } from '../.shared/utils';
 import { AdventureMap, TileBossData } from '../world/types';
 import { ALL_MAPS } from '../world/all-maps';
 import { BattleAction, BattleResult, DisplayAlly, DisplayEnemy, TurnStatus } from './types';
 import { BattleMove } from '../moves/types';
 import { BattleEnemy } from '../enemies/types';
 import { BattleAlly } from '../party/types';
-import { TooltipComponent } from '../shared/TooltipComponent';
+import { TooltipComponent } from '../.shared/TooltipComponent';
 
 type BattleComponentProps = {
     bossData?: TileBossData;

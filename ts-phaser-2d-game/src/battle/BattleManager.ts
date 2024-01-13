@@ -2,23 +2,14 @@ import { BattleEnemy } from '../enemies/types';
 import { BattleMove } from '../moves/types';
 import { BattleAlly } from '../party/types';
 import { QuestManager } from '../quests/QuestManager';
-import { getMoveValueSpread, getRandomItem } from '../shared/math';
-import { Character } from '../shared/types';
+import { getMoveValueSpread, getRandomItem } from '../.shared/math';
 import { BattleResultsManager } from './BattleResultsManager';
-import { BattleAction, BattleStatistics } from './types';
+import { BattleAction } from './types';
 
 export class BattleManager {
     private static turnNumber = 0;
     private static allies: BattleAlly[] = [];
     private static enemies: BattleEnemy[] = [];
-
-    public static getBattleStatistics({ character }: { character: Character }) {
-        return {
-            health: character.baseStatistics.health,
-            maxHealth: character.baseStatistics.health,
-            speed: character.baseStatistics.speed,
-        } as BattleStatistics;
-    }
 
     public static startBattle({ allies, enemies }: { allies: BattleAlly[]; enemies: BattleEnemy[] }) {
         this.turnNumber = 0;
@@ -62,9 +53,12 @@ export class BattleManager {
         if (this.enemies.filter((e) => e.alive).length === 0) {
             battleResult = {
                 victory: true,
-                experience: BattleResultsManager.calculateExperienceGain({ enemies: this.enemies }),
-                gold: BattleResultsManager.calculateGoldGain({ enemies: this.enemies }),
-                loots: BattleResultsManager.getLoots({ enemies: this.enemies }),
+                experience: BattleResultsManager.awardExperience({
+                    enemies: this.enemies,
+                    allies: this.allies,
+                }),
+                gold: BattleResultsManager.awardGold({ enemies: this.enemies }),
+                loots: BattleResultsManager.awardLoots({ enemies: this.enemies }),
             };
             this.enemies.forEach((e) => {
                 QuestManager.updateKillQuestProgress({ enemyUid: e.uid, amount: 1 });

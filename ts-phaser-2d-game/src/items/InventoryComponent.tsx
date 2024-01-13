@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import style from './InventoryComponent.module.scss';
 import { InventoryManager } from './InventoryManager';
 import { DisplayItem } from './types';
-import { TooltipComponent } from '../shared/TooltipComponent';
+import { TooltipComponent } from '../.shared/TooltipComponent';
 
 export const InventoryComponent = () => {
     const [items, setItems] = useState<DisplayItem[]>([]);

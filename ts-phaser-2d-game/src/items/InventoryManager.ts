@@ -1,4 +1,4 @@
-import { uuid } from '../shared/utils';
+import { uuid } from '../.shared/utils';
 import { getItem } from './all-items';
 import { UserItem } from './types';
 

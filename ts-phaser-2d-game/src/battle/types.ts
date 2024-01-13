@@ -11,7 +11,13 @@ export type BattleCharacter = {
 export type BattleStatistics = {
     maxHealth: number;
     health: number;
+    maxMana: number;
+    mana: number;
     speed: number;
+    physicalDef: number;
+    physicalAtk: number;
+    criticalChance: number;
+    criticalPower: number;
 };
 
 export type DisplayCharacter = {

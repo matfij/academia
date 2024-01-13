@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createMarkup } from '../shared/utils';
+import { createMarkup } from '../.shared/utils';
 import style from './QuestComponent.module.scss';
 import { QuestManager } from './QuestManager';
 import { QuestState } from './types';

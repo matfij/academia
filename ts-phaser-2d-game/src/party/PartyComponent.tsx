@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Ally } from './types';
 import { PartyManager } from './PartyManager';
 import { PARTY_INDEXES, PARTY_SIZE_MAX, PARTY_SIZE_MIN } from '../config';
-import { TooltipComponent } from '../shared/TooltipComponent';
+import { TooltipComponent } from '../.shared/TooltipComponent';
 
 export const PartyComponent = () => {
     const [party, setParty] = useState<Ally[]>([]);

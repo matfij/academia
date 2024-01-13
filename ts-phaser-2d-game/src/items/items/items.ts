@@ -1,4 +1,4 @@
-import { CharacterClass } from '../../shared/types';
+import { CharacterClass } from '../../.shared/types';
 import { Item, ItemType } from '../types';
 
 export const ITEM_QUEST_1: Item = {

@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { WorldManager } from './WorldManager';
-import { AudioManager } from '../shared/AudioManager';
+import { AudioManager } from '../.shared/AudioManager';
 import { Direction, DisplayTile, Tile, TileBossData, TileType } from './types';
 import { QuestStatus } from '../quests/types';
 

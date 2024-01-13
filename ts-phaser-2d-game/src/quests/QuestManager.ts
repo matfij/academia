@@ -1,6 +1,6 @@
 import { getEnemy } from '../enemies/all-enemies';
-import { Point } from '../shared/types';
-import { comparePositions } from '../shared/utils';
+import { Point } from '../.shared/types';
+import { comparePositions } from '../.shared/utils';
 import { ALL_QUESTS, getQuest } from './all-quests';
 import { QuestState, QuestStepItemProgress, QuestStepKillProgress } from './types';
 

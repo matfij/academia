@@ -12,3 +12,7 @@ export const getRandomItem = <T>(array: T[]) => {
 export const chance = (chance: number) => {
     return chance > Math.random();
 };
+
+export const spread = (min: number, max: number) => {
+    return min + Math.random() * (max - min);
+};

@@ -1,8 +1,8 @@
-import { BattleManager } from '../battle/BattleManager';
 import { getBoss, getEnemy } from '../enemies/all-enemies';
 import { BattleEnemy } from '../enemies/types';
-import { currentDate, uuid } from '../shared/utils';
+import { currentDate, uuid } from '../.shared/utils';
 import { AdventureMap, Encounter } from './types';
+import { BattleStatisticsManager } from '../battle/BattleStatisticsManager';
 
 export class EncounterManager {
     private static bossCooldown: Record<string, number> = {};
@@ -18,7 +18,7 @@ export class EncounterManager {
                 ...enemy,
                 id: uuid(),
                 alive: true,
-                battleStatistics: BattleManager.getBattleStatistics({ character: enemy }),
+                battleStatistics: BattleStatisticsManager.getEnemyStatistics({ enemy }),
             };
         });
         this.bossCooldown[bossData.uid] = currentDate() + bossData.cooldownMS;
@@ -38,7 +38,7 @@ export class EncounterManager {
                 ...enemy,
                 id: uuid(),
                 alive: true,
-                battleStatistics: BattleManager.getBattleStatistics({ character: enemy }),
+                battleStatistics: BattleStatisticsManager.getEnemyStatistics({ enemy }),
             };
         });
         return enemies;

@@ -1,4 +1,4 @@
-import { CharacterClass } from '../shared/types';
+import { CharacterClass } from '../.shared/types';
 
 export type Item = {
     uid: string;
