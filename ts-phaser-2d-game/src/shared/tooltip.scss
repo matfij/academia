@@ -1,18 +1,18 @@
 .tooltipContainer {
     width: 100%;
     height: fit-content;
-    position: relative;
     display: inline-block;
 }
 
 .tooltipWrapper {
     width: 100%;
-    position: absolute;
+    position: fixed;
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
     background-color: #333;
     color: #fff;
+    border: 2px solid white;
     padding: 8px;
     border-radius: 8px;
     font-size: 14px;

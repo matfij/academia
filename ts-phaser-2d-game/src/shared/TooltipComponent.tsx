@@ -1,8 +1,11 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 
 type TooltipConfig = {
     containerWidth?: string;
-    hintWidth?: string;
+    width?: string;
+    top?: string;
+    left?: string;
+    transform?: string;
 };
 
 type TooltipComponentProps = {
@@ -13,10 +16,14 @@ type TooltipComponentProps = {
 
 const DEFAULT_CONFIG: TooltipConfig = {
     containerWidth: 'fit-content',
-    hintWidth: '400px',
+    width: '400px',
+    top: '110%',
+    left: '50%',
+    transform: 'translateX(-50%)',
 };
 
 export const TooltipComponent = ({ content, hint, config }: TooltipComponentProps) => {
+    const hintRef = useRef<HTMLDivElement>(null);
     const [cssConfig, setCssConfig] = useState(DEFAULT_CONFIG);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -28,6 +35,18 @@ export const TooltipComponent = ({ content, hint, config }: TooltipComponentProp
         setIsVisible(true);
     };
 
+    const handleMouseMove = ({clientX, clientY}: MouseEvent) => {
+        const translateX = clientX > window.innerWidth / 2 ? '-110%' : '10%';
+        const translateY = clientY > window.innerHeight / 2 ? '-110%' : '10%';
+
+        setCssConfig((oldConfig) => ({
+            ...oldConfig,
+            top: `${clientY}px`,
+            left: `${clientX}px`,
+            transform: `translateX(${translateX}) translateY(${translateY})`,
+        }));
+    };
+
     const handleMouseLeave = () => {
         setIsVisible(false);
     };
@@ -36,12 +55,13 @@ export const TooltipComponent = ({ content, hint, config }: TooltipComponentProp
         <div
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onMouseMove={(e) => handleMouseMove(e)}
             className="tooltipContainer"
             style={{ width: cssConfig.containerWidth }}
         >
             {content}
             {isVisible && (
-                <div className="tooltipWrapper" style={{ width: cssConfig.hintWidth }}>
+                <div ref={hintRef} className="tooltipWrapper" style={cssConfig}>
                     {hint}
                 </div>
             )}

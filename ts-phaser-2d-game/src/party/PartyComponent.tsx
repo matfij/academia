@@ -68,7 +68,7 @@ export const PartyComponent = () => {
                                             <TooltipComponent
                                                 content={<span className="action">👁️</span>}
                                                 hint={getAllyDescription(ally)}
-                                                config={{ hintWidth: '300px' }}
+                                                config={{ width: '300px' }}
                                             />{' '}
                                             |{' '}
                                             <span
@@ -97,7 +97,7 @@ export const PartyComponent = () => {
                                 <TooltipComponent
                                     content={<span className="action">👁️</span>}
                                     hint={getAllyDescription(character)}
-                                    config={{ hintWidth: '300px' }}
+                                    config={{ width: '300px' }}
                                 />{' '}
                                 |{' '}
                                 <span onClick={() => addToParty(character.uid)} className="action">
