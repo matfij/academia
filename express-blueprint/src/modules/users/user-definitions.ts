@@ -1,6 +1,10 @@
 export type User = {
     login: string;
     password: string;
+    level: number;
 };
 
-export type UserCreateDto = User;
+export type UserCreateDto = {
+    login: string;
+    password: string;
+};
