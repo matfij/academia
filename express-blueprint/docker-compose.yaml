@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+    server:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '3005:3005'
+        volumes:
+            - .:/app
+            - /app/node_modules
+        env_file:
+            - .env
+
+    db:
+        image: mongo
+        ports:
+            - '27017:27017'
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
