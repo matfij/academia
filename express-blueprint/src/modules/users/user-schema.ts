@@ -1,9 +1,12 @@
-import { Schema, Document, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { User } from './user-definitions';
 import { STARTING_LEVEL } from '../../config/game-config';
 
-const userSchema = new Schema(
+const userSchema = new Schema<User>(
     {
+        id: {
+            type: String,
+        },
         login: {
             type: String,
             required: true,
@@ -17,6 +20,7 @@ const userSchema = new Schema(
             type: Number,
             default: STARTING_LEVEL,
         },
+        items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
     },
     {
         toJSON: {
@@ -29,4 +33,4 @@ const userSchema = new Schema(
     },
 );
 
-export const UserModel = model<User & Document>('User', userSchema);
+export const UserModel = model<User>('User', userSchema);
