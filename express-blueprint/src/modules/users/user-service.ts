@@ -26,4 +26,12 @@ export class UserService {
             level: user.level,
         }));
     }
+
+    public static async readUserById(id: string) {
+        const user = await UserModel.findOne({ id });
+        if (!user) {
+            throw new ApiError({ message: 'errors.userNotFound' });
+        }
+        return user;
+    }
 }

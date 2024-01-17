@@ -4,9 +4,7 @@ import { STARTING_LEVEL } from '../../config/game-config';
 
 const userSchema = new Schema<User>(
     {
-        id: {
-            type: String,
-        },
+        // id mapped from _id
         login: {
             type: String,
             required: true,
@@ -20,7 +18,6 @@ const userSchema = new Schema<User>(
             type: Number,
             default: STARTING_LEVEL,
         },
-        items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
     },
     {
         toJSON: {

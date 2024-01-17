@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { UserService } from './user-service';
 
-export class UsersRouter {
+export class UserRouter {
     private readonly basePath = '/users';
     public readonly router = Router();
 

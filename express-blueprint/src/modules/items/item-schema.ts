@@ -1,13 +1,10 @@
 import { Schema, model } from 'mongoose';
-import { Item, ItemStatistics } from './item-definitions';
+import { Item } from './item-definitions';
 import { BASE_STATISTICS } from '../../config/game-config';
 
 const itemSchema = new Schema<Item>(
     {
-        id: {
-            type: String,
-            required: true,
-        },
+        // id mapped from _id
         name: {
             type: String,
             required: true,
@@ -17,12 +14,12 @@ const itemSchema = new Schema<Item>(
             required: true,
         },
         statistics: {
-            type: ItemStatistics,
+            type: Schema.Types.Mixed, // ItemStatistics
             default: BASE_STATISTICS,
         },
-        user: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        userId: {
+            type: String,
+            required: true,
         },
     },
     {
@@ -36,4 +33,4 @@ const itemSchema = new Schema<Item>(
     },
 );
 
-export const ItemModel = model<Item>('User', itemSchema);
+export const ItemModel = model<Item>('Item', itemSchema);

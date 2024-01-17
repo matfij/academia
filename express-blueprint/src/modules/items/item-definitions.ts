@@ -1,11 +1,9 @@
-import type { User } from '../users/user-definitions';
-
 export type Item = {
     id: string;
     name: string;
     requiredLevel: number;
     statistics: ItemStatistics;
-    user: User;
+    userId: string;
 };
 
 export class ItemStatistics {
@@ -13,3 +11,10 @@ export class ItemStatistics {
     intelligence!: number;
     agility!: number;
 }
+
+export type ItemCreateDto = {
+    userId: string;
+    name: string;
+    requiredLevel: number;
+    statistics?: ItemStatistics;
+};

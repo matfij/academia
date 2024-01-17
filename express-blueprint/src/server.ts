@@ -1,8 +1,10 @@
 import express from 'express';
-import { UsersRouter } from './modules/users/user-router';
+import { UserRouter } from './modules/users/user-router';
+import { ItemRouter } from './modules/items/item-router';
 
 export const app = express();
 
 app.use(express.json());
 
-app.use(new UsersRouter().router);
+app.use(new UserRouter().router);
+app.use(new ItemRouter().router);
