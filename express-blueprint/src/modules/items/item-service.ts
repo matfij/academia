@@ -1,4 +1,4 @@
-import { ItemCreateDto } from './item-definitions';
+import { ItemCreateDto, ItemReadByUserDto } from './item-definitions';
 import { ItemModel } from './item-schema';
 
 export class ItemService {
@@ -11,11 +11,19 @@ export class ItemService {
             statistics: dto.statistics,
             userId: dto.userId,
         });
-        return newItem;
+        return {
+            id: newItem.id,
+            statistics: newItem.statistics,
+            requiredLevel: newItem.requiredLevel,
+        };
     }
 
-    public static async readUserItems(userId: string) {
-        const items = await this.model.find({ userId });
-        return items;
+    public static async readUserItems(dto: ItemReadByUserDto) {
+        const items = await this.model.find({ userId: dto.userId });
+        return items.map((item) => ({
+            id: item.id,
+            statistics: item.statistics,
+            requiredLevel: item.requiredLevel,
+        }));
     }
 }

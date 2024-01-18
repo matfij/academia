@@ -18,3 +18,7 @@ export type ItemCreateDto = {
     requiredLevel: number;
     statistics?: ItemStatistics;
 };
+
+export type ItemReadByUserDto = {
+    userId: string;
+};

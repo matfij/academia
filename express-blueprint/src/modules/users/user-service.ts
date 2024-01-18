@@ -28,8 +28,7 @@ export class UserService {
     }
 
     public static async readUserById(id: string) {
-        console.log(id);
-        const user = await UserModel.findOne({ id });
+        const user = await UserModel.findOne({ _id: id });
         if (!user) {
             throw new ApiError({ message: 'errors.userNotFound' });
         }

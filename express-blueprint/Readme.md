@@ -9,6 +9,7 @@
 -   JWT auth & middleware [TODO]
 -   Local Docker setup [TODO]
 -   Example Production setup (Docker, DB, NGINX) [TODO]
+-   Linter & prettier config
 
 ### Requirements:
 
