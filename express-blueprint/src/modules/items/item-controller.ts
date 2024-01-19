@@ -9,7 +9,7 @@ export class ItemController extends Controller {
         try {
             return await ItemService.createItem(dto);
         } catch (err) {
-            return err;
+            throw err;
         }
     }
 
@@ -18,7 +18,7 @@ export class ItemController extends Controller {
         try {
             return await ItemService.readUserItems(dto);
         } catch (err) {
-            return err;
+            throw err;
         }
     }
 }

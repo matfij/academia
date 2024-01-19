@@ -4,7 +4,7 @@
 
 -   Mongo DB with moongose
 -   Docmented API with TSOA and frontend client generation
--   Custom global error handling [TODO]
+-   Custom global error handling with logging [TODO]
 -   Validation middleware [TODO]
 -   JWT auth & middleware [TODO]
 -   Local Docker setup [TODO]

@@ -9,7 +9,7 @@ export class UserController extends Controller {
         try {
             return await UserService.createUser(dto);
         } catch (err) {
-            return err;
+            throw err;
         }
     }
 
@@ -18,16 +18,16 @@ export class UserController extends Controller {
         try {
             return await UserService.readUsers();
         } catch (err) {
-            return err;
+            throw err;
         }
     }
 
     @Get('{userId}')
-    public async readById(@Path() userId: string) {
+    public async readById(@Path() _: string) {
         try {
-            return await UserService.readUserById(userId);
+            return await UserService.readUserById();
         } catch (err) {
-            return err;
+            throw err;
         }
     }
 }
