@@ -1,15 +1,15 @@
-import { ItemCreateDto, ItemReadByUserDto } from './item-definitions';
+import { ItemCreateDto } from './item-definitions';
 import { ItemModel } from './item-schema';
 
 export class ItemService {
     private static model = ItemModel;
 
-    public static async createItem(dto: ItemCreateDto) {
+    public static async createItem({ userId, dto }: { userId: string; dto: ItemCreateDto }) {
         const newItem = await this.model.create({
             name: dto.name,
             requiredLevel: dto.requiredLevel,
             statistics: dto.statistics,
-            userId: dto.userId,
+            userId: userId,
         });
         return {
             id: newItem.id,
@@ -18,8 +18,8 @@ export class ItemService {
         };
     }
 
-    public static async readUserItems(dto: ItemReadByUserDto) {
-        const items = await this.model.find({ userId: dto.userId });
+    public static async readUserItems({ userId }: { userId: string }) {
+        const items = await this.model.find({ userId });
         return items.map((item) => ({
             id: item.id,
             statistics: item.statistics,

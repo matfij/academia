@@ -5,7 +5,7 @@ import { ApiError, ApiErrorCode } from './api-error';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorMiddleware = (error: Error, req: Request, res: Response, _: NextFunction) => {
     // TODO - add file logger
-    console.log(req.url);
+    console.log(req.url, error.name, error.message, error.stack);
     if (error instanceof ValidateError) {
         // TODO - custom TSOA error message
         return res.status(ApiErrorCode.BadRequest).send({

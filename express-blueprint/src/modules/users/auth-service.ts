@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_EXPIRE, ACCESS_SECRET } from '../../config/app-config';
+import { ACCESS_TOKEN_EXPIRE, ACCESS_TOKEN_SECRET } from '../../config/app-config';
 
 export class AuthService {
     public static generateAccessToken({ userId }: { userId: string }) {
-        return jwt.sign({ userId }, ACCESS_SECRET, {
+        return jwt.sign({ userId }, ACCESS_TOKEN_SECRET, {
             expiresIn: ACCESS_TOKEN_EXPIRE,
         });
     }
 
     public static generateRefreshToken({ userId }: { userId: string }) {
-        return jwt.sign({ userId }, ACCESS_SECRET, {
+        return jwt.sign({ userId }, ACCESS_TOKEN_SECRET, {
             expiresIn: ACCESS_TOKEN_EXPIRE,
         });
     }

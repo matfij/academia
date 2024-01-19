@@ -7,6 +7,7 @@ export enum ApiErrorName {
 
 export enum ApiErrorCode {
     BadRequest = 400,
+    Unauthorized = 401,
 }
 
 export class ApiError extends Error {
