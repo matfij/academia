@@ -7,7 +7,7 @@
 -   Custom global error handling with logging [TODO]
 -   Validation middleware [TODO]
 -   JWT auth & middleware [TODO]
--   Local Docker setup [TODO]
+-   Local Docker setup
 -   Example Production setup (Docker, DB, NGINX) [TODO]
 -   Linter & prettier config
 
