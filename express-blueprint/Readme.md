@@ -6,7 +6,7 @@
 -   Docmented API with TSOA and frontend client generation
 -   Custom global error handling with logging [TODO]
 -   Validation middleware [TODO]
--   JWT auth & middleware [TODO]
+-   JWT auth & middleware
 -   Local Docker setup
 -   Example Production setup (Docker, DB, NGINX) [TODO]
 -   Linter & prettier config
@@ -19,4 +19,4 @@
 
 ### Run:
 
--   docker-compose up
+-   docker compose up

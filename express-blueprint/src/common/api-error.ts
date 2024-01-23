@@ -3,11 +3,13 @@ export enum ApiErrorName {
     NotFound = 'NotFound',
     PermissionDenied = 'PermissionDenied',
     MissingData = 'MissingData',
+    InternalServerError = 'InternalServerError',
 }
 
 export enum ApiErrorCode {
     BadRequest = 400,
     Unauthorized = 401,
+    InternalServerError = 500,
 }
 
 export class ApiError extends Error {

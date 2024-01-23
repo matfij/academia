@@ -18,5 +18,8 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, _: Ne
             message: error.message,
         });
     }
-    process.exit(1);
+    return res.status(ApiErrorCode.InternalServerError).send({
+        message: 'errors.internalServerError',
+        details: error.message,
+    });
 };
