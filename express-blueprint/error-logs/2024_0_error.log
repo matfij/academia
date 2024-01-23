@@ -1,0 +1,8 @@
+
+        2024-01-23T18:52:01.890Z; 
+        /users/; ::ffff:172.21.0.1; 
+        {"login":"test","password":"Złota egida"}; 
+        BadRequest: errors.loginInUse;
+        
+2024-01-23T18:52:37.958Z; /users/; ::ffff:172.21.0.1; {"login":"test","password":"Złota egida"}; BadRequest: errors.loginInUse;
+2024-01-23T18:53:02.884Z; POST; /users/; ::ffff:172.21.0.1; {"login":"test","password":"Złota egida"}; BadRequest: errors.loginInUse;
