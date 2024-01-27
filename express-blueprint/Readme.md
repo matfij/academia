@@ -2,7 +2,7 @@
 
 ### Features:
 
--   Mongo DB with moongose and loosely-coupled repository [TODO]
+-   Mongo DB with moongose and loosely-coupled repository
 -   Docmented API with TSOA and frontend client generation
 -   Custom global error handling with logging
 -   JWT auth & middleware

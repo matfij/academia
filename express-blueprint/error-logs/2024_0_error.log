@@ -16,3 +16,6 @@
 2024-01-27T09:08:33.413Z; GET; /users/xc9wtaub6qphyvra; ::ffff:172.21.0.1; {"login":"admin","password":"secreat"}; BadRequest: errors.userNotFound;
 2024-01-27T09:08:49.063Z; GET; /users/xc9wtaub6qphyvra; ::ffff:172.21.0.1; {"login":"admin","password":"secreat"}; BadRequest: errors.userNotFound;
 2024-01-27T09:08:50.070Z; GET; /users/xc9wtaub6qphyvra; ::ffff:172.21.0.1; {"login":"admin","password":"secreat"}; BadRequest: errors.userNotFound;
+2024-01-27T09:25:43.088Z; POST; /users/; ::ffff:172.21.0.1; {"login":"tester","password":"password"}; BadRequest: errors.loginInUse;
+2024-01-27T09:26:02.414Z; GET; /users/mb39xqx9yn69ylwl; ::ffff:172.21.0.1; {"login":"admin","password":"secreat"}; BadRequest: errors.userNotFound;
+2024-01-27T09:26:43.900Z; POST; /users/login; ::ffff:172.21.0.1; {"login":"tester","password":"password1"}; BadRequest: errors.incorrectCredentials;
