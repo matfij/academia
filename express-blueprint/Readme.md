@@ -2,10 +2,9 @@
 
 ### Features:
 
--   Mongo DB with moongose
+-   Mongo DB with moongose and loosely-coupled repository [TODO]
 -   Docmented API with TSOA and frontend client generation
--   Custom global error handling with logging [TODO]
--   Validation middleware [TODO]
+-   Custom global error handling with logging
 -   JWT auth & middleware
 -   Local Docker setup
 -   Example Production setup (Docker, DB, NGINX) [TODO]

@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ApiError, ApiErrorCode } from './api-error';
+import { ApiError, ApiErrorCode } from './errors/api-error';
 import { ACCESS_TOKEN_SECRET } from '../config/app-config';
 import { AuthRequest } from './types';
 

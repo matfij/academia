@@ -1,7 +1,7 @@
 import express from 'express';
 import { RegisterRoutes } from './.generated/routes';
-import { errorMiddleware } from './common/error-middleware';
-import { ApiError, ApiErrorCode } from './common/api-error';
+import { ApiError, ApiErrorCode } from './common/errors/api-error';
+import { errorMiddleware } from './common/errors/error-middleware';
 
 export const app = express();
 

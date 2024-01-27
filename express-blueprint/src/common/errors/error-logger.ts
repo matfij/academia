@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ERROR_LOGS_BASE_PATH } from '../config/app-config';
+import { ERROR_LOGS_BASE_PATH } from '../../config/app-config';
 
 export class ErrorLogger {
     private static BASE_PATH = ERROR_LOGS_BASE_PATH;

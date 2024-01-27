@@ -1,13 +1,14 @@
-import { ApiError } from '../../common/api-error';
+import { ApiError } from '../../common/errors/api-error';
 import { AuthService } from './auth-service';
 import { UserCreateDto, UserLoginDto } from './user-definitions';
+import { UserRepository } from './user-repository';
 import { UserModel } from './user-schema';
 
 export class UserService {
-    private static UserModel = UserModel;
+    private static repository = UserRepository;
 
     public static async createUser(dto: UserCreateDto) {
-        const existingUser = await this.UserModel.findOne({ login: dto.login });
+        const existingUser = await this.repository.findOneBy({ login: dto.login });
         if (existingUser) {
             throw new ApiError({ message: 'errors.loginInUse' });
         }
@@ -24,7 +25,7 @@ export class UserService {
     }
 
     public static async readUsers() {
-        const users = await UserModel.find();
+        const users = await this.repository.findManyBy();
         return users.map((user) => ({
             id: user.id,
             login: user.login,
@@ -33,7 +34,7 @@ export class UserService {
     }
 
     public static async readUserById(id: string) {
-        const user = await UserModel.findOne({ _id: id });
+        const user = await this.repository.findOneBy({ id });
         if (!user) {
             throw new ApiError({ message: 'errors.userNotFound' });
         }
@@ -45,7 +46,7 @@ export class UserService {
     }
 
     public static async login(dto: UserLoginDto) {
-        const user = await UserModel.findOne({ login: dto.login });
+        const user = await this.repository.findOneBy({ login: dto.login });
         if (!user) {
             throw new ApiError({ message: 'errors.incorrectCredentials' });
         }
