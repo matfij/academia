@@ -6,4 +6,4 @@ export const ACCESS_TOKEN_EXPIRE = 15 * 60 * 1000; // 15min
 export const REFRESH_TOKEN_SECRET = process.env['REFRESH_TOKEN_SECRET']!;
 export const REFRESH_TOKEN_EXPIRE = 48 * 60 * 60 * 1000; // 48h
 
-export const ERROR_LOGS_BASE_PATH = './error-logs';
+export const ERROR_LOGS_BASE_PATH = './.error-logs';

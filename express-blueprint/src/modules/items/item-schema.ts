@@ -1,10 +1,14 @@
 import { Schema, model } from 'mongoose';
 import { Item } from './item-definitions';
 import { BASE_STATISTICS } from '../../config/game-config';
+import { getId } from '../../common/utils';
 
 const itemSchema = new Schema<Item>(
     {
-        // id mapped from _id
+        id: {
+            type: String,
+            default: () => getId(),
+        },
         name: {
             type: String,
             required: true,
@@ -20,15 +24,6 @@ const itemSchema = new Schema<Item>(
         userId: {
             type: String,
             required: true,
-        },
-    },
-    {
-        toJSON: {
-            transform(_, ret) {
-                ret['id'] = ret['_id'];
-                delete ret['_id'];
-                delete ret['__v'];
-            },
         },
     },
 );

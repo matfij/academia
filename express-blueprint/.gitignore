@@ -8,3 +8,4 @@ coverage/
 data
 
 .generated
+.error-logs
