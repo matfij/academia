@@ -7,12 +7,12 @@
         "dev": "ts-node-dev --respawn --poll src/index.ts",
         "build": "tsoa spec-and-routes && tsc",
         "lint": "eslint src/**",
-        "gen-api-routes": "tsoa routes",
-        "gen-api-spec": "tsoa spec",
-        "gen-api-client": "openapi-generator-cli generate -i src/.generated/swagger.json -g typescript-fetch -o .generated"
+        "gen-api": "tsoa routes && tsoa spec",
+        "gen-client": "rimraf .generated && openapi-generator-cli generate -i src/common/api/swagger.json -g typescript-fetch -o .generated"
     },
     "dependencies": {
         "bcrypt": "^5.1.1",
+        "cors": "^2.8.5",
         "express": "^4.18.2",
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.0.4",
@@ -20,12 +20,14 @@
     },
     "devDependencies": {
         "@types/bcrypt": "^5.0.2",
+        "@types/cors": "^2.8.17",
         "@types/express": "^4.17.21",
         "@types/jsonwebtoken": "^9.0.5",
         "@types/node": "^20.11.5",
         "@typescript-eslint/eslint-plugin": "^6.18.1",
         "@typescript-eslint/parser": "^6.18.1",
         "eslint": "^8.56.0",
+        "rimraf": "^5.0.5",
         "ts-node-dev": "^2.0.0",
         "typescript": "^5.3.3"
     }

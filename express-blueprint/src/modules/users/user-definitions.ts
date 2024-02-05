@@ -16,12 +16,9 @@ export type UserAuthDto = UserDto & {
     refreshToken: string;
 };
 
-export type UserCreateDto = {
+export type UserSignupDto = {
     login: string;
     password: string;
 };
 
-export type UserLoginDto = {
-    login: string;
-    password: string;
-}
+export type UserSigninDto = UserSignupDto;

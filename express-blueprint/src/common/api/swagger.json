@@ -1,0 +1,337 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"UserDto": {
+				"properties": {
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"login": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"level",
+					"login",
+					"id"
+				],
+				"type": "object"
+			},
+			"UserSignupDto": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"login": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"login"
+				],
+				"type": "object"
+			},
+			"UserAuthDto": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/UserDto"
+					},
+					{
+						"properties": {
+							"refreshToken": {
+								"type": "string"
+							},
+							"accessToken": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"refreshToken",
+							"accessToken"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"UserSigninDto": {
+				"$ref": "#/components/schemas/UserSignupDto"
+			},
+			"ItemStatistics": {
+				"properties": {
+					"strength": {
+						"type": "number",
+						"format": "double"
+					},
+					"intelligence": {
+						"type": "number",
+						"format": "double"
+					},
+					"agility": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"strength",
+					"intelligence",
+					"agility"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ItemCreateDto": {
+				"properties": {
+					"statistics": {
+						"$ref": "#/components/schemas/ItemStatistics"
+					},
+					"requiredLevel": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"requiredLevel",
+					"name"
+				],
+				"type": "object"
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "express-blueprint",
+		"version": "1.0.0",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/users/signup": {
+			"post": {
+				"operationId": "Signup",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserSignupDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/readAll": {
+			"get": {
+				"operationId": "ReadAll",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/UserDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/users/{userId}": {
+			"get": {
+				"operationId": "ReadById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/signin": {
+			"post": {
+				"operationId": "Signin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserAuthDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserSigninDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/items/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"requiredLevel": {
+											"type": "number",
+											"format": "double"
+										},
+										"statistics": {
+											"$ref": "#/components/schemas/ItemStatistics"
+										},
+										"id": {}
+									},
+									"required": [
+										"requiredLevel",
+										"statistics",
+										"id"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Items"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ItemCreateDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/items/readByUser": {
+			"get": {
+				"operationId": "ReadByUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"requiredLevel": {
+												"type": "number",
+												"format": "double"
+											},
+											"statistics": {
+												"$ref": "#/components/schemas/ItemStatistics"
+											},
+											"id": {}
+										},
+										"required": [
+											"requiredLevel",
+											"statistics",
+											"id"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Items"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

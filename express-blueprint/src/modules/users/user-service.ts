@@ -1,13 +1,13 @@
 import { ApiError } from '../../common/errors/api-error';
 import { AuthService } from './auth-service';
-import { UserCreateDto, UserLoginDto } from './user-definitions';
+import { UserSignupDto, UserSigninDto } from './user-definitions';
 import { UserRepository } from './user-repository';
 import { UserModel } from './user-schema';
 
 export class UserService {
     private static repository = UserRepository;
 
-    public static async createUser(dto: UserCreateDto) {
+    public static async signup(dto: UserSignupDto) {
         const existingUser = await this.repository.findOneBy({ login: dto.login });
         if (existingUser) {
             throw new ApiError({ message: 'errors.loginInUse' });
@@ -45,7 +45,7 @@ export class UserService {
         };
     }
 
-    public static async login(dto: UserLoginDto) {
+    public static async signin(dto: UserSigninDto) {
         const user = await this.repository.findOneBy({ login: dto.login });
         if (!user) {
             throw new ApiError({ message: 'errors.incorrectCredentials' });

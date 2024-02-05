@@ -1,19 +1,22 @@
-import { Body, Controller, Get, Path, Post, Route } from 'tsoa';
+import { Body, Controller, Get, Middlewares, Path, Post, Route, Tags } from 'tsoa';
 import { UserService } from './user-service';
-import { UserAuthDto, UserCreateDto, UserDto, UserLoginDto } from './user-definitions';
+import { UserAuthDto, UserSignupDto, UserDto, UserSigninDto } from './user-definitions';
+import { authMiddleware } from '../../common/auth-middleware';
 
 @Route('users')
+@Tags('Users')
 export class UserController extends Controller {
-    @Post()
-    public async create(@Body() dto: UserCreateDto): Promise<UserDto> {
+    @Post('signup')
+    public async signup(@Body() dto: UserSignupDto): Promise<UserDto> {
         try {
-            return await UserService.createUser(dto);
+            return await UserService.signup(dto);
         } catch (err) {
             throw err;
         }
     }
 
-    @Get()
+    @Get('readAll')
+    @Middlewares(authMiddleware)
     public async readAll(): Promise<UserDto[]> {
         try {
             return await UserService.readUsers();
@@ -23,6 +26,7 @@ export class UserController extends Controller {
     }
 
     @Get('{userId}')
+    @Middlewares(authMiddleware)
     public async readById(@Path() userId: string): Promise<UserDto> {
         try {
             return await UserService.readUserById(userId);
@@ -31,10 +35,10 @@ export class UserController extends Controller {
         }
     }
 
-    @Post('login')
-    public async login(@Body() dto: UserLoginDto): Promise<UserAuthDto> {
+    @Post('signin')
+    public async signin(@Body() dto: UserSigninDto): Promise<UserAuthDto> {
         try {
-            return await UserService.login(dto);
+            return await UserService.signin(dto);
         } catch (err) {
             throw err;
         }
