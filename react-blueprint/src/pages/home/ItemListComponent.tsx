@@ -3,6 +3,7 @@ import { ItemDto, ItemStatistics } from '../../common/api/generated';
 import { ItemsClient } from '../../common/api/client';
 
 export const ItemListComponent = () => {
+    // TODO - utile new "use" hook when stable
     const [items, setItems] = useState<ItemDto[]>([]);
 
     useEffect(() => {

@@ -5,6 +5,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { HomeComponent } from './pages/home/HomeComponent.tsx';
 import { LoginComponent } from './pages/login/LoginComponent.tsx';
 import { NotFoundComponent } from './common/components/NotFoundComponent.tsx';
+import { ErrorBoundary } from './common/components/ErrorBoundaryComponent.tsx';
+import { ErrorComponent } from './common/components/ErrorComponent.tsx';
 
 const router = createBrowserRouter([
     {
@@ -20,6 +22,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <RouterProvider router={router} />
+        <ErrorBoundary fallback={<ErrorComponent />}>
+            <RouterProvider router={router} />
+        </ErrorBoundary>
     </React.StrictMode>,
 );
