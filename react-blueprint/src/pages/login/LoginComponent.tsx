@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { UsersClient } from '../../common/api/client';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { UserSignupDto } from '../../common/api/generated';
+import { StorageService } from '../../common/services/StorageService';
 
 export const LoginComponent = () => {
     const [formData, setFormData] = useState<UserSignupDto>({
@@ -36,8 +37,8 @@ export const LoginComponent = () => {
         if (checkFormErrors()) {
             return;
         }
-        const res = await UsersClient.signin({ body: formData });
-        console.log(res.accessToken, res.login, res.level);
+        const user = (await UsersClient.signin(formData)).data;
+        StorageService.set({ key: 'user', data: user });
         navigate('home');
     };
 
