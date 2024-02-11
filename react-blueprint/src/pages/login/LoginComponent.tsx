@@ -3,6 +3,7 @@ import { UsersClient } from '../../common/api/client';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { UserSignupDto } from '../../common/api/generated';
 import { StorageService } from '../../common/services/StorageService';
+import { ToastService } from '../../common/services/ToastService';
 
 export const LoginComponent = () => {
     const [formData, setFormData] = useState<UserSignupDto>({
@@ -33,6 +34,7 @@ export const LoginComponent = () => {
     };
 
     const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+        ToastService.success({ text: 'hi there' });
         event.preventDefault();
         if (checkFormErrors()) {
             return;

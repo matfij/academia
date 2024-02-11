@@ -4,7 +4,7 @@
 
 -   react router routing
 -   i18n internationalisation
--   auth interceptor
+-   http interceptors
 -   styled components
 
 ## Requirements

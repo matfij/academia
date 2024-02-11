@@ -1,12 +1,13 @@
 import './common/styles/index.scss';
+// import './common/styles/colors.scss';
+import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { HomeComponent } from './pages/home/HomeComponent.tsx';
 import { LoginComponent } from './pages/login/LoginComponent.tsx';
 import { NotFoundComponent } from './common/components/NotFoundComponent.tsx';
-import { ErrorBoundary } from './common/components/ErrorBoundaryComponent.tsx';
-import { ErrorComponent } from './common/components/ErrorComponent.tsx';
+import { ToastContainer } from 'react-toastify';
 
 const router = createBrowserRouter([
     {
@@ -22,8 +23,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <ErrorBoundary fallback={<ErrorComponent />}>
-            <RouterProvider router={router} />
-        </ErrorBoundary>
+        <RouterProvider router={router} />
+        <ToastContainer />
     </React.StrictMode>,
 );
