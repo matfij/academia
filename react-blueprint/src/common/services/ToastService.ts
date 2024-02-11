@@ -6,7 +6,7 @@ export type ToastOptions = {
 };
 
 export class ToastService {
-    private static readonly DEFAULT_DURATION = 300000;
+    private static readonly DEFAULT_DURATION = 3000;
     private static readonly DEFAULT_POSITION = 'bottom-center';
 
     public static success(options: ToastOptions) {
@@ -18,6 +18,7 @@ export class ToastService {
     }
 
     public static error(options: ToastOptions) {
+        console.log(options)
         toast.error(options.text, {
             autoClose: options.duration || this.DEFAULT_DURATION,
             position: this.DEFAULT_POSITION,

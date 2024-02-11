@@ -34,14 +34,15 @@ export const LoginComponent = () => {
     };
 
     const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
-        ToastService.success({ text: 'hi there' });
         event.preventDefault();
         if (checkFormErrors()) {
             return;
         }
-        const user = (await UsersClient.signin(formData)).data;
-        StorageService.set({ key: 'user', data: user });
-        navigate('home');
+        UsersClient.signin(formData).then((res) => {
+            StorageService.set({ key: 'user', data: res.data });
+            ToastService.success({ text: 'Welcome back!' });
+            navigate('home');
+        });
     };
 
     return (

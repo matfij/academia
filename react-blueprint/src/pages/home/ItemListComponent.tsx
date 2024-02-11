@@ -6,8 +6,10 @@ export const ItemListComponent = () => {
     const [items, setItems] = useState<ItemDto[]>([]);
 
     useEffect(() => {
-        ItemsClient.readByUser().then((data) => {
-            setItems(data.data);
+        ItemsClient.readByUser().then((res) => {
+            if (res) {
+                setItems(res.data);
+            }
         });
     }, []);
 
