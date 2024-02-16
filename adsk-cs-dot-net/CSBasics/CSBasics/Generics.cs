@@ -110,15 +110,15 @@ namespace CSBasics
             this.Author = author;
             this.Title = title;
         }
+    }
 
-        public class Library : Product<Library>
+    public class Library : Product<Library>
+    {
+        public string Name { get; init; }
+
+        public Library(string name)
         {
-            public string Name { get; init; }
-
-            public Library(string name)
-            {
-                this.Name = name;
-            }
+            this.Name = name;
         }
     }
 }
