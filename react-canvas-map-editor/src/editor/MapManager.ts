@@ -1,19 +1,19 @@
-import { TileType } from './types';
+import { MapTileType } from './types';
 
 export class MapManager {
     public static createEmptyMap(rows: number, columns: number) {
-        const emptyMap: TileType[][] = [];
+        const emptyMap: MapTileType[][] = [];
         for (let row = 0; row < rows; row++) {
-            const row: TileType[] = [];
+            const row: MapTileType[] = [];
             for (let col = 0; col < columns; col++) {
-                row.push(TileType.Route);
+                row.push(MapTileType.SafeRoute);
             }
             emptyMap.push(row);
         }
         return emptyMap;
     }
 
-    public static printMap(map: TileType[][], scale: number) {
+    public static printMap(map: MapTileType[][], scale: number) {
         let printedMap = '[';
         for (let row = 0; row < map.length; row++) {
             for (let col = 0; col < map[0].length; col++) {
@@ -22,11 +22,13 @@ export class MapManager {
                     type: map[row][col],
                 };
                 printedMap += `${JSON.stringify(tile)},`
-                    .replace('"Wall"', 'TileType.Wall')
-                    .replace('"Route"', 'TileType.Route')
-                    .replace('"Passage"', 'TileType.Passage')
-                    .replace('"Quest"', 'TileType.Quest')
-                    .replace('"Boss"', 'TileType.Boss');
+                    .replace('"Collision"', 'MapTileType.Collision')
+                    .replace('"Route"', 'MapTileType.Route')
+                    .replace('"SafeRoute"', 'MapTileType.SafeRoute')
+                    .replace('"Passage"', 'MapTileType.Passage')
+                    .replace('"Quest"', 'MapTileType.Quest')
+                    .replace('"Encounter"', 'MapTileType.Encounter')
+                    .replace('"Npc"', 'MapTileType.Npc');
             }
         }
         printedMap += ']';

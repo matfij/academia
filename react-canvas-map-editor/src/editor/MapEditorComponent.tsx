@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, MouseEvent } from 'react';
-import { TileType } from './types';
+import { MapTileType } from './types';
 import { MapManager } from './MapManager';
 
 const TILE_SIZE = 10;
@@ -9,7 +9,7 @@ const COLUMNS = 110;
 export const MapEditorComponent = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [blueprint, setBlueprint] = useState('');
-    const [tileType, setTileType] = useState(TileType.Route);
+    const [tileType, setTileType] = useState(MapTileType.SafeRoute);
     const [map, setMap] = useState(MapManager.createEmptyMap(ROWS, COLUMNS));
     const [isPainting, setIsPainting] = useState(false);
     const [cursorSize, setCursorSize] = useState(1);
@@ -20,7 +20,7 @@ export const MapEditorComponent = () => {
         drawMap(ctx!, map);
     }, [map]);
 
-    const drawMap = (ctx: CanvasRenderingContext2D, map: TileType[][]) => {
+    const drawMap = (ctx: CanvasRenderingContext2D, map: MapTileType[][]) => {
         ctx.clearRect(0, 0, canvasRef!.current!.width, canvasRef!.current!.height);
         map.forEach((row, rowIndex) => {
             row.forEach((tile, colIndex) => {
@@ -30,17 +30,21 @@ export const MapEditorComponent = () => {
         });
     };
 
-    const getTileColor = (type: TileType) => {
+    const getTileColor = (type: MapTileType) => {
         switch (type) {
-            case TileType.Wall:
+            case MapTileType.Collision:
                 return '#808080';
-            case TileType.Passage:
+            case MapTileType.Passage:
                 return '#7cb9e8';
-            case TileType.Quest:
+            case MapTileType.Quest:
                 return '#ffff00';
-            case TileType.Boss:
+            case MapTileType.Encounter:
                 return '#ff7f7f';
-            case TileType.Route:
+            case MapTileType.Npc:
+                return '#c43cbd';
+            case MapTileType.Route:
+                return '#ab8821';
+            case MapTileType.SafeRoute:
             default:
                 return '#66ff99';
         }
@@ -93,20 +97,26 @@ export const MapEditorComponent = () => {
             </div>
             <div className="blueprintWrapper">{blueprint && <img src={blueprint} />}</div>
             <div className="actionWrapper">
-                <div onClick={() => setTileType(TileType.Route)} className="actionItem green">
+                <div onClick={() => setTileType(MapTileType.SafeRoute)} className="actionItem green">
+                    ∎ Safe Route
+                </div>
+                <div onClick={() => setTileType(MapTileType.Route)} className="actionItem orange">
                     ∎ Route
                 </div>
-                <div onClick={() => setTileType(TileType.Wall)} className="actionItem gray">
+                <div onClick={() => setTileType(MapTileType.Collision)} className="actionItem gray">
                     ∎ Wall
                 </div>
-                <div onClick={() => setTileType(TileType.Passage)} className="actionItem blue">
+                <div onClick={() => setTileType(MapTileType.Passage)} className="actionItem blue">
                     ∎ Passage
                 </div>
-                <div onClick={() => setTileType(TileType.Quest)} className="actionItem yellow">
+                <div onClick={() => setTileType(MapTileType.Quest)} className="actionItem yellow">
                     ∎ Quest
                 </div>
-                <div onClick={() => setTileType(TileType.Boss)} className="actionItem red">
-                    ∎ Boss
+                <div onClick={() => setTileType(MapTileType.Npc)} className="actionItem purple">
+                    ∎ Npc
+                </div>
+                <div onClick={() => setTileType(MapTileType.Encounter)} className="actionItem red">
+                    ∎ Encounter
                 </div>
             </div>
             <div className="rangeWrapper">
