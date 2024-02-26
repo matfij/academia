@@ -1,45 +1,24 @@
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { UsersClient } from '../../common/api/client';
-import { ChangeEvent, FormEvent, useState } from 'react';
 import { UserSignupDto } from '../../common/api/generated';
 import { StorageService } from '../../common/services/StorageService';
 import { ToastService } from '../../common/services/ToastService';
 import { ROUTES } from '../../common/routes';
 
 export const LoginComponent = () => {
-    const [formData, setFormData] = useState<UserSignupDto>({
-        login: '',
-        password: '',
-    });
-    const [formErrors, setFormErrors] = useState<Partial<UserSignupDto>>();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<UserSignupDto>();
     const navigate = useNavigate();
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const checkFormErrors = () => {
-        const errors: Partial<UserSignupDto> = {};
-        let errorOccured = false;
-        if (!formData.login) {
-            errors.login = 'errors.loginRequired';
-            errorOccured = true;
-        }
-        if (!formData.password) {
-            errors.password = 'errors.passwordRequired';
-            errorOccured = true;
-        }
-        setFormErrors(errors);
-        return errorOccured;
-    };
-
-    const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (checkFormErrors()) {
+    const login = async (data: UserSignupDto) => {
+        if (errors.login || errors.password) {
             return;
         }
-        const res = await UsersClient.signin(formData);
+        const res = await UsersClient.signin(data);
         StorageService.set({ key: 'user', data: res.data });
         ToastService.success({ text: 'Welcome back!' });
         navigate(ROUTES.HOME);
@@ -48,29 +27,25 @@ export const LoginComponent = () => {
     return (
         <>
             <h2>Login Component</h2>
-            <form onSubmit={handleLogin}>
-                <label htmlFor="login">
-                    Login:
-                    <input
-                        type="text"
-                        name="login"
-                        id="login"
-                        value={formData.login}
-                        onChange={handleInputChange}
-                    />
-                    {formErrors?.login}
-                </label>
-                <label htmlFor="password">
-                    Password:
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                {formErrors?.password}
+            <form onSubmit={handleSubmit((data) => login(data))}>
+                <label htmlFor="login">Login:</label>
+                <input
+                    {...register('login', {
+                        required: 'Login is required',
+                        minLength: { value: 4, message: 'Login must be at least 4 characters' },
+                        maxLength: { value: 20, message: 'Login must not exceed 20 characters' },
+                    })}
+                />
+                {errors.login && <p>{errors.login.message}</p>}
+                <label htmlFor="password">Password:</label>
+                <input
+                    {...register('password', {
+                        required: 'Password is required',
+                        minLength: { value: 4, message: 'Password must be at least 4 characters' },
+                        maxLength: { value: 20, message: 'Password must not exceed 20 characters' },
+                    })}
+                />
+                {errors.password && <p>{errors.password.message}</p>}
                 <button type="submit">Login</button>
             </form>
         </>
