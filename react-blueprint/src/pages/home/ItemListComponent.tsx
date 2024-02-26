@@ -6,12 +6,13 @@ export const ItemListComponent = () => {
     const [items, setItems] = useState<ItemDto[]>([]);
 
     useEffect(() => {
-        ItemsClient.readByUser().then((res) => {
-            if (res) {
-                setItems(res.data);
-            }
-        });
+        fetchItems();
     }, []);
+
+    const fetchItems = async () => {
+        const res = await ItemsClient.readByUser();
+        setItems(res.data);
+    };
 
     const displayStatistics = (statistics: ItemStatistics) => {
         return (

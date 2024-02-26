@@ -1,6 +1,4 @@
 import './common/styles/index.scss';
-// import './common/styles/colors.scss';
-import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
@@ -8,15 +6,16 @@ import { HomeComponent } from './pages/home/HomeComponent.tsx';
 import { LoginComponent } from './pages/login/LoginComponent.tsx';
 import { NotFoundComponent } from './common/components/NotFoundComponent.tsx';
 import { ToastContainer } from 'react-toastify';
+import { ROUTES } from './common/routes.ts';
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: ROUTES.ROOT,
         element: <LoginComponent />,
         errorElement: <NotFoundComponent />,
     },
     {
-        path: 'home',
+        path: ROUTES.HOME,
         element: <HomeComponent />,
     },
 ]);

@@ -1,6 +1,6 @@
 import { UserAuthDto } from '../api/generated';
 
-export type StorageData = {
+type StorageData = {
     user: UserAuthDto;
 };
 

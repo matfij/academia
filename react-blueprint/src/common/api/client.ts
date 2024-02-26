@@ -20,7 +20,6 @@ axios.interceptors.request.use((req) => {
 axios.interceptors.response.use(
     (res) => res,
     (err: ApiError) => {
-        console.log('errno!')
         ToastService.error({ text: err.message });
         return Promise.reject(err);
     },

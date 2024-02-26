@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 
-export type ToastOptions = {
+type ToastOptions = {
     text: string;
     duration?: number;
 };
@@ -18,7 +18,6 @@ export class ToastService {
     }
 
     public static error(options: ToastOptions) {
-        console.log(options)
         toast.error(options.text, {
             autoClose: options.duration || this.DEFAULT_DURATION,
             position: this.DEFAULT_POSITION,

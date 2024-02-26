@@ -70,7 +70,6 @@ export const setBasicAuthToObject = function (object: any, configuration?: Confi
  * @export
  */
 export const setBearerAuthToObject = async function (object: any, configuration?: Configuration) {
-    console.log('settin', configuration);
     if (configuration && configuration.accessToken) {
         const accessToken =
             typeof configuration.accessToken === 'function'

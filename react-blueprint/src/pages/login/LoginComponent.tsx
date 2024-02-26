@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { UserSignupDto } from '../../common/api/generated';
 import { StorageService } from '../../common/services/StorageService';
 import { ToastService } from '../../common/services/ToastService';
+import { ROUTES } from '../../common/routes';
 
 export const LoginComponent = () => {
     const [formData, setFormData] = useState<UserSignupDto>({
@@ -38,11 +39,10 @@ export const LoginComponent = () => {
         if (checkFormErrors()) {
             return;
         }
-        UsersClient.signin(formData).then((res) => {
-            StorageService.set({ key: 'user', data: res.data });
-            ToastService.success({ text: 'Welcome back!' });
-            navigate('home');
-        });
+        const res = await UsersClient.signin(formData);
+        StorageService.set({ key: 'user', data: res.data });
+        ToastService.success({ text: 'Welcome back!' });
+        navigate(ROUTES.HOME);
     };
 
     return (
