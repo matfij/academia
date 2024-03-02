@@ -22,7 +22,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <RouterProvider router={router} />
-        <ToastContainer />
+        <div className="pageWrapper">
+            <RouterProvider router={router} />
+            <ToastContainer />
+        </div>
     </React.StrictMode>,
 );

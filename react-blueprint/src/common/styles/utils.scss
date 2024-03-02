@@ -1,0 +1,45 @@
+.pageWrapper {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mainWrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.navWrapper {
+}
+
+.inline {
+    display: inline;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.primary {
+    color: $color-primary;
+}
+
+.secondary {
+    color: $color-secondary;
+}
+
+.gone {
+    display: none;
+}
+
+.disabled {
+    cursor: default;
+    opacity: 0.6;
+}

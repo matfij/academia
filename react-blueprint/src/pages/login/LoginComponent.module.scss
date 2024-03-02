@@ -1,0 +1,22 @@
+@import '../../common/styles/variables.scss';
+
+.formWrapper {
+    width: 90%;
+    max-width: 40rem;
+    display: flex;
+    flex-direction: column;
+    padding: 4rem 1rem;
+    background: darken($color: $color-secondary, $amount: 5);
+
+    h2 {
+        text-align: center;
+    }
+
+    label {
+        margin-top: 1rem;
+    }
+
+    button {
+        margin-top: 2rem;
+    }
+}

@@ -1,3 +1,4 @@
+import style from './LoginComponent.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { UsersClient } from '../../common/api/client';
@@ -25,9 +26,9 @@ export const LoginComponent = () => {
     };
 
     return (
-        <>
-            <h2>Login Component</h2>
-            <form onSubmit={handleSubmit((data) => login(data))}>
+        <main className='mainWrapper'>
+            <form onSubmit={handleSubmit((data) => login(data))} className={style.formWrapper}>
+                <h2>Login Component</h2>
                 <label htmlFor="login">Login:</label>
                 <input
                     {...register('login', {
@@ -46,8 +47,10 @@ export const LoginComponent = () => {
                     })}
                 />
                 {errors.password && <p>{errors.password.message}</p>}
-                <button type="submit">Login</button>
+                <button type="submit" className="btn">
+                    Login
+                </button>
             </form>
-        </>
+        </main>
     );
 };
