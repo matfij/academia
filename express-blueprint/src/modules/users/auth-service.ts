@@ -5,7 +5,7 @@ import {
     ACCESS_TOKEN_SECRET,
     REFRESH_TOKEN_EXPIRE,
     REFRESH_TOKEN_SECRET,
-} from '../../config/app-config';
+} from '../../common/config';
 
 export class AuthService {
     private static readonly SALT_ROUNDS = 12;

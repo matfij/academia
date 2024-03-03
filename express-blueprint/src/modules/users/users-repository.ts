@@ -2,17 +2,17 @@ import { ApiError, ApiErrorCode, ApiErrorName } from '../../common/errors/api-er
 import { User } from './user-definitions';
 import { UserModel } from './user-schema';
 
-export class UserRepository {
+export class UsersRepository {
     private static repository = UserModel;
 
-    static async create({ login, password }: Pick<User, 'login' | 'password'>): Promise<User> {
+    static async create({ username, password }: Pick<User, 'username' | 'password'>): Promise<User> {
         const newUser = await this.repository.create({
-            login,
+            username,
             password,
         });
         return {
             id: newUser.id,
-            login: newUser.login,
+            username: newUser.username,
             password: newUser.password,
             level: newUser.level,
         };
@@ -25,7 +25,7 @@ export class UserRepository {
         }
         return {
             id: user.id,
-            login: user.login,
+            username: user.username,
             password: user.password,
             level: user.level,
         };
@@ -35,7 +35,7 @@ export class UserRepository {
         const users = await this.repository.find(query);
         return users.map((user) => ({
             id: user.id,
-            login: user.login,
+            username: user.username,
             password: user.password,
             level: user.level,
         }));
@@ -52,7 +52,7 @@ export class UserRepository {
         }
         return {
             id: user.id,
-            login: user.login,
+            username: user.username,
             password: user.password,
             level: user.level,
         };

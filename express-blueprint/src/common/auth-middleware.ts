@@ -1,10 +1,9 @@
 import { Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ApiError, ApiErrorCode } from './errors/api-error';
-import { ACCESS_TOKEN_SECRET } from '../config/app-config';
+import { ACCESS_TOKEN_SECRET } from './config';
 import { AuthRequest } from './types';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const authMiddleware = (req: AuthRequest, _: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Bearer ')) {

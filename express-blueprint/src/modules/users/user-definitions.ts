@@ -1,24 +1,27 @@
 export type User = {
     id: string;
-    login: string;
+    username: string;
     password: string;
     level: number;
 };
 
 export type UserDto = {
     id: string;
-    login: string;
+    username: string;
     level: number;
 };
 
-export type UserAuthDto = UserDto & {
+export type UserSignedDto = UserDto & {
     accessToken: string;
     refreshToken: string;
 };
 
 export type UserSignupDto = {
-    login: string;
+    username: string;
     password: string;
 };
 
-export type UserSigninDto = UserSignupDto;
+export type UserSigninDto = {
+    username: string;
+    password: string;
+};

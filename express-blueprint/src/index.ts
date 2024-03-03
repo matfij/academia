@@ -1,6 +1,6 @@
-import { app } from './server';
-import { DB_URI, APP_PORT } from './config/app-config';
 import mongoose from 'mongoose';
+import { app } from './server';
+import { DB_URI, APP_PORT } from './common/config';
 
 const server = app.listen(APP_PORT, () => {
     console.log('Server started on port: ', APP_PORT);

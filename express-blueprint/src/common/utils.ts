@@ -1,4 +1,4 @@
-export const getId = ({ length }: { length: number } | undefined = { length: 16 }) => {
+export const generateId = ({ length }: { length: number } | undefined = { length: 16 }) => {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {

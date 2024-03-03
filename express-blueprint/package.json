@@ -8,7 +8,7 @@
         "build": "tsoa spec-and-routes && tsc",
         "lint": "eslint src/**",
         "gen-api": "tsoa routes && tsoa spec",
-        "gen-client": "rimraf .generated && openapi-generator-cli generate -i src/common/api/swagger.json -g typescript-fetch -o .generated"
+        "gen-client": "rimraf .generated && openapi-generator-cli generate -i src/common/api/swagger.json -g typescript-axios -o .generated"
     },
     "dependencies": {
         "bcrypt": "^5.1.1",

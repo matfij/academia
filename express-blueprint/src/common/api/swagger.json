@@ -13,7 +13,7 @@
 						"type": "number",
 						"format": "double"
 					},
-					"login": {
+					"username": {
 						"type": "string"
 					},
 					"id": {
@@ -22,7 +22,7 @@
 				},
 				"required": [
 					"level",
-					"login",
+					"username",
 					"id"
 				],
 				"type": "object"
@@ -32,13 +32,13 @@
 					"password": {
 						"type": "string"
 					},
-					"login": {
+					"username": {
 						"type": "string"
 					}
 				},
 				"required": [
 					"password",
-					"login"
+					"username"
 				],
 				"type": "object"
 			},
@@ -65,7 +65,19 @@
 				]
 			},
 			"UserSigninDto": {
-				"$ref": "#/components/schemas/UserSignupDto"
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"username"
+				],
+				"type": "object"
 			},
 			"ItemStatistics": {
 				"properties": {
@@ -89,6 +101,30 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ItemDto": {
+				"properties": {
+					"requiredLevel": {
+						"type": "number",
+						"format": "double"
+					},
+					"statistics": {
+						"$ref": "#/components/schemas/ItemStatistics"
+					},
+					"name": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"requiredLevel",
+					"statistics",
+					"name",
+					"id"
+				],
+				"type": "object"
 			},
 			"ItemCreateDto": {
 				"properties": {
@@ -153,62 +189,6 @@
 				}
 			}
 		},
-		"/users/readAll": {
-			"get": {
-				"operationId": "ReadAll",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/UserDto"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/users/{userId}": {
-			"get": {
-				"operationId": "ReadById",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserDto"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
 		"/users/signin": {
 			"post": {
 				"operationId": "Signin",
@@ -241,6 +221,62 @@
 				}
 			}
 		},
+		"/users/readAll": {
+			"get": {
+				"operationId": "ReadAll",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/UserDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/users/readById/{userId}": {
+			"get": {
+				"operationId": "ReadById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/items/create": {
 			"post": {
 				"operationId": "Create",
@@ -250,22 +286,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"requiredLevel": {
-											"type": "number",
-											"format": "double"
-										},
-										"statistics": {
-											"$ref": "#/components/schemas/ItemStatistics"
-										},
-										"id": {}
-									},
-									"required": [
-										"requiredLevel",
-										"statistics",
-										"id"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/ItemDto"
 								}
 							}
 						}
@@ -298,22 +319,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"properties": {
-											"requiredLevel": {
-												"type": "number",
-												"format": "double"
-											},
-											"statistics": {
-												"$ref": "#/components/schemas/ItemStatistics"
-											},
-											"id": {}
-										},
-										"required": [
-											"requiredLevel",
-											"statistics",
-											"id"
-										],
-										"type": "object"
+										"$ref": "#/components/schemas/ItemDto"
 									},
 									"type": "array"
 								}

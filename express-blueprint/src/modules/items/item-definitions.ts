@@ -6,6 +6,13 @@ export type Item = {
     userId: string;
 };
 
+export type ItemDto = {
+    id: string;
+    name: string;
+    statistics: ItemStatistics;
+    requiredLevel: number;
+}
+
 export class ItemStatistics {
     strength!: number;
     intelligence!: number;

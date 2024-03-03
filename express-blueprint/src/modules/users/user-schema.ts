@@ -1,14 +1,13 @@
 import { Schema, model } from 'mongoose';
 import { User } from './user-definitions';
-import { STARTING_LEVEL } from '../../config/game-config';
-import { getId } from '../../common/utils';
+import { generateId } from '../../common/utils';
 
 const userSchema = new Schema<User>({
     id: {
         type: String,
-        default: () => getId(),
+        default: () => generateId(),
     },
-    login: {
+    username: {
         type: String,
         required: true,
         uniqie: true,
@@ -19,7 +18,7 @@ const userSchema = new Schema<User>({
     },
     level: {
         type: Number,
-        default: STARTING_LEVEL,
+        default: 1,
     },
 });
 
