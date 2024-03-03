@@ -1,22 +1,22 @@
-import style from './LoginComponent.module.scss';
+import style from './AuthComponent.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { UsersClient } from '../../common/api/client';
-import { UserSignupDto } from '../../common/api/generated';
+import { UserSigninDto } from '../../common/api/.generated';
 import { StorageService } from '../../common/services/StorageService';
 import { ToastService } from '../../common/services/ToastService';
 import { ROUTES } from '../../common/routes';
 
-export const LoginComponent = () => {
+export const AuthComponent = () => {
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<UserSignupDto>();
+    } = useForm<UserSigninDto>();
     const navigate = useNavigate();
 
-    const login = async (data: UserSignupDto) => {
-        if (errors.login || errors.password) {
+    const handleSignin = async (data: UserSigninDto) => {
+        if (errors.username || errors.password) {
             return;
         }
         const res = await UsersClient.signin(data);
@@ -27,17 +27,17 @@ export const LoginComponent = () => {
 
     return (
         <main className='mainWrapper'>
-            <form onSubmit={handleSubmit((data) => login(data))} className={style.formWrapper}>
-                <h2>Login Component</h2>
-                <label htmlFor="login">Login:</label>
+            <form onSubmit={handleSubmit((data) => handleSignin(data))} className={style.formWrapper}>
+                <h2>Auth Component</h2>
+                <label htmlFor="username">Username:</label>
                 <input
-                    {...register('login', {
-                        required: 'Login is required',
-                        minLength: { value: 4, message: 'Login must be at least 4 characters' },
-                        maxLength: { value: 20, message: 'Login must not exceed 20 characters' },
+                    {...register('username', {
+                        required: 'Username is required',
+                        minLength: { value: 4, message: 'Username must be at least 4 characters' },
+                        maxLength: { value: 20, message: 'Username must not exceed 20 characters' },
                     })}
                 />
-                {errors.login && <p>{errors.login.message}</p>}
+                {errors.username && <p>{errors.username.message}</p>}
                 <label htmlFor="password">Password:</label>
                 <input
                     {...register('password', {
@@ -48,7 +48,7 @@ export const LoginComponent = () => {
                 />
                 {errors.password && <p>{errors.password.message}</p>}
                 <button type="submit" className="btn">
-                    Login
+                    Signin
                 </button>
             </form>
         </main>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ItemDto, ItemStatistics } from '../../common/api/generated';
+import { ItemDto, ItemStatistics } from '../../common/api/.generated';
 import { ItemsClient } from '../../common/api/client';
 
 export const ItemListComponent = () => {

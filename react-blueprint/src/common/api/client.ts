@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { ItemsApi, UsersApi } from './generated';
+import axios, { AxiosError } from 'axios';
+import { ItemsApi, UsersApi } from './.generated';
 import { StorageService } from '../services/StorageService';
 import { ToastService } from '../services/ToastService';
 
@@ -19,8 +19,8 @@ axios.interceptors.request.use((req) => {
 
 axios.interceptors.response.use(
     (res) => res,
-    (err: ApiError) => {
-        ToastService.error({ text: err.message });
+    (err: AxiosError<ApiError>) => {
+        ToastService.error({ text: err.response?.data.message || 'Unknown error' });
         return Promise.reject(err);
     },
 );
