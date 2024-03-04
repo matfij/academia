@@ -43,3 +43,9 @@
     cursor: default;
     opacity: 0.6;
 }
+
+.error {
+    font-size: $font-size-hint;
+    text-align: left;
+    color: $color-error;
+}

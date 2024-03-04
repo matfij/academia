@@ -3,16 +3,21 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { HomeComponent } from './pages/home/HomeComponent.tsx';
-import { AuthComponent } from './pages/auth/AuthComponent.tsx';
 import { NotFoundComponent } from './common/components/NotFoundComponent.tsx';
 import { ToastContainer } from 'react-toastify';
 import { ROUTES } from './common/routes.ts';
+import { SigninComponent } from './pages/auth/SigninComponent.tsx';
+import { SignupComponent } from './pages/auth/SignupComponent.tsx';
 
 const router = createBrowserRouter([
     {
         path: ROUTES.ROOT,
-        element: <AuthComponent />,
+        element: <SigninComponent />,
         errorElement: <NotFoundComponent />,
+    },
+    {
+        path: ROUTES.SIGNUP,
+        element: <SignupComponent />,
     },
     {
         path: ROUTES.HOME,
