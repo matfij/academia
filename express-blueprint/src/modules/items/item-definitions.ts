@@ -22,5 +22,5 @@ export class ItemStatistics {
 export type ItemCreateDto = {
     name: string;
     requiredLevel: number;
-    statistics?: ItemStatistics;
+    statistics: ItemStatistics;
 };

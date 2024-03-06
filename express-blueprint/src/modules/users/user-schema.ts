@@ -10,7 +10,7 @@ const userSchema = new Schema<User>({
     username: {
         type: String,
         required: true,
-        uniqie: true,
+        unique: true,
     },
     password: {
         type: String,

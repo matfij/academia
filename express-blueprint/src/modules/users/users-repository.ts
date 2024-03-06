@@ -3,10 +3,10 @@ import { User } from './user-definitions';
 import { UserModel } from './user-schema';
 
 export class UsersRepository {
-    private static repository = UserModel;
+    private static model = UserModel;
 
     static async create({ username, password }: Pick<User, 'username' | 'password'>): Promise<User> {
-        const newUser = await this.repository.create({
+        const newUser = await this.model.create({
             username,
             password,
         });
@@ -19,7 +19,7 @@ export class UsersRepository {
     }
 
     static async findOneBy(query: Partial<User>): Promise<User | undefined> {
-        const user = (await this.repository.findOne(query))?.toObject();
+        const user = (await this.model.findOne(query))?.toObject();
         if (!user) {
             return undefined;
         }
@@ -32,7 +32,7 @@ export class UsersRepository {
     }
 
     static async findManyBy(query: Partial<User> = {}): Promise<User[]> {
-        const users = await this.repository.find(query);
+        const users = await this.model.find(query);
         return users.map((user) => ({
             id: user.id,
             username: user.username,
@@ -42,7 +42,7 @@ export class UsersRepository {
     }
 
     static async update({ id, data }: { id: string; data: Partial<User> }): Promise<User> {
-        const user = await this.repository.findOneAndUpdate({ id }, { $set: data });
+        const user = await this.model.findOneAndUpdate({ id }, { $set: data });
         if (!user) {
             throw new ApiError({
                 name: ApiErrorName.NotFound,
@@ -59,6 +59,6 @@ export class UsersRepository {
     }
 
     static async delete({ id }: { id: string }) {
-        await this.repository.findOneAndDelete({ id });
+        await this.model.findOneAndDelete({ id });
     }
 }

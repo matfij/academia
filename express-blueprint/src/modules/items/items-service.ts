@@ -1,8 +1,8 @@
 import { ItemCreateDto, ItemDto } from './item-definitions';
-import { ItemModel } from './item-schema';
+import { ItemsRepository } from './items-repository';
 
 export class ItemsService {
-    private static model = ItemModel;
+    private static repository = ItemsRepository;
 
     public static async createItem({
         userId,
@@ -11,27 +11,17 @@ export class ItemsService {
         userId: string;
         dto: ItemCreateDto;
     }): Promise<ItemDto> {
-        const newItem = await this.model.create({
+        const newItem = await this.repository.create({
             name: dto.name,
             requiredLevel: dto.requiredLevel,
             statistics: dto.statistics,
             userId: userId,
         });
-        return {
-            id: newItem.id,
-            name: newItem.name,
-            statistics: newItem.statistics,
-            requiredLevel: newItem.requiredLevel,
-        };
+        return newItem;
     }
 
     public static async readByUser({ userId }: { userId: string }): Promise<ItemDto[]> {
-        const items = await this.model.find({ userId });
-        return items.map((item) => ({
-            id: item.id,
-            name: item.name,
-            statistics: item.statistics,
-            requiredLevel: item.requiredLevel,
-        }));
+        const items = await this.repository.findManyBy({ userId });
+        return items;
     }
 }
