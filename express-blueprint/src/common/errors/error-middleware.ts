@@ -27,8 +27,8 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, _: Ne
 };
 
 const saveLog = ({ error, req }: { error: Error; req: Request }) => {
-    const log = `${new Date().toISOString()}; ${req.method}; ${req.path}; ${req.ip}; ${JSON.stringify(
-        req.body,
-    )}; ${error};\n`;
+    const EXCLUDED_PATHS = new Set(['/users/signin', '/users/signup']);
+    const reqBody = EXCLUDED_PATHS.has(req.path) ? '' : JSON.stringify(req.body);
+    const log = `${new Date().toISOString()}; ${req.method}; ${req.path}; ${req.ip}; ${reqBody}; ${error};\n`;
     ErrorLogger.saveLog({ log });
 };
