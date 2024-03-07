@@ -1,3 +1,7 @@
 export const ItemAddComponent = () => {
-    return <h1>Add a new Item</h1>
+    return (
+        <section>
+            <h2>Add a new Item</h2>
+        </section>
+    );
 };

@@ -26,7 +26,7 @@ export const ItemListComponent = () => {
 
     return (
         <section>
-            <h3>Inventory</h3>
+            <h2>Inventory</h2>
             {items.map((item) => (
                 <li key={item.id}>
                     {item.requiredLevel} | {displayStatistics(item.statistics)}

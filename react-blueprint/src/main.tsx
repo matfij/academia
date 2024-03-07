@@ -21,7 +21,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route path={ROUTES.APP} element={<HomeComponent />}>
                         <Route path={ROUTES.ITEM_LIST} element={<ItemListComponent />} />
                         <Route path={ROUTES.ITEM_ADD} element={<ItemAddComponent />} />
-                        {/* <Route path="*" element={<ItemListComponent />} /> */}
                     </Route>
                     <Route path="*" element={<NotFoundComponent />} />
                 </Routes>
