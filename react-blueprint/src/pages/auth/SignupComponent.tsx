@@ -25,16 +25,13 @@ export const SignupComponent = () => {
 
     const handleSignup = async (data: UserSignupDto) => {
         validatePasswordMatch();
-        if (errors.username || errors.password || errors.confirmPassword) {
-            return;
-        }
         const res = await UsersClient.signup({
             username: data.username,
             password: data.password,
         });
         StorageService.set({ key: 'user', data: res.data });
         ToastService.success({ text: 'Welcome to the app!' });
-        navigate(ROUTES.HOME);
+        navigate(ROUTES.APP);
     };
 
     return (

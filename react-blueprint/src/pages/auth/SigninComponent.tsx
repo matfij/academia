@@ -16,13 +16,10 @@ export const SigninComponent = () => {
     const navigate = useNavigate();
 
     const handleSignin = async (data: UserSigninDto) => {
-        if (errors.username || errors.password) {
-            return;
-        }
         const res = await UsersClient.signin(data);
         StorageService.set({ key: 'user', data: res.data });
         ToastService.success({ text: 'Welcome back!' });
-        navigate(ROUTES.HOME);
+        navigate(ROUTES.APP);
     };
 
     return (
