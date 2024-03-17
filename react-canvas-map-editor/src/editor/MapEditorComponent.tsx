@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, MouseEvent } from 'react';
+import { useState, useRef, useEffect, MouseEvent, ChangeEvent } from 'react';
 import { MapTileType } from './types';
 import { MapManager } from './MapManager';
 
@@ -8,7 +8,7 @@ const COLUMNS = 110;
 
 export const MapEditorComponent = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [blueprint, setBlueprint] = useState('');
+    const [mapImage, setMapImage] = useState('');
     const [tileType, setTileType] = useState(MapTileType.SafeRoute);
     const [map, setMap] = useState(MapManager.createEmptyMap(ROWS, COLUMNS));
     const [isPainting, setIsPainting] = useState(false);
@@ -19,6 +19,14 @@ export const MapEditorComponent = () => {
         const ctx = canvas?.getContext('2d');
         drawMap(ctx!, map);
     }, [map]);
+
+    const handleMapImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files ? event.target.files[0] : null;
+        if (!file) {
+            return;
+        }
+        setMapImage(URL.createObjectURL(file));
+    };
 
     const drawMap = (ctx: CanvasRenderingContext2D, map: MapTileType[][]) => {
         ctx.clearRect(0, 0, canvasRef!.current!.width, canvasRef!.current!.height);
@@ -44,6 +52,8 @@ export const MapEditorComponent = () => {
                 return '#c43cbd';
             case MapTileType.Route:
                 return '#ab8821';
+            case MapTileType.Empty:
+                return '#000';
             case MapTileType.SafeRoute:
             default:
                 return '#66ff99';
@@ -82,6 +92,7 @@ export const MapEditorComponent = () => {
     return (
         <div className="mainWrapper">
             <div className="canvasWrapper">
+                <div className="mapImageWrapper">{mapImage && <img src={mapImage} />}</div>
                 <canvas
                     ref={canvasRef}
                     width={COLUMNS * TILE_SIZE}
@@ -95,7 +106,6 @@ export const MapEditorComponent = () => {
                     }}
                 />
             </div>
-            <div className="blueprintWrapper">{blueprint && <img src={blueprint} />}</div>
             <div className="actionWrapper">
                 <div onClick={() => setTileType(MapTileType.SafeRoute)} className="actionItem green">
                     ∎ Safe Route
@@ -118,17 +128,13 @@ export const MapEditorComponent = () => {
                 <div onClick={() => setTileType(MapTileType.Encounter)} className="actionItem red">
                     ∎ Encounter
                 </div>
+                <div onClick={() => setTileType(MapTileType.Empty)} className="actionItem black">
+                    ∎ Empty
+                </div>
             </div>
             <div className="rangeWrapper">
                 <div>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                            const file = e.target.files ? e.target.files[0] : null;
-                            if (file) setBlueprint(URL.createObjectURL(file));
-                        }}
-                    />
+                    <input type="file" accept="image/*" onChange={(e) => handleMapImageUpload(e)} />
                 </div>
                 <label>Cursor Size:</label>
                 <input

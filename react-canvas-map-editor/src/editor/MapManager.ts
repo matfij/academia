@@ -6,7 +6,7 @@ export class MapManager {
         for (let row = 0; row < rows; row++) {
             const row: MapTileType[] = [];
             for (let col = 0; col < columns; col++) {
-                row.push(MapTileType.SafeRoute);
+                row.push(MapTileType.Route);
             }
             emptyMap.push(row);
         }
@@ -21,6 +21,9 @@ export class MapManager {
                     position: { x: scale * col, y: scale * row },
                     type: map[row][col],
                 };
+                if (tile.type === MapTileType.Empty) {
+                    continue;
+                }
                 printedMap += `${JSON.stringify(tile)},`
                     .replace('"Collision"', 'MapTileType.Collision')
                     .replace('"Route"', 'MapTileType.Route')

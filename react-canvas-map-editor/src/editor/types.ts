@@ -6,6 +6,7 @@ export enum MapTileType {
     Passage = 'Passage',
     Quest = 'Quest',
     Npc = 'Npc',
+    Empty = 'Empty',
 }
 
 export type MapTileBase<T extends MapTileType> = {
