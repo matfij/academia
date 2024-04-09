@@ -5,7 +5,31 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
-            <body>{children}</body>
+            <body>
+                <div>
+                    <Header />
+                    <main>{children}</main>
+                    <Footer />
+                </div>
+            </body>
         </html>
     );
 }
+
+const Header = () => {
+    return (
+        <header>
+            Header
+            <hr />
+        </header>
+    );
+};
+
+const Footer = () => {
+    return (
+        <footer>
+            <hr />
+            Footer
+        </footer>
+    );
+};
