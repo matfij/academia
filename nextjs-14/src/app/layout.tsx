@@ -1,3 +1,8 @@
+import { Inter } from 'next/font/google';
+import { cn } from '../lib/utils';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+
 export const metadata = {
     title: 'Next 14',
 };
@@ -5,8 +10,8 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
-            <body>
-                <main>{children}</main>
+            <body className={cn('bg-background min-h-screen font-sans antialiased', inter.variable)}>
+                {children}
             </body>
         </html>
     );
