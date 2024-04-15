@@ -1,5 +1,6 @@
+import '../shared/styles/globals.css';
 import { Inter } from 'next/font/google';
-import { cn } from '../lib/utils';
+import { cn } from '../shared/lib/utils';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
