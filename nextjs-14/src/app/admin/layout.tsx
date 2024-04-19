@@ -1,5 +1,8 @@
 import { NavComponent, NavLink } from '../../shared/components/nav-component';
 
+// don't cache admin pages
+export const dynamic = 'force-dynamic';
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
