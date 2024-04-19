@@ -9,7 +9,7 @@ export default function AdminProductsPage() {
             <div className="flex justify-between items-center gap-4">
                 <PageHeaderComponent>Products</PageHeaderComponent>
                 <Button>
-                    <Link href="admin/products/new">Add Product</Link>
+                    <Link href="/admin/products/new">Add Product</Link>
                 </Button>
             </div>
             <Table>
@@ -27,7 +27,6 @@ export default function AdminProductsPage() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    ...
                 </TableBody>
             </Table>
         </>
