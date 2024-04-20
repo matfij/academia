@@ -3,7 +3,7 @@
 import fs from 'fs/promises';
 import { prisma } from '../../../shared/db/db-client';
 import { ProductNewSchema } from '../_models/product-models';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { wait } from '../../../shared/lib/utils';
 
 export const addProduct = async (_prev: unknown, formData: FormData) => {
@@ -35,4 +35,24 @@ export const addProduct = async (_prev: unknown, formData: FormData) => {
     });
 
     redirect('/admin/products');
+};
+
+export const toggleProductAvailability = async ({
+    id,
+    isAvailable,
+}: {
+    id: string;
+    isAvailable: boolean;
+}) => {
+    await prisma.product.update({ where: { id }, data: { available: isAvailable } });
+};
+
+export const deleteProduct = async ({ id }: { id: string }) => {
+    const product = await prisma.product.delete({ where: { id } });
+    if (!product) {
+        return notFound();
+    }
+
+    await fs.unlink(product.filePath);
+    await fs.unlink(product.imagePath);
 };

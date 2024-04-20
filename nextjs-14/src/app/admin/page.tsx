@@ -30,7 +30,7 @@ export default async function AdminPage() {
             <DashboardCardComponent
                 title="Products"
                 subtitle={`No. inactive products: ${formatNumber(productData.noActive)}`}
-                body={`No. active products: ${formatCurrency(productData.noInactive)}`}
+                body={`No. active products: ${formatNumber(productData.noInactive)}`}
             />
         </div>
     );
