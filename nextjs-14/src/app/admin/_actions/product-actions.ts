@@ -4,16 +4,16 @@ import fs from 'fs/promises';
 import { prisma } from '../../../shared/db/db-client';
 import { ProductNewSchema } from '../_models/product-models';
 import { redirect } from 'next/navigation';
+import { wait } from '../../../shared/lib/utils';
 
-export const addProduct = async (formData: FormData) => {
+export const addProduct = async (_prev: unknown, formData: FormData) => {
+    await wait(1000);
+
     const result = ProductNewSchema.safeParse(Object.fromEntries(formData.entries()));
     if (result.success === false) {
-        console.log(result.error.formErrors.fieldErrors);
         return result.error.formErrors.fieldErrors;
     }
     const data = result.data;
-
-    console.log(data);
 
     await fs.mkdir('products', { recursive: true });
     const filePath = `products/${crypto.randomUUID()}-${result.data.file.name}`;
@@ -30,6 +30,7 @@ export const addProduct = async (formData: FormData) => {
             description: data.description,
             filePath,
             imagePath,
+            available: false,
         },
     });
 
