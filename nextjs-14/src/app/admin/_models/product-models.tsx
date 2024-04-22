@@ -10,3 +10,11 @@ export const ProductNewSchema = z.object({
     file: fileSchema.refine((f) => f.size > 0, 'Required'),
     image: imageSchema.refine((f) => f.size > 0, 'Required'),
 });
+
+export const ProductEditSchema = z.object({
+    name: z.string().min(1),
+    description: z.string().min(1),
+    price: z.coerce.number().int().min(1),
+    file: fileSchema.optional(),
+    image: imageSchema.optional(),
+});

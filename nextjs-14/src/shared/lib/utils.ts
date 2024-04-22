@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function wait(durationMs: number) {
     return new Promise((resolve) => setTimeout(resolve, durationMs));
 }
+
+export function getImagePath(path: string) {
+    return `${path.replace('public', '')}`;
+}

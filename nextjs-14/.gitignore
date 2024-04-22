@@ -39,4 +39,5 @@ next-env.d.ts
 # database
 *.db
 *.db-journal
-**/products/*
+public/products/*
+products/*

@@ -2,7 +2,7 @@
 
 import fs from 'fs/promises';
 import { prisma } from '../../../shared/db/db-client';
-import { ProductNewSchema } from '../_models/product-models';
+import { ProductEditSchema, ProductNewSchema } from '../_models/product-models';
 import { notFound, redirect } from 'next/navigation';
 import { wait } from '../../../shared/lib/utils';
 
@@ -15,13 +15,11 @@ export const addProduct = async (_prev: unknown, formData: FormData) => {
     }
     const data = result.data;
 
-    await fs.mkdir('products', { recursive: true });
-    const filePath = `products/${crypto.randomUUID()}-${result.data.file.name}`;
+    const filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
     await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()));
 
-    await fs.mkdir('public/products', { recursive: true });
-    const imagePath = `public/products/${crypto.randomUUID()}-${result.data.file.name}`;
-    await fs.writeFile(imagePath, Buffer.from(await data.file.arrayBuffer()));
+    const imagePath = `public/products/${crypto.randomUUID()}-${result.data.image.name}`;
+    await fs.writeFile(imagePath, Buffer.from(await data.image.arrayBuffer()));
 
     await prisma.product.create({
         data: {
@@ -31,6 +29,47 @@ export const addProduct = async (_prev: unknown, formData: FormData) => {
             filePath,
             imagePath,
             available: false,
+        },
+    });
+
+    redirect('/admin/products');
+};
+
+export const editProduct = async (id: string, _prev: unknown, formData: FormData) => {
+    await wait(1000);
+
+    const result = ProductEditSchema.safeParse(Object.fromEntries(formData.entries()));
+    if (result.success === false) {
+        return result.error.formErrors.fieldErrors;
+    }
+    const data = result.data;
+
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) {
+        return notFound();
+    }
+
+    let filePath = product.filePath;
+    if (data.file && data.file.size > 0) {
+        await fs.unlink(product.filePath);
+        filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
+        await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()));
+    }
+
+    let imagePath = product.imagePath;
+    if (data.image && data.image.size > 0) {
+        imagePath = `public/products/${crypto.randomUUID()}-${data.image.name}`;
+        await fs.writeFile(imagePath, Buffer.from(await data.image.arrayBuffer()));
+    }
+
+    await prisma.product.update({
+        where: { id },
+        data: {
+            name: data.name,
+            price: data.price,
+            description: data.description,
+            filePath,
+            imagePath,
         },
     });
 
