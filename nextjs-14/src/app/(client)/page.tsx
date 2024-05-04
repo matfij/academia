@@ -3,13 +3,20 @@ import { prisma } from '../../shared/db/db-client';
 import { Button } from '../../shared/components/shadcn/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { ProductCardComponent } from '../../shared/components/product-card-component';
+import {
+    ProductCardComponent,
+    ProductCardSkeletonComponent,
+} from '../../shared/components/product-card-component';
+import { wait } from '../../shared/lib/utils';
+import { Suspense } from 'react';
 
 const getMostPopularProducts = async () => {
+    await wait(1000);
     return prisma.product.findMany({ orderBy: { orders: { _count: 'desc' } }, take: 3 });
 };
 
 const getLatestProducts = async () => {
+    await wait(1000);
     return prisma.product.findMany({ orderBy: { createdAt: 'desc' }, take: 3 });
 };
 
@@ -41,10 +48,27 @@ const ProductGridSection = async ({
                 </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(await productFetcher()).map((product) => (
-                    <ProductCardComponent key={product.id} {...product} />
-                ))}
+                <Suspense
+                    fallback={
+                        <>
+                            <ProductCardSkeletonComponent />
+                            <ProductCardSkeletonComponent />
+                            <ProductCardSkeletonComponent />
+                        </>
+                    }>
+                    <ProductSuspense productFetcher={productFetcher} />
+                </Suspense>
             </div>
         </div>
+    );
+};
+
+const ProductSuspense = async ({ productFetcher }: { productFetcher: () => Promise<Product[]> }) => {
+    return (
+        <>
+            {(await productFetcher()).map((product) => (
+                <ProductCardComponent key={product.id} {...product} />
+            ))}
+        </>
     );
 };
