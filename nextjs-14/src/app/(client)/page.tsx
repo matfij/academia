@@ -9,16 +9,25 @@ import {
 } from '../../shared/components/product-card-component';
 import { wait } from '../../shared/lib/utils';
 import { Suspense } from 'react';
+import { cache } from '../../shared/lib/cacher';
 
-const getMostPopularProducts = async () => {
-    await wait(1000);
-    return prisma.product.findMany({ orderBy: { orders: { _count: 'desc' } }, take: 3 });
-};
+const getMostPopularProducts = cache(
+    async () => {
+        await wait(1000);
+        return prisma.product.findMany({ orderBy: { orders: { _count: 'desc' } }, take: 3 });
+    },
+    ['/', 'getMostPopularProducts'],
+    { revalidate: 60 * 60 * 24 },
+);
 
-const getLatestProducts = async () => {
-    await wait(1000);
-    return prisma.product.findMany({ orderBy: { createdAt: 'desc' }, take: 3 });
-};
+const getLatestProducts = cache(
+    async () => {
+        await wait(1000);
+        return prisma.product.findMany({ orderBy: { createdAt: 'desc' }, take: 3 });
+    },
+    ['/', 'getLatestProducts'],
+    { revalidate: 60 * 60 * 24 },
+);
 
 export default function HomePage() {
     return (

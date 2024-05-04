@@ -5,6 +5,7 @@ import {
 } from '../../../shared/components/product-card-component';
 import { prisma } from '../../../shared/db/db-client';
 import { wait } from '../../../shared/lib/utils';
+import { cache } from '../../../shared/lib/cacher';
 
 export default function ProductsPages() {
     return (
@@ -12,6 +13,9 @@ export default function ProductsPages() {
             <Suspense
                 fallback={
                     <>
+                        <ProductCardSkeletonComponent />
+                        <ProductCardSkeletonComponent />
+                        <ProductCardSkeletonComponent />
                         <ProductCardSkeletonComponent />
                         <ProductCardSkeletonComponent />
                         <ProductCardSkeletonComponent />
@@ -23,10 +27,10 @@ export default function ProductsPages() {
     );
 }
 
-const getProducts = async () => {
+const getProducts = cache(async () => {
     await wait(1000);
     return prisma.product.findMany({ where: { available: true }, orderBy: { createdAt: 'desc' } });
-};
+}, ['/products', 'getProducts']);
 
 const ProductsSuspense = async () => {
     const products = await getProducts();

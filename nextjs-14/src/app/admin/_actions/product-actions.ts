@@ -5,6 +5,12 @@ import { prisma } from '../../../shared/db/db-client';
 import { ProductEditSchema, ProductNewSchema } from '../_models/product-models';
 import { notFound, redirect } from 'next/navigation';
 import { wait } from '../../../shared/lib/utils';
+import { revalidatePath } from 'next/cache';
+
+const revalidateClientProducts = () => {
+    revalidatePath('/');
+    revalidatePath('/products');
+};
 
 export const addProduct = async (_prev: unknown, formData: FormData) => {
     await wait(1000);
@@ -32,6 +38,7 @@ export const addProduct = async (_prev: unknown, formData: FormData) => {
         },
     });
 
+    revalidateClientProducts();
     redirect('/admin/products');
 };
 
@@ -73,6 +80,7 @@ export const editProduct = async (id: string, _prev: unknown, formData: FormData
         },
     });
 
+    revalidateClientProducts();
     redirect('/admin/products');
 };
 
@@ -84,6 +92,8 @@ export const toggleProductAvailability = async ({
     isAvailable: boolean;
 }) => {
     await prisma.product.update({ where: { id }, data: { available: isAvailable } });
+
+    revalidateClientProducts();
 };
 
 export const deleteProduct = async ({ id }: { id: string }) => {
@@ -94,4 +104,6 @@ export const deleteProduct = async ({ id }: { id: string }) => {
 
     await fs.unlink(product.filePath);
     await fs.unlink(product.imagePath);
+
+    revalidateClientProducts();
 };
