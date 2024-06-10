@@ -1,9 +1,15 @@
 'use client';
 
 import { Product } from '@prisma/client';
-import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import {
+    Elements,
+    LinkAuthenticationElement,
+    PaymentElement,
+    useElements,
+    useStripe,
+} from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { STRIPE_PUBLIC_KEY } from '../../../../shared/config';
+import { PUBLIC_URL, STRIPE_PUBLIC_KEY } from '../../../../shared/config';
 import Image from 'next/image';
 import { getImagePath } from '../../../../shared/lib/utils';
 import { formatCurrency } from '../../../../shared/lib/formatters';
@@ -15,6 +21,8 @@ import {
     CardTitle,
 } from '../../../../shared/components/shadcn/card';
 import { Button } from '../../../../shared/components/shadcn/button';
+import { FormEvent, useState } from 'react';
+import { userOrderExists } from '../../../actions/orders';
 
 const stripe$ = loadStripe(STRIPE_PUBLIC_KEY);
 
@@ -38,30 +46,59 @@ export const ProductCheckoutFormComponent = ({
                 </section>
             </div>
             <Elements stripe={stripe$} options={{ clientSecret, appearance: { theme: 'flat' } }}>
-                <CheckoutForm />
+                <CheckoutForm product={product} />
             </Elements>
         </div>
     );
 };
 
-const CheckoutForm = () => {
+const CheckoutForm = ({ product }: { product: Product }) => {
     const stripe = useStripe();
     const elements = useElements();
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>();
+    const [email, setEmail] = useState<string | undefined>();
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        if (!stripe || !elements) {
+            return;
+        }
+        if (email && (await userOrderExists(email, product.id))) {
+            setErrorMessage('Product already owned, check "My Orders"');
+        }
+        setLoading(true);
+        stripe
+            .confirmPayment({
+                elements,
+                confirmParams: { return_url: `${PUBLIC_URL}/stripe/purchase-success` },
+            })
+            .then(({ error }) => {
+                if (error.type === 'card_error' || error.type === 'validation_error') {
+                    setErrorMessage(error.message);
+                } else {
+                    setErrorMessage('Unknown error, please try again later');
+                }
+            })
+            .finally(() => setLoading(false));
+    };
 
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <Card>
                 <CardHeader>
                     <CardTitle>Checkout</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <PaymentElement />
+                    <div className="mt-2" />
+                    <LinkAuthenticationElement onChange={(e) => setEmail(e.value.email)} />
                 </CardContent>
                 <CardFooter className="block">
-                    <Button className="w-full" disabled={!stripe || !elements}>
+                    <Button className="w-full" disabled={!stripe || !elements || loading}>
                         Purchase
                     </Button>
-                    <p className="text-destructive space-y-4">Error</p>
+                    {errorMessage && <p className="text-destructive mt-2">{errorMessage}</p>}
                 </CardFooter>
             </Card>
         </form>
