@@ -42,10 +42,24 @@ export default async function StripePurchaseSuccessPage({
                     <h1 className="text-2xl font-bold">{product.name}</h1>
                     <p className="line-clamp-3 text-muted-foreground">{product.description}</p>
                 </section>
-                <Button className="mt-4" size="lg" asChild>
-                    {isSuccess ? <a></a> : <Link href={`/products/${product.id}/purchase`}>Try Again</Link>}
-                </Button>
             </div>
+            <Button className="mt-4" size="lg" asChild>
+                {isSuccess ? (
+                    <a href={`/products/download/${await createDownloadVerification(product.id)}`}>
+                        Download
+                    </a>
+                ) : (
+                    <Link href={`/products/${product.id}/purchase`}>Try Again</Link>
+                )}
+            </Button>
         </div>
     );
 }
+
+const createDownloadVerification = async (productId: string) => {
+    return (
+        await prisma.downloadVerification.create({
+            data: { productId, expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24) },
+        })
+    ).id;
+};
