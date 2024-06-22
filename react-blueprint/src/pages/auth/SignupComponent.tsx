@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { UserSignupDto } from '../../common/api/.generated';
 import { UsersClient } from '../../common/api/client';
-import { ROUTES } from '../../common/routes';
+import { ROUTES } from '../../common/config';
 import { StorageService } from '../../common/services/StorageService';
 import { ToastService } from '../../common/services/ToastService';
 
@@ -31,7 +31,7 @@ export const SignupComponent = () => {
         });
         StorageService.set({ key: 'user', data: res.data });
         ToastService.success({ text: 'Welcome to the app!' });
-        navigate(ROUTES.APP);
+        navigate(`../${ROUTES.APP}`);
     };
 
     return (

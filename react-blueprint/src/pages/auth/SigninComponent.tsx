@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { UserSigninDto } from '../../common/api/.generated';
 import { UsersClient } from '../../common/api/client';
-import { ROUTES } from '../../common/routes';
+import { ROUTES } from '../../common/config';
 import { StorageService } from '../../common/services/StorageService';
 import { ToastService } from '../../common/services/ToastService';
 

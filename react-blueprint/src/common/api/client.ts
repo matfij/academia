@@ -2,14 +2,13 @@ import axios, { AxiosError } from 'axios';
 import { ItemsApi, UsersApi } from './.generated';
 import { StorageService } from '../services/StorageService';
 import { ToastService } from '../services/ToastService';
-
-const BASE_PATH = 'http://localhost:3013';
+import { BASE_PATH } from '../config';
 
 type ApiError = {
     name: string;
     code: string;
     message: string;
-}
+};
 
 axios.interceptors.request.use((req) => {
     const authToken = StorageService.get('user')?.accessToken;

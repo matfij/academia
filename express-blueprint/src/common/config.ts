@@ -1,4 +1,5 @@
 export const APP_PORT = process.env['APP_PORT']!;
+export const WS_PORT = +process.env['WS_PORT']!;
 export const DB_URI = process.env['DB_URI']!;
 
 export const ACCESS_TOKEN_SECRET = process.env['ACCESS_TOKEN_SECRET']!;

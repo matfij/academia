@@ -1,5 +1,5 @@
 import { useNavigate, useRouteError } from 'react-router-dom';
-import { ROUTES } from '../routes';
+import { ROUTES } from '../config';
 
 export const NotFoundComponent = () => {
     const error = useRouteError() as { statusText?: string; statusMessage: string };

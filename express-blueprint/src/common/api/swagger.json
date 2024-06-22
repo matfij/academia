@@ -42,7 +42,7 @@
 				],
 				"type": "object"
 			},
-			"UserAuthDto": {
+			"UserSignedDto": {
 				"allOf": [
 					{
 						"$ref": "#/components/schemas/UserDto"
@@ -140,6 +140,7 @@
 					}
 				},
 				"required": [
+					"statistics",
 					"requiredLevel",
 					"name"
 				],
@@ -198,7 +199,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UserAuthDto"
+									"$ref": "#/components/schemas/UserSignedDto"
 								}
 							}
 						}

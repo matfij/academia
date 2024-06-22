@@ -5,11 +5,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { HomeComponent } from './pages/app/AppComponent.tsx';
 import { NotFoundComponent } from './common/components/NotFoundComponent.tsx';
 import { ToastContainer } from 'react-toastify';
-import { ROUTES } from './common/routes.ts';
+import { ROUTES } from './common/config.ts';
 import { SigninComponent } from './pages/auth/SigninComponent.tsx';
 import { SignupComponent } from './pages/auth/SignupComponent.tsx';
 import { ItemListComponent } from './pages/itemList/ItemListComponent.tsx';
 import { ItemAddComponent } from './pages/itemAdd/ItemAddComponent.tsx';
+import { ChatComponent } from './pages/chat/ChatComponent.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route path={ROUTES.APP} element={<HomeComponent />}>
                         <Route path={ROUTES.ITEM_LIST} element={<ItemListComponent />} />
                         <Route path={ROUTES.ITEM_ADD} element={<ItemAddComponent />} />
+                        <Route path={ROUTES.CHAT} element={<ChatComponent />} />
                     </Route>
                     <Route path="*" element={<NotFoundComponent />} />
                 </Routes>
