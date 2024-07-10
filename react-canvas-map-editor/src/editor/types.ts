@@ -1,4 +1,4 @@
-export enum MapTileType {
+export enum SceneTileType {
     Route = 'Route',
     SafeRoute = 'SafeRoute',
     Collision = 'Collision',
@@ -9,47 +9,47 @@ export enum MapTileType {
     Empty = 'Empty',
 }
 
-export type MapTileBase<T extends MapTileType> = {
-    position: MapPoint;
+export type SceneTileBase<T extends SceneTileType> = {
+    position: ScenePoint;
     type: T;
 };
 
-export type MapTile =
-    | MapTileRoute
-    | MapTileSafeRoute
-    | MapTileCollision
-    | MapTileEncunter
-    | MapTilePassage
-    | MapTileQuest
-    | MapTileNpc;
+export type SceneTile =
+    | SceneTileRoute
+    | SceneTileSafeRoute
+    | SceneTileCollision
+    | SceneTileEncounter
+    | SceneTilePassage
+    | SceneTileQuest
+    | SceneTileNpc;
 
-export type MapTileRoute = MapTileBase<MapTileType.Route>;
-export type MapTileSafeRoute = MapTileBase<MapTileType.SafeRoute>;
-export type MapTileCollision = MapTileBase<MapTileType.Collision>;
-export type MapTileEncunter = MapTileBase<MapTileType.Encounter> & {
+export type SceneTileRoute = SceneTileBase<SceneTileType.Route>;
+export type SceneTileSafeRoute = SceneTileBase<SceneTileType.SafeRoute>;
+export type SceneTileCollision = SceneTileBase<SceneTileType.Collision>;
+export type SceneTileEncounter = SceneTileBase<SceneTileType.Encounter> & {
     encounterData: {
         encounterName: string;
     };
 };
-export type MapTilePassage = MapTileBase<MapTileType.Passage> & {
+export type SceneTilePassage = SceneTileBase<SceneTileType.Passage> & {
     passageData?: {
-        mapName: string;
-        position: MapPoint;
+        SceneName: string;
+        position: ScenePoint;
         locked: () => boolean;
     };
 };
-export type MapTileQuest = MapTileBase<MapTileType.Quest> & {
+export type SceneTileQuest = SceneTileBase<SceneTileType.Quest> & {
     questData?: {
         questName: string;
     };
 };
-export type MapTileNpc = MapTileBase<MapTileType.Npc> & {
+export type SceneTileNpc = SceneTileBase<SceneTileType.Npc> & {
     npcData?: {
         npcName: string;
     };
 };
 
-export type MapPoint = {
+export type ScenePoint = {
     x: number;
     y: number;
 };

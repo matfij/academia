@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, MouseEvent, ChangeEvent } from 'react';
-import { MapTileType } from './types';
+import { SceneTileType } from './types';
 import { MapManager } from './MapManager';
 
 const TILE_SIZE = 10;
@@ -9,7 +9,7 @@ const COLUMNS = 110;
 export const MapEditorComponent = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [mapImage, setMapImage] = useState('');
-    const [tileType, setTileType] = useState(MapTileType.SafeRoute);
+    const [tileType, setTileType] = useState(SceneTileType.SafeRoute);
     const [map, setMap] = useState(MapManager.createEmptyMap(ROWS, COLUMNS));
     const [isPainting, setIsPainting] = useState(false);
     const [cursorSize, setCursorSize] = useState(1);
@@ -28,7 +28,7 @@ export const MapEditorComponent = () => {
         setMapImage(URL.createObjectURL(file));
     };
 
-    const drawMap = (ctx: CanvasRenderingContext2D, map: MapTileType[][]) => {
+    const drawMap = (ctx: CanvasRenderingContext2D, map: SceneTileType[][]) => {
         ctx.clearRect(0, 0, canvasRef!.current!.width, canvasRef!.current!.height);
         map.forEach((row, rowIndex) => {
             row.forEach((tile, colIndex) => {
@@ -38,23 +38,23 @@ export const MapEditorComponent = () => {
         });
     };
 
-    const getTileColor = (type: MapTileType) => {
+    const getTileColor = (type: SceneTileType) => {
         switch (type) {
-            case MapTileType.Collision:
+            case SceneTileType.Collision:
                 return '#808080';
-            case MapTileType.Passage:
+            case SceneTileType.Passage:
                 return '#7cb9e8';
-            case MapTileType.Quest:
+            case SceneTileType.Quest:
                 return '#ffff00';
-            case MapTileType.Encounter:
+            case SceneTileType.Encounter:
                 return '#ff7f7f';
-            case MapTileType.Npc:
+            case SceneTileType.Npc:
                 return '#c43cbd';
-            case MapTileType.Route:
+            case SceneTileType.Route:
                 return '#ab8821';
-            case MapTileType.Empty:
+            case SceneTileType.Empty:
                 return '#000';
-            case MapTileType.SafeRoute:
+            case SceneTileType.SafeRoute:
             default:
                 return '#66ff99';
         }
@@ -107,28 +107,28 @@ export const MapEditorComponent = () => {
                 />
             </div>
             <div className="actionWrapper">
-                <div onClick={() => setTileType(MapTileType.SafeRoute)} className="actionItem green">
+                <div onClick={() => setTileType(SceneTileType.SafeRoute)} className="actionItem green">
                     ∎ Safe Route
                 </div>
-                <div onClick={() => setTileType(MapTileType.Route)} className="actionItem orange">
+                <div onClick={() => setTileType(SceneTileType.Route)} className="actionItem orange">
                     ∎ Route
                 </div>
-                <div onClick={() => setTileType(MapTileType.Collision)} className="actionItem gray">
+                <div onClick={() => setTileType(SceneTileType.Collision)} className="actionItem gray">
                     ∎ Wall
                 </div>
-                <div onClick={() => setTileType(MapTileType.Passage)} className="actionItem blue">
+                <div onClick={() => setTileType(SceneTileType.Passage)} className="actionItem blue">
                     ∎ Passage
                 </div>
-                <div onClick={() => setTileType(MapTileType.Quest)} className="actionItem yellow">
+                <div onClick={() => setTileType(SceneTileType.Quest)} className="actionItem yellow">
                     ∎ Quest
                 </div>
-                <div onClick={() => setTileType(MapTileType.Npc)} className="actionItem purple">
+                <div onClick={() => setTileType(SceneTileType.Npc)} className="actionItem purple">
                     ∎ Npc
                 </div>
-                <div onClick={() => setTileType(MapTileType.Encounter)} className="actionItem red">
+                <div onClick={() => setTileType(SceneTileType.Encounter)} className="actionItem red">
                     ∎ Encounter
                 </div>
-                <div onClick={() => setTileType(MapTileType.Empty)} className="actionItem black">
+                <div onClick={() => setTileType(SceneTileType.Empty)} className="actionItem black">
                     ∎ Empty
                 </div>
             </div>
