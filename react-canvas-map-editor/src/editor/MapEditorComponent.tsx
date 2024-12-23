@@ -3,8 +3,8 @@ import { SceneTileType } from './types';
 import { MapManager } from './MapManager';
 
 const TILE_SIZE = 10;
-const ROWS = 60;
-const COLUMNS = 110;
+const ROWS = 75;
+const COLUMNS = 145;
 
 export const MapEditorComponent = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);

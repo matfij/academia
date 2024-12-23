@@ -39,7 +39,7 @@ h1 {
 
 .actionWrapper {
     position: absolute;
-    top: 620px;
+    top: 775px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -49,7 +49,7 @@ h1 {
 
 .rangeWrapper {
     position: absolute;
-    top: 680px;
+    top: 825px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
