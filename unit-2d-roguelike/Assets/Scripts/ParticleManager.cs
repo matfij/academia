@@ -1,11 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ParticleManager : MonoBehaviour
 {
     public GameObject particlePrefab;
     public int spawnCount = 16;
+    private List<Particle> activeParticles = new ();
 
-    void Uodate()
+    void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -19,10 +21,19 @@ public class ParticleManager : MonoBehaviour
     {
         for (int i = 0; i < spawnCount; i++)
         {
-            var particle = Instantiate(particlePrefab, position, Quaternion.identity);
-            var particleScript = particle.GetComponent<Particle>();
-            particleScript.velocity = new Vector2(Random.Range(-1f, 1f), Random.Range(1f, 3f));
-            particleScript.color = new Color(0.76f, 0.7f, 0.5f);
+            var particleObject = Instantiate(particlePrefab, position, Quaternion.identity);
+            var particle = particleObject.GetComponent<Particle>();
+            particle.velocity = new Vector2(Random.Range(-1f, 1f), Random.Range(1f, 3f));
+            particle.color = new Color(0.76f, 0.7f, 0.5f);
+            activeParticles.Add(particle);
         }
     }
+
+    public void RemoveParticle(Particle particle)
+    {
+        activeParticles.Remove(particle);
+        Destroy(particle.gameObject);
+    }
+
+    public List<Particle> particles => activeParticles;
 }

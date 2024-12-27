@@ -14,7 +14,7 @@ public class Particle : MonoBehaviour
         transform.localScale = Vector3.one;
     }
 
-    private void Update()
+    void Update()
     {
         transform.position += (Vector3)velocity * Time.deltaTime;
         velocity.y -= 9.81f * Time.deltaTime;
