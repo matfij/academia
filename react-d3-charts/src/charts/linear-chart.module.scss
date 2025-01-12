@@ -1,0 +1,31 @@
+.chartWrapper {
+    position: relative;
+    margin: 1rem;
+    padding: 1rem;
+    border: 1px solid white;
+}
+
+.chartTitle {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    top: 20px;
+    font-size: 24px;
+    color: bisque;
+}
+
+.chartLabelX {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: -20px;
+    color: beige;
+}
+
+.chartLabelY {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(270deg);
+    color: beige;
+}

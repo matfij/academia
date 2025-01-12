@@ -23,8 +23,7 @@
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
         "noUncheckedSideEffectImports": true,
-        "strictFunctionTypes": true,
-        "noPropertyAccessFromIndexSignature": true
+        "strictFunctionTypes": true
     },
     "include": ["src"]
 }
