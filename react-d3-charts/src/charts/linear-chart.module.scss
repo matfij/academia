@@ -1,8 +1,9 @@
 .chartWrapper {
     position: relative;
+    aspect-ratio: 2/1;
     margin: 1rem;
-    padding: 1rem;
     border: 1px solid white;
+    overflow: hidden;
 }
 
 .chartTitle {

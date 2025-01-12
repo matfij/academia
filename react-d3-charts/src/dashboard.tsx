@@ -11,7 +11,7 @@ export const Dashboard = () => {
     });
 
     return (
-        <div>
+        <div className="dashboardWrapper">
             <h1 style={{ margin: '1rem' }}>Dashboard</h1>
             <LinearChart {...lineChartData} />
         </div>
