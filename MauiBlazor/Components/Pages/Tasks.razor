@@ -1,0 +1,33 @@
+﻿@page "/tasks"
+@using MauiBlazor.Data;
+
+<section>
+	<h3>Tasks (@tasks.Count(task => !task.IsDone))</h3>
+	<ul>
+		@foreach (var task in tasks)
+		{
+			<li>
+				<input type="checkbox" @bind="task.IsDone" />
+				<input @bind="task.Title" />
+			</li>
+		}
+	</ul>
+	<hr />
+	<input @bind="newTask" />
+	<button @onclick="AddTask">Add</button>
+</section>
+
+@code {
+	string newTask;
+	List<Data.Task> tasks = new List<Data.Task>();
+
+	void AddTask()
+	{
+		if (string.IsNullOrWhiteSpace(newTask))
+		{
+			return;
+		}
+		tasks.Add(new Data.Task { Title = newTask });
+		newTask = string.Empty;
+	}
+}
