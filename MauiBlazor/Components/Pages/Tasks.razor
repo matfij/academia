@@ -1,5 +1,8 @@
 ﻿@page "/tasks"
+
 @using MauiBlazor.Data;
+
+@inject TaskService taskService;
 
 <section>
 	<h3>Tasks (@tasks.Count(task => !task.IsDone))</h3>
@@ -15,11 +18,19 @@
 	<hr />
 	<input @bind="newTask" />
 	<button @onclick="AddTask">Add</button>
+	<button @onclick="Save">Save</button>
 </section>
 
 @code {
 	string newTask;
 	List<Data.Task> tasks = new List<Data.Task>();
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		var loadedTasks = taskService.Load();
+		tasks.AddRange(loadedTasks);
+	}
 
 	void AddTask()
 	{
@@ -29,5 +40,10 @@
 		}
 		tasks.Add(new Data.Task { Title = newTask });
 		newTask = string.Empty;
+	}
+
+	void Save()
+	{
+		taskService.Save(tasks);
 	}
 }

@@ -21,6 +21,8 @@ namespace MauiBlazor
     		builder.Logging.AddDebug();
 #endif
 
+            builder.Services.AddSingleton<Data.TaskService>();
+
             return builder.Build();
         }
     }
