@@ -22,6 +22,7 @@ namespace MauiBlazor
 #endif
 
             builder.Services.AddSingleton<Data.TaskService>();
+            builder.Services.AddSingleton<IConnectivity>(x => Connectivity.Current);
 
             return builder.Build();
         }

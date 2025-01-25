@@ -14,7 +14,7 @@ public class TaskService
         );
     }
 
-    public void Save(IEnumerable<Data.Task> tasks)
+    public void Save(IEnumerable<Task> tasks)
     {
         File.WriteAllText(file, JsonSerializer.Serialize(tasks));
     }
@@ -29,4 +29,3 @@ public class TaskService
         return JsonSerializer.Deserialize<IEnumerable<Data.Task>>(tasksData) ?? [];
     }
 }
-
