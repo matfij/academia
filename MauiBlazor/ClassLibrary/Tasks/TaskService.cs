@@ -14,23 +14,23 @@ public class TaskService
         );
     }
 
-    public void Save(IEnumerable<Task> tasks)
+    public void Save(IEnumerable<TaskItem> tasks)
     {
         File.WriteAllText(file, JsonSerializer.Serialize(tasks));
     }
 
-    public IEnumerable<Task> Load()
+    public IEnumerable<TaskItem> Load()
     {
         if (!File.Exists(file))
         {
             return [];
         }
         var tasksData = File.ReadAllText(file);
-        return JsonSerializer.Deserialize<IEnumerable<Data.Task>>(tasksData) ?? [];
+        return JsonSerializer.Deserialize<IEnumerable<TaskItem>>(tasksData) ?? [];
     }
 
-    public Task GetSampleTask()
+    public TaskItem GetSampleTask()
     {
-        return new Task { Title = "Sample", IsDone = true };
+        return new TaskItem { Title = "Sample", IsDone = true };
     }
 }

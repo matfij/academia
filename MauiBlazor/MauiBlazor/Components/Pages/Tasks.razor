@@ -31,7 +31,7 @@
 @code {
 	bool isOnline = true;
 	string newTask;
-	List<Data.Task> tasks = new List<Data.Task>();
+	List<TaskItem> tasks = new List<TaskItem>();
 
 	protected override void OnInitialized()
 	{
@@ -46,7 +46,7 @@
 		{
 			return;
 		}
-		tasks.Add(new Data.Task { Title = newTask });
+		tasks.Add(new TaskItem { Title = newTask });
 		newTask = string.Empty;
 	}
 
