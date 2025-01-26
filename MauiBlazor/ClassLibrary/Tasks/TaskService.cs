@@ -1,4 +1,4 @@
-﻿namespace MauiBlazor.Data;
+﻿namespace MauiBlazor.Tasks;
 
 using System.Text.Json;
 
@@ -19,7 +19,7 @@ public class TaskService
         File.WriteAllText(file, JsonSerializer.Serialize(tasks));
     }
 
-    public IEnumerable<Data.Task> Load()
+    public IEnumerable<Task> Load()
     {
         if (!File.Exists(file))
         {
@@ -27,5 +27,10 @@ public class TaskService
         }
         var tasksData = File.ReadAllText(file);
         return JsonSerializer.Deserialize<IEnumerable<Data.Task>>(tasksData) ?? [];
+    }
+
+    public Task GetSampleTask()
+    {
+        return new Task { Title = "Sample", IsDone = true };
     }
 }
