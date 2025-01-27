@@ -5,10 +5,13 @@
              x:Class="MauiBlazor.MainPage"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
 
-    <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
-        <BlazorWebView.RootComponents>
-            <RootComponent Selector="#app" ComponentType="{x:Type local:Routes}" />
-        </BlazorWebView.RootComponents>
-    </BlazorWebView>
+    <Grid RowDefinitions="*, Auto">
+        <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+            <BlazorWebView.RootComponents>
+                <RootComponent Selector="#app" ComponentType="{x:Type local:Routes}" />
+            </BlazorWebView.RootComponents>
+        </BlazorWebView>
+        <Button Text="Native Button" Grid.Row="1" Margin="10" Clicked="Button_Clicked" />
+    </Grid>
 
 </ContentPage>
