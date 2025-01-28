@@ -1,0 +1,67 @@
+﻿@page "/tasks"
+
+@using MauiBlazor.Tasks;
+@using Microsoft.Maui.Networking
+
+@inject TaskService TaskService;
+@inject IConnectivity ConnectivityService;
+
+<section>
+	<h3>Tasks (@tasks.Count(task => !task.IsDone))</h3>
+	@if (!isOnline)
+	{
+		<p>Offline</p>
+	}
+	<ul>
+		@foreach (var task in tasks)
+		{
+			<li>
+				<input type="checkbox" @bind="task.IsDone" />
+				<input @bind="task.Title" />
+			</li>
+		}
+	</ul>
+	<hr />
+	<input @bind="newTask" />
+	<button @onclick="AddTask">Add</button>
+	<button @onclick="Save">Save</button>
+	<hr />
+	<button @onclick="Upload">Upload</button>
+</section>
+
+@code {
+	bool isOnline = true;
+	string newTask;
+	List<TaskItem> tasks = new List<TaskItem>();
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		var loadedTasks = TaskService.Load();
+		tasks.AddRange(loadedTasks);
+	}
+
+	void AddTask()
+	{
+		if (string.IsNullOrWhiteSpace(newTask))
+		{
+			return;
+		}
+		tasks.Add(new TaskItem { Title = newTask });
+		newTask = string.Empty;
+	}
+
+	void Save()
+	{
+		TaskService.Save(tasks);
+	}
+
+	void Upload()
+	{
+		if (ConnectivityService is null)
+		{
+			return;
+		}
+		isOnline = ConnectivityService.NetworkAccess == NetworkAccess.Internet;
+	}
+}

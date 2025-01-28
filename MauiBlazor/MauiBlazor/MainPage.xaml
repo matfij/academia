@@ -2,13 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MauiBlazor"
+             xmlns:pagesShared="clr-namespace:HybricComponentsLibrary.Pages;assembly=HybricComponentsLibrary"
              x:Class="MauiBlazor.MainPage"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
 
     <Grid RowDefinitions="*, Auto">
         <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
             <BlazorWebView.RootComponents>
-                <RootComponent Selector="#app" ComponentType="{x:Type local:Routes}" />
+                <RootComponent Selector="#app" ComponentType="{x:Type pagesShared:Tasks}" />
             </BlazorWebView.RootComponents>
         </BlazorWebView>
         <Button Text="Native Button" Grid.Row="1" Margin="10" Clicked="Button_Clicked" />

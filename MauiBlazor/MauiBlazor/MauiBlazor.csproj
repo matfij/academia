@@ -67,6 +67,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ClassLibrary\ClassLibrary.csproj" />
+      <ProjectReference Include="..\HybricComponentsLibrary\HybricComponentsLibrary.csproj" />
     </ItemGroup>
 
 </Project>
