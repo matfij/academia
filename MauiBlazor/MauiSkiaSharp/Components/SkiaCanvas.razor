@@ -1,0 +1,26 @@
+﻿@using SkiaSharp
+@using SkiaSharp.Views.Maui
+@using SkiaSharp.Views.Maui.Controls
+
+@code {
+    private SKCanvasView _canvasView;
+
+    protected override void OnInitialized()
+    {
+        // Create and configure SKCanvasView
+        _canvasView = new SKCanvasView();
+        _canvasView.PaintSurface += OnPaintSurface;
+    }
+
+    private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs args)
+    {
+        var canvas = args.Surface.Canvas;
+        canvas.Clear(SKColors.Black);
+
+        using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+        canvas.DrawCircle(50, 50, 20, paint); // Draw a white circle
+    }
+
+    // Render SKCanvasView inside a MAUI ContentView
+    public SKCanvasView GetCanvasView() => _canvasView;
+}
