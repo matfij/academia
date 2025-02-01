@@ -1,22 +1,3 @@
 ﻿@page "/"
 
-<h3>Particle Simulation</h3>
-
-<SkiaCanvas @ref="_skiaCanvas" />
-
-@code {
-    private SkiaCanvas _skiaCanvas;
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var canvas = _skiaCanvas.GetCanvasView();
-            if (canvas != null)
-            {
-                var contentPage = (ContentPage)Application.Current.MainPage;
-                contentPage.Content = canvas;
-            }
-        }
-    }
-}
+<SkiaCanvas />
