@@ -1,12 +1,15 @@
 ﻿@using Microsoft.Maui.Controls
 @using SkiaSharp
 @using SkiaSharp.Views.Maui
+@using MauiSkiaSharp.Services;
+
+@inject ParticleService particleService;
 
 @code {
     private SKCanvasView CanvasView = new()
         {
             WidthRequest = 1000,
-            HeightRequest = 600
+            HeightRequest = 600,
         };
 
     protected override void OnAfterRender(bool firstRender)
@@ -33,7 +36,11 @@
         canvas.Clear(SKColors.Black);
 
         using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
-        canvas.DrawCircle(50, 50, 10, paint);
-        canvas.DrawCircle(250, 150, 20, paint);
+
+
+        foreach (var particle in particleService.GetParticles)
+        {
+            canvas.DrawCircle(particle.X, particle.Y, particle.R, paint);
+        }
     }
 }

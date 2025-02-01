@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MauiSkiaSharp.Services;
+using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace MauiSkiaSharp
@@ -17,6 +18,7 @@ namespace MauiSkiaSharp
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddSingleton<ParticleService>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
