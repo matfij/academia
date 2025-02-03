@@ -1,4 +1,5 @@
-﻿@using Microsoft.Maui.Controls
+﻿@using System.Timers;
+@using Microsoft.Maui.Controls
 @using SkiaSharp
 @using SkiaSharp.Views.Maui
 @using MauiSkiaSharp.Services;
@@ -6,7 +7,8 @@
 @inject ParticleService particleService;
 
 @code {
-    private SKCanvasView CanvasView = new()
+    private Timer? timer;
+    private SKCanvasView canvasView = new()
         {
             WidthRequest = 1000,
             HeightRequest = 600,
@@ -17,18 +19,29 @@
         if (firstRender)
         {
             SetupCanvas();
+            SetupTimer();
         }
+    }
+
+    private void SetupTimer()
+    {
+        timer = new Timer(10); // ~100fps;
+        timer.Elapsed += (sender, args) => InvokeAsync(() =>
+        {
+            canvasView.InvalidateSurface();
+        });
+        timer.Start();
     }
 
     private void SetupCanvas()
     {
-        CanvasView.EnableTouchEvents = true;
-        CanvasView.PaintSurface += OnPaintSurface;
-        CanvasView.Touch += OnTouch;
+        canvasView.EnableTouchEvents = true;
+        canvasView.PaintSurface += OnPaintSurface;
+        canvasView.Touch += OnTouch;
         var contentPage = Application.Current?.MainPage as ContentPage;
         if (contentPage != null)
         {
-            contentPage.Content = CanvasView;
+            contentPage.Content = canvasView;
         }
     }
 
@@ -38,7 +51,6 @@
         canvas.Clear(SKColors.Black);
 
         using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
-
 
         foreach (var particle in particleService.GetParticles)
         {
@@ -52,7 +64,6 @@
         {
             return;
         }
-        System.Diagnostics.Debug.WriteLine($"Canvas touched at ({args.Location.X} {args.Location.Y})");
         particleService.AddParticle(
         new Particle(
         (float)(10 * Math.Round((decimal)args.Location.X / 10)),
