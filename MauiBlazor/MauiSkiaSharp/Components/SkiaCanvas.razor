@@ -25,7 +25,7 @@
 
     private void SetupTimer()
     {
-        timer = new Timer(10); // ~100fps;
+        timer = new Timer(1000);
         timer.Elapsed += (sender, args) => InvokeAsync(() =>
         {
             canvasView.InvalidateSurface();
@@ -47,14 +47,24 @@
 
     private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs args)
     {
+        particleService.Tick();
+
         var canvas = args.Surface.Canvas;
         canvas.Clear(SKColors.Black);
 
-        using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+        using var alivePaint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+        using var deadPaint = new SKPaint { Color = SKColors.Black, IsAntialias = true };
 
         foreach (var particle in particleService.GetParticles)
         {
-            canvas.DrawCircle(particle.X, particle.Y, particle.R, paint);
+            if (particle.Alive)
+            {
+                canvas.DrawCircle(10 * particle.X, 10 * particle.Y, 5, alivePaint);
+            }
+            else
+            {
+                canvas.DrawCircle(10 * particle.X, 10 * particle.Y, 5, deadPaint);
+            }
         }
     }
 
@@ -66,8 +76,8 @@
         }
         particleService.AddParticle(
         new Particle(
-        (float)(10 * Math.Round((decimal)args.Location.X / 10)),
-        (float)(10 * Math.Round((decimal)args.Location.Y / 10))
+        (float)(Math.Round(args.Location.X / 10)),
+        (float)(Math.Round(args.Location.Y / 10))
         ));
     }
 }
