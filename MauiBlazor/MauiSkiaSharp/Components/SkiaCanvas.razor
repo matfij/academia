@@ -22,7 +22,9 @@
 
     private void SetupCanvas()
     {
+        CanvasView.EnableTouchEvents = true;
         CanvasView.PaintSurface += OnPaintSurface;
+        CanvasView.Touch += OnTouch;
         var contentPage = Application.Current?.MainPage as ContentPage;
         if (contentPage != null)
         {
@@ -42,5 +44,19 @@
         {
             canvas.DrawCircle(particle.X, particle.Y, particle.R, paint);
         }
+    }
+
+    private void OnTouch(object? sender, SKTouchEventArgs args)
+    {
+        if (args.ActionType != SKTouchAction.Pressed || args.MouseButton != SKMouseButton.Left)
+        {
+            return;
+        }
+        System.Diagnostics.Debug.WriteLine($"Canvas touched at ({args.Location.X} {args.Location.Y})");
+        particleService.AddParticle(
+        new Particle(
+        (float)(10 * Math.Round((decimal)args.Location.X / 10)),
+        (float)(10 * Math.Round((decimal)args.Location.Y / 10))
+        ));
     }
 }

@@ -1,29 +1,27 @@
 
 namespace MauiSkiaSharp.Services;
 
-public struct Particle
+public struct Particle(float x, float y, float r = 10)
 {
-    public Particle(float x, float y, float r = 10)
-    {
-        X = x;
-        Y = y;
-        R = r;
-    }
-
-    public float X { get; set; }
-    public float Y { get; set; }
-    public float R { get; set; }
+    public float X { get; set; } = x;
+    public float Y { get; set; } = y;
+    public float R { get; set; } = r;
 }
 
 public class ParticleService
 {
-    private List<Particle> Particles = new();
+    private readonly List<Particle> Particles = [];
 
     public ParticleService()
     {
         Particles.Add(new Particle(10, 50));
         Particles.Add(new Particle(100, 10));
         Particles.Add(new Particle(250, 150, 25));
+    }
+
+    public void AddParticle(Particle particle)
+    {
+        Particles.Add(particle);
     }
 
     public IEnumerable<Particle> GetParticles => Particles;
