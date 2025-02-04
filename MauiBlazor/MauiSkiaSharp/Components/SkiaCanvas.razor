@@ -25,7 +25,7 @@
 
     private void SetupTimer()
     {
-        timer = new Timer(1000);
+        timer = new Timer(100);
         timer.Elapsed += (sender, args) => InvokeAsync(() =>
         {
             canvasView.InvalidateSurface();
@@ -47,8 +47,6 @@
 
     private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs args)
     {
-        particleService.Tick();
-
         var canvas = args.Surface.Canvas;
         canvas.Clear(SKColors.Black);
 
@@ -57,14 +55,7 @@
 
         foreach (var particle in particleService.GetParticles)
         {
-            if (particle.Alive)
-            {
-                canvas.DrawCircle(10 * particle.X, 10 * particle.Y, 5, alivePaint);
-            }
-            else
-            {
-                canvas.DrawCircle(10 * particle.X, 10 * particle.Y, 5, deadPaint);
-            }
+            canvas.DrawCircle(10 * particle.X, 10 * particle.Y, 5, particle.IsAlive ? alivePaint : deadPaint);
         }
     }
 
