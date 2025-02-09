@@ -37,7 +37,7 @@ public class ParticleService : IDisposable
 
     public ParticleService()
     {
-        for (int x = 0; x < 100; x++)
+        for (int x = 0; x < 120; x++)
         {
             for (int y = 0; y < 60; y++)
             {
@@ -47,7 +47,7 @@ public class ParticleService : IDisposable
                 }
             }
         }
-        timer = new(10);
+        timer = new(100);
         timer.Elapsed += (sender, args) => Tick();
         timer.Start();
     }
