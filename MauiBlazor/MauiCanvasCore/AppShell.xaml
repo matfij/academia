@@ -5,10 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MauiCanvasCore"
     Shell.FlyoutBehavior="Disabled"
-    Title="MauiCanvasCore">
+    Title="Maui CanvasCore">
 
     <ShellContent
-        Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
