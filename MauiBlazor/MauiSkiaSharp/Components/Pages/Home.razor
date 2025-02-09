@@ -1,3 +1,52 @@
-﻿@page "/"
+﻿@page "/";
 
-<SkiaCanvas />
+@using MauiSkiaSharp.Services;
+
+@inject IJSRuntime JS
+@inject ParticleService particleService;
+
+<canvas id="particleCanvas" width="1000" height="600"></canvas>
+<button @onclick="StartSimulation">Start</button>
+<button @onclick="StopSimulation">Stop</button>
+
+@code {
+    private IJSObjectReference? _jsModule;
+    private bool _isRunning = false;
+    private PeriodicTimer? _timer;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./particleRenderer.js");
+        }
+    }
+
+    private async Task StartSimulation()
+    {
+        if (_isRunning || _jsModule is null) return;
+        _isRunning = true;
+
+        _timer = new PeriodicTimer(TimeSpan.FromMilliseconds(50));
+        while (await _timer.WaitForNextTickAsync() && _isRunning)
+        {
+            await RedrawParticles();
+        }
+    }
+
+    private async Task StopSimulation()
+    {
+        _isRunning = false;
+    }
+
+    private async Task RedrawParticles()
+    {
+        if (_jsModule is null) return;
+
+        var particles = particleService.GetParticles
+        .Select(p => new { p.X, p.Y })
+        .ToArray();
+
+        await _jsModule.InvokeVoidAsync("drawParticles", particles);
+    }
+}
