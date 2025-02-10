@@ -9,6 +9,8 @@
 
         <skia:SKCanvasView x:Name="CanvasView" 
             PaintSurface="OnPaintSurface"
+            EnableTouchEvents="True"
+            Touch="OnTouch"
             HeightRequest="600"
             WidthRequest="1200"
             Margin="20"/>

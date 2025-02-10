@@ -1,7 +1,3 @@
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Timers;
-
 namespace MauiCanvasCore.Services;
 
 public struct Particle(float x, float y)
@@ -26,7 +22,8 @@ public class ParticleService : IDisposable
     private HashSet<Particle> Particles = new HashSet<Particle>();
     private Random rnd = new Random();
     private readonly System.Timers.Timer timer;
-    private readonly (float dx, float dy)[] NegihborOffests =
+    private readonly (float width, float height) cancasSize = (120, 60);
+    private readonly (float dx, float dy)[] negihborOffests =
     {
         (-1, 1), (0, 1), (1, 1),
         (-1, 0), (1, 0),
@@ -37,9 +34,9 @@ public class ParticleService : IDisposable
 
     public ParticleService()
     {
-        for (int x = 0; x < 120; x++)
+        for (int x = 0; x < cancasSize.width; x++)
         {
-            for (int y = 0; y < 60; y++)
+            for (int y = 0; y < cancasSize.height; y++)
             {
                 if (rnd.Next(0, 100) > 80)
                 {
@@ -49,12 +46,21 @@ public class ParticleService : IDisposable
         }
         timer = new(100);
         timer.Elapsed += (sender, args) => Tick();
+    }
+
+    public void Start()
+    {
         timer.Start();
+    }
+
+    public void Stop()
+    {
+        timer.Stop();
     }
 
     public void AddParticle(Particle particle)
     {
-        throw new NotImplementedException();
+        Particles.Add(particle);
     }
 
     private void Tick()
@@ -63,9 +69,9 @@ public class ParticleService : IDisposable
         {
             HashSet<Particle> newParticles = [];
 
-            for (int x = 0; x < 100; x++)
+            for (int x = 0; x < cancasSize.width; x++)
             {
-                for (int y = 0; y < 60; y++)
+                for (int y = 0; y < cancasSize.height; y++)
                 {
                     var wasAlive = Particles.Contains(new Particle(x, y));
                     var aliveNeighbors = FindAliveNeighbors(new Particle(x, y));
@@ -87,7 +93,7 @@ public class ParticleService : IDisposable
     {
         int neighbors = 0;
 
-        foreach (var offset in NegihborOffests)
+        foreach (var offset in negihborOffests)
         {
             if (Particles.Contains(new Particle(particle.X + offset.dx, particle.Y + offset.dy)))
             {
