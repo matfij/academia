@@ -74,7 +74,7 @@ public class ParticleService : IDisposable
         lock (Particles)
         {
             ConcurrentBag<Particle> newParticles = [];
-            ConcurrentBag<Particle> checkedParticles = [];
+            HashSet<Particle> checkedParticles = new();
 
             foreach (var particle in Particles.Keys)
             {
@@ -83,7 +83,6 @@ public class ParticleService : IDisposable
                 {
                     checkedParticles.Add(new Particle(particle.X + offset.dx, particle.Y + offset.dy));
                 }
-
             }
 
             Parallel.ForEach(checkedParticles, particle =>
