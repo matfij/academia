@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace MauiCanvasCore.Services;
 
@@ -21,7 +22,7 @@ public struct Particle(float x, float y)
 
 public class ParticleService : IDisposable
 {
-    private HashSet<Particle> Particles = new HashSet<Particle>();
+    private ConcurrentDictionary<Particle, bool> Particles = new();
     private Random rnd = new Random();
     private readonly System.Timers.Timer timer;
     private readonly (float width, float height) cancasSize = (1200, 600);
@@ -32,7 +33,7 @@ public class ParticleService : IDisposable
         (-1, -1), (0, -1), (1, -1),
     };
 
-    public IEnumerable<Particle> GetParticles => Particles;
+    public IEnumerable<Particle> GetParticles => Particles.Keys;
 
     public ParticleService()
     {
@@ -42,7 +43,7 @@ public class ParticleService : IDisposable
             {
                 if (rnd.Next(0, 100) > 90)
                 {
-                    Particles.Add(new Particle(x, y));
+                    Particles.TryAdd(new Particle(x, y), true);
                 }
             }
         }
@@ -64,7 +65,7 @@ public class ParticleService : IDisposable
     {
         lock (Particles)
         {
-            Particles.Add(particle);
+            Particles.TryAdd(particle, true);
         }
     }
 
@@ -75,7 +76,7 @@ public class ParticleService : IDisposable
             ConcurrentBag<Particle> newParticles = [];
             ConcurrentBag<Particle> checkedParticles = [];
 
-            foreach (var particle in Particles)
+            foreach (var particle in Particles.Keys)
             {
                 checkedParticles.Add(particle);
                 foreach (var offset in negihborOffests)
@@ -87,7 +88,7 @@ public class ParticleService : IDisposable
 
             Parallel.ForEach(checkedParticles, particle =>
             {
-                var wasAlive = Particles.Contains(particle);
+                var wasAlive = Particles.ContainsKey(particle);
                 var aliveNeighbors = FindAliveNeighbors(particle);
                 var isAlive =
                     (wasAlive && (aliveNeighbors == 2 || aliveNeighbors == 3))
@@ -98,7 +99,9 @@ public class ParticleService : IDisposable
                 }
             });
 
-            Particles = newParticles.ToHashSet();
+            Particles = new ConcurrentDictionary<Particle, bool>(
+                newParticles.Distinct().Select(p => new KeyValuePair<Particle, bool>(p, true))
+            );
         }
     }
 
@@ -110,7 +113,7 @@ public class ParticleService : IDisposable
         foreach (var offset in negihborOffests)
         {
             neighbor = new Particle(particle.X + offset.dx, particle.Y + offset.dy);
-            if (Particles.Contains(neighbor))
+            if (Particles.ContainsKey(neighbor))
             {
                 neighbors++;
                 if (neighbors > 3)
