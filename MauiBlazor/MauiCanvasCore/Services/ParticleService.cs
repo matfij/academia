@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+
 namespace MauiCanvasCore.Services;
 
 public struct Particle(float x, float y)
@@ -22,7 +24,7 @@ public class ParticleService : IDisposable
     private HashSet<Particle> Particles = new HashSet<Particle>();
     private Random rnd = new Random();
     private readonly System.Timers.Timer timer;
-    private readonly (float width, float height) cancasSize = (120, 60);
+    private readonly (float width, float height) cancasSize = (1200, 600);
     private readonly (float dx, float dy)[] negihborOffests =
     {
         (-1, 1), (0, 1), (1, 1),
@@ -38,7 +40,7 @@ public class ParticleService : IDisposable
         {
             for (int y = 0; y < cancasSize.height; y++)
             {
-                if (rnd.Next(0, 100) > 80)
+                if (rnd.Next(0, 100) > 90)
                 {
                     Particles.Add(new Particle(x, y));
                 }
@@ -60,44 +62,61 @@ public class ParticleService : IDisposable
 
     public void AddParticle(Particle particle)
     {
-        Particles.Add(particle);
+        lock (Particles)
+        {
+            Particles.Add(particle);
+        }
     }
 
     private void Tick()
     {
         lock (Particles)
         {
-            HashSet<Particle> newParticles = [];
+            ConcurrentBag<Particle> newParticles = [];
+            ConcurrentBag<Particle> checkedParticles = [];
 
-            for (int x = 0; x < cancasSize.width; x++)
+            foreach (var particle in Particles)
             {
-                for (int y = 0; y < cancasSize.height; y++)
+                checkedParticles.Add(particle);
+                foreach (var offset in negihborOffests)
                 {
-                    var wasAlive = Particles.Contains(new Particle(x, y));
-                    var aliveNeighbors = FindAliveNeighbors(new Particle(x, y));
-                    var isAlive =
-                        (wasAlive && (aliveNeighbors == 2 || aliveNeighbors == 3))
-                        || (!wasAlive && aliveNeighbors == 3);
-                    if (isAlive)
-                    {
-                        newParticles.Add(new Particle(x, y));
-                    }
+                    checkedParticles.Add(new Particle(particle.X + offset.dx, particle.Y + offset.dy));
                 }
+
             }
 
-            Particles = newParticles;
+            Parallel.ForEach(checkedParticles, particle =>
+            {
+                var wasAlive = Particles.Contains(particle);
+                var aliveNeighbors = FindAliveNeighbors(particle);
+                var isAlive =
+                    (wasAlive && (aliveNeighbors == 2 || aliveNeighbors == 3))
+                    || (!wasAlive && aliveNeighbors == 3);
+                if (isAlive)
+                {
+                    newParticles.Add(particle);
+                }
+            });
+
+            Particles = newParticles.ToHashSet();
         }
     }
 
     private int FindAliveNeighbors(Particle particle)
     {
         int neighbors = 0;
+        var neighbor = new Particle(particle.X, particle.Y);
 
         foreach (var offset in negihborOffests)
         {
-            if (Particles.Contains(new Particle(particle.X + offset.dx, particle.Y + offset.dy)))
+            neighbor = new Particle(particle.X + offset.dx, particle.Y + offset.dy);
+            if (Particles.Contains(neighbor))
             {
                 neighbors++;
+                if (neighbors > 3)
+                {
+                    break;
+                }
             }
         }
 

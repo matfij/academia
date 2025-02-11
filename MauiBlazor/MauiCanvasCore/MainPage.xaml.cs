@@ -24,7 +24,7 @@ namespace MauiCanvasCore
         {
             var canvas = args.Surface.Canvas;
             canvas.Clear(SKColors.Black);
-            _canvasScalse = (args.Info.Width / 120f, args.Info.Height / 60f);
+            _canvasScalse = (args.Info.Width / 1200f, args.Info.Height / 600f);
 
             using var paint = new SKPaint { Color = SKColors.White };
 
@@ -33,7 +33,7 @@ namespace MauiCanvasCore
 
             foreach (var p in _particleService.GetParticles)
             {
-                canvas.DrawRect(cellWidth * p.X + 1, cellHeight * p.Y + 1, cellWidth - 1, cellHeight - 1, paint);
+                canvas.DrawRect(cellWidth * p.X, cellHeight * p.Y, cellWidth, cellHeight, paint);
             }
         }
 
