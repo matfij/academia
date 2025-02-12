@@ -63,45 +63,39 @@ public class ParticleService : IDisposable
 
     public void AddParticle(Particle particle)
     {
-        lock (Particles)
-        {
-            Particles.TryAdd(particle, true);
-        }
+        Particles.TryAdd(particle, true);
     }
 
     private void Tick()
     {
-        lock (Particles)
+        ConcurrentBag<Particle> newParticles = [];
+        HashSet<Particle> checkedParticles = [];
+
+        foreach (var particle in Particles.Keys)
         {
-            ConcurrentBag<Particle> newParticles = [];
-            HashSet<Particle> checkedParticles = new();
-
-            foreach (var particle in Particles.Keys)
+            checkedParticles.Add(particle);
+            foreach (var offset in negihborOffests)
             {
-                checkedParticles.Add(particle);
-                foreach (var offset in negihborOffests)
-                {
-                    checkedParticles.Add(new Particle(particle.X + offset.dx, particle.Y + offset.dy));
-                }
+                checkedParticles.Add(new Particle(particle.X + offset.dx, particle.Y + offset.dy));
             }
-
-            Parallel.ForEach(checkedParticles, particle =>
-            {
-                var wasAlive = Particles.ContainsKey(particle);
-                var aliveNeighbors = FindAliveNeighbors(particle);
-                var isAlive =
-                    (wasAlive && (aliveNeighbors == 2 || aliveNeighbors == 3))
-                    || (!wasAlive && aliveNeighbors == 3);
-                if (isAlive)
-                {
-                    newParticles.Add(particle);
-                }
-            });
-
-            Particles = new ConcurrentDictionary<Particle, bool>(
-                newParticles.Distinct().Select(p => new KeyValuePair<Particle, bool>(p, true))
-            );
         }
+
+        Parallel.ForEach(checkedParticles, particle =>
+        {
+            var wasAlive = Particles.ContainsKey(particle);
+            var aliveNeighbors = FindAliveNeighbors(particle);
+            var isAlive =
+                (wasAlive && (aliveNeighbors == 2 || aliveNeighbors == 3))
+                || (!wasAlive && aliveNeighbors == 3);
+            if (isAlive)
+            {
+                newParticles.Add(particle);
+            }
+        });
+
+        Particles = new ConcurrentDictionary<Particle, bool>(
+            newParticles.Distinct().Select(p => new KeyValuePair<Particle, bool>(p, true))
+        );
     }
 
     private int FindAliveNeighbors(Particle particle)
