@@ -37,16 +37,6 @@ public class ParticleService : IDisposable
 
     public ParticleService()
     {
-        for (int x = 0; x < cancasSize.width; x++)
-        {
-            for (int y = 0; y < cancasSize.height; y++)
-            {
-                if (rnd.Next(0, 100) > 90)
-                {
-                    Particles.TryAdd(new Particle(x, y), true);
-                }
-            }
-        }
         timer = new(100);
         timer.Elapsed += (sender, args) => Tick();
     }
@@ -61,9 +51,19 @@ public class ParticleService : IDisposable
         timer.Stop();
     }
 
-    public void AddParticle(Particle particle)
+    public void AddParticle((float x, float y) center, int radius)
     {
-        Particles.TryAdd(particle, true);
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                var dr = Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2));
+                if (dr <= radius)
+                {
+                    Particles.TryAdd(new Particle(center.x + dx, center.y + dy), true);
+                }
+            }
+        }
     }
 
     private void Tick()

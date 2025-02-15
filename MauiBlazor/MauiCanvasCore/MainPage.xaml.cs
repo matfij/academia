@@ -66,7 +66,7 @@ namespace MauiCanvasCore
             {
                 var particleX = (int)(args.Location.X / _canvasScalse.x);
                 var particleY = (int)(args.Location.Y / _canvasScalse.y);
-                _particleService.AddParticle(new Particle { X = particleX, Y = particleY });
+                _particleService.AddParticle((x: particleX, y: particleY), (int)(2 * _cursor.r / (_canvasScalse.x + _canvasScalse.y)));
             }
         }
 
