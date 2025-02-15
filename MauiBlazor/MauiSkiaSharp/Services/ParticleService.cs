@@ -9,7 +9,6 @@ public struct Particle(float x, float y)
     public float X { get; set; } = x;
     public float Y { get; set; } = y;
 
-
     public override bool Equals(object? obj)
     {
         return obj is Particle p && p.X == X && p.Y == Y;
@@ -28,9 +27,14 @@ public class ParticleService : IDisposable
     private readonly System.Timers.Timer timer;
     private readonly (float dx, float dy)[] NegihborOffests =
     {
-        (-1, 1), (0, 1), (1, 1),
-        (-1, 0), (1, 0),
-        (-1, -1), (0, -1), (1, -1),
+        (-1, 1),
+        (0, 1),
+        (1, 1),
+        (-1, 0),
+        (1, 0),
+        (-1, -1),
+        (0, -1),
+        (1, -1),
     };
 
     public IEnumerable<Particle> GetParticles => Particles;

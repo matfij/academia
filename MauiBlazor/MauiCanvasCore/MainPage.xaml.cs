@@ -62,11 +62,19 @@ namespace MauiCanvasCore
                 _cursor.r += args.WheelDelta / 10;
                 _cursor.r = Math.Min(Math.Max(2, _cursor.r), 100);
             }
-            if (args.MouseButton == SKMouseButton.Left && (args.ActionType == SKTouchAction.Pressed || args.ActionType == SKTouchAction.Moved))
+            if ((args.ActionType == SKTouchAction.Pressed || args.ActionType == SKTouchAction.Moved))
             {
                 var particleX = (int)(args.Location.X / _canvasScalse.x);
                 var particleY = (int)(args.Location.Y / _canvasScalse.y);
-                _particleService.AddParticle((x: particleX, y: particleY), (int)(2 * _cursor.r / (_canvasScalse.x + _canvasScalse.y)));
+                var radius = (int)(2 * _cursor.r / (_canvasScalse.x + _canvasScalse.y));
+                if (args.MouseButton == SKMouseButton.Left)
+                {
+                    _particleService.AddParticles((x: particleX, y: particleY), radius);
+                }
+                if (args.MouseButton == SKMouseButton.Right)
+                {
+                    _particleService.EraseParticles((x: particleX, y: particleY), radius);
+                }
             }
         }
 

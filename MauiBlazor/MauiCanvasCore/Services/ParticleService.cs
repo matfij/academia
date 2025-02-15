@@ -51,7 +51,7 @@ public class ParticleService : IDisposable
         timer.Stop();
     }
 
-    public void AddParticle((float x, float y) center, int radius)
+    public void AddParticles((float x, float y) center, int radius)
     {
         for (int dx = -radius; dx <= radius; dx++)
         {
@@ -61,6 +61,21 @@ public class ParticleService : IDisposable
                 if (dr <= radius)
                 {
                     Particles.TryAdd(new Particle(center.x + dx, center.y + dy), true);
+                }
+            }
+        }
+    }
+
+    public void EraseParticles((float x, float y) center, int radius)
+    {
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                var dr = Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2));
+                if (dr <= radius)
+                {
+                    Particles.TryRemove(new Particle(center.x + dx, center.y + dy), out _);
                 }
             }
         }
