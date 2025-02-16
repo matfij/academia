@@ -66,9 +66,9 @@ public class ParticleService : IDisposable
 
     public void EraseParticles((float x, float y) center, int radius)
     {
-        for (int dx = -radius; dx <= radius; dx++)
+        for (int dx = -radius; dx < radius; dx++)
         {
-            for (int dy = -radius; dy <= radius; dy++)
+            for (int dy = -radius; dy < radius; dy++)
             {
                 var dr = Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2));
                 if (dr <= radius)
