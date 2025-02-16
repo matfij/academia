@@ -1,23 +1,22 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Maui;
 using MauiCanvasCore.Services;
-using System.Diagnostics;
 
 namespace MauiCanvasCore
 {
     public partial class MainPage : ContentPage
     {
-        private readonly ParticleService _particleService;
-        private readonly System.Timers.Timer _timer;
-        private (float x, float y) _canvasScalse = (0, 0);
-        private (float x, float y, float r) _cursor = (0, 0, 10);
-        private readonly SKPaint _whitePaint = new()
+        private readonly ParticleService ParticleService;
+        private readonly System.Timers.Timer PaintTimer;
+        private (float x, float y) CanvasScale = (0, 0);
+        private (float x, float y, float r) Cursor = (0, 0, 10);
+        private readonly SKPaint ParticlePaint = new()
         {
             Color = SKColors.White,
             IsAntialias = false,
             Style = SKPaintStyle.Fill
         };
-        private readonly SKPaint _redPaint = new()
+        private readonly SKPaint CursorPaint = new()
         {
             Color = SKColors.Red,
             IsAntialias = true,
@@ -28,64 +27,64 @@ namespace MauiCanvasCore
         public MainPage(ParticleService particleService)
         {
             InitializeComponent();
-            _particleService = particleService;
-            _timer = new(10);
-            _timer.Elapsed += (sender, args) => InvalidateCanvas();
-            _timer.Start();
+            this.ParticleService = particleService;
+            PaintTimer = new(20);
+            PaintTimer.Elapsed += (sender, args) => MainThread.BeginInvokeOnMainThread(InvalidateCanvas);
+            PaintTimer.Start();
         }
 
         private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs args)
         {
             var canvas = args.Surface.Canvas;
             canvas.Clear(SKColors.Black);
-            _canvasScalse = (args.Info.Width / 1200f, args.Info.Height / 600f);
+            CanvasScale = (args.Info.Width / 1200f, args.Info.Height / 600f);
 
-            var cellWidth = _canvasScalse.x;
-            var cellHeight = _canvasScalse.y;
+            var cellWidth = CanvasScale.x;
+            var cellHeight = CanvasScale.y;
 
-            foreach (var p in _particleService.GetParticles)
-            {
-                canvas.DrawRect(cellWidth * p.X, cellHeight * p.Y, cellWidth, cellHeight, _whitePaint);
-            }
-            canvas.DrawCircle(cellWidth * _cursor.x, cellWidth * _cursor.y, _cursor.r, _redPaint);
+            canvas.DrawPoints(
+                SKPointMode.Points,
+                ParticleService.GetParticles.Select(p => new SKPoint(cellWidth * p.X, cellHeight * p.Y)).ToArray(),
+                ParticlePaint
+            );
+            canvas.DrawCircle(cellWidth * Cursor.x, cellHeight * Cursor.y, Cursor.r, CursorPaint);
         }
 
         private void OnTouch(object sender, SKTouchEventArgs args)
         {
             if (args.ActionType == SKTouchAction.Moved)
             {
-                _cursor.x = args.Location.X / _canvasScalse.x;
-                _cursor.y = args.Location.Y / _canvasScalse.y;
+                Cursor.x = args.Location.X / CanvasScale.x;
+                Cursor.y = args.Location.Y / CanvasScale.y;
             }
             if (args.ActionType == SKTouchAction.WheelChanged)
             {
-                _cursor.r += args.WheelDelta / 10;
-                _cursor.r = Math.Min(Math.Max(2, _cursor.r), 100);
+                Cursor.r = Math.Clamp(Cursor.r + args.WheelDelta / 10, 2, 100);
             }
             if ((args.ActionType == SKTouchAction.Pressed || args.ActionType == SKTouchAction.Moved))
             {
-                var particleX = (int)(args.Location.X / _canvasScalse.x);
-                var particleY = (int)(args.Location.Y / _canvasScalse.y);
-                var radius = (int)(2 * _cursor.r / (_canvasScalse.x + _canvasScalse.y));
+                var particleX = (int)(args.Location.X / CanvasScale.x);
+                var particleY = (int)(args.Location.Y / CanvasScale.y);
+                var radius = (int)(2 * Cursor.r / (CanvasScale.x + CanvasScale.y));
                 if (args.MouseButton == SKMouseButton.Left)
                 {
-                    _particleService.AddParticles((x: particleX, y: particleY), radius);
+                    ParticleService.AddParticles((x: particleX, y: particleY), radius);
                 }
                 if (args.MouseButton == SKMouseButton.Right)
                 {
-                    _particleService.EraseParticles((x: particleX, y: particleY), radius);
+                    ParticleService.EraseParticles((x: particleX, y: particleY), radius);
                 }
             }
         }
 
         private void StartSimulation(object sender, EventArgs e)
         {
-            _particleService.Start();
+            ParticleService.Start();
         }
 
         private void StopSimulation(object sender, EventArgs e)
         {
-            _particleService.Stop();
+            ParticleService.Stop();
         }
 
         private void InvalidateCanvas()

@@ -23,10 +23,9 @@ public struct Particle(float x, float y)
 public class ParticleService : IDisposable
 {
     private ConcurrentDictionary<Particle, bool> Particles = new();
-    private Random rnd = new Random();
-    private readonly System.Timers.Timer timer;
-    private readonly (float width, float height) cancasSize = (1200, 600);
-    private readonly (float dx, float dy)[] negihborOffests =
+    private readonly System.Timers.Timer LoopTimer = new(100);
+    private readonly (float width, float height) CanvasSize = (1200, 600);
+    private readonly (float dx, float dy)[] NeighborOffsets =
     {
         (-1, 1), (0, 1), (1, 1),
         (-1, 0), (1, 0),
@@ -37,18 +36,17 @@ public class ParticleService : IDisposable
 
     public ParticleService()
     {
-        timer = new(100);
-        timer.Elapsed += (sender, args) => Tick();
+        LoopTimer.Elapsed += (sender, args) => Tick();
     }
 
     public void Start()
     {
-        timer.Start();
+        LoopTimer.Start();
     }
 
     public void Stop()
     {
-        timer.Stop();
+        LoopTimer.Stop();
     }
 
     public void AddParticles((float x, float y) center, int radius)
@@ -89,7 +87,7 @@ public class ParticleService : IDisposable
         foreach (var particle in Particles.Keys)
         {
             checkedParticles.Add(particle);
-            foreach (var offset in negihborOffests)
+            foreach (var offset in NeighborOffsets)
             {
                 checkedParticles.Add(new Particle(particle.X + offset.dx, particle.Y + offset.dy));
             }
@@ -99,9 +97,7 @@ public class ParticleService : IDisposable
         {
             var wasAlive = Particles.ContainsKey(particle);
             var aliveNeighbors = FindAliveNeighbors(particle);
-            var isAlive =
-                (wasAlive && (aliveNeighbors == 2 || aliveNeighbors == 3))
-                || (!wasAlive && aliveNeighbors == 3);
+            var isAlive = (wasAlive && (aliveNeighbors == 2 || aliveNeighbors == 3)) || (!wasAlive && aliveNeighbors == 3);
             if (isAlive)
             {
                 newParticles.Add(particle);
@@ -118,7 +114,7 @@ public class ParticleService : IDisposable
         int neighbors = 0;
         var neighbor = new Particle(particle.X, particle.Y);
 
-        foreach (var offset in negihborOffests)
+        foreach (var offset in NeighborOffsets)
         {
             neighbor = new Particle(particle.X + offset.dx, particle.Y + offset.dy);
             if (Particles.ContainsKey(neighbor))
@@ -136,7 +132,8 @@ public class ParticleService : IDisposable
 
     public void Dispose()
     {
-        timer.Stop();
-        timer.Dispose();
+        LoopTimer.Stop();
+        LoopTimer.Dispose();
+        Particles.Clear();
     }
 }
