@@ -1,12 +1,11 @@
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace MauiCanvasCore.Services;
 
-public struct Particle(float x, float y)
+public struct Particle(int x, int y)
 {
-    public float X { get; set; } = x;
-    public float Y { get; set; } = y;
+    public int X { get; set; } = x;
+    public int Y { get; set; } = y;
 
 
     public override bool Equals(object? obj)
@@ -24,8 +23,7 @@ public class ParticleService : IDisposable
 {
     private ConcurrentDictionary<Particle, bool> Particles = new();
     private readonly System.Timers.Timer LoopTimer = new(100);
-    private readonly (float width, float height) CanvasSize = (1200, 600);
-    private readonly (float dx, float dy)[] NeighborOffsets =
+    private readonly (int dx, int dy)[] NeighborOffsets =
     {
         (-1, 1), (0, 1), (1, 1),
         (-1, 0), (1, 0),
@@ -49,14 +47,14 @@ public class ParticleService : IDisposable
         LoopTimer.Stop();
     }
 
-    public void AddParticles((float x, float y) center, int radius)
+    public void AddParticles((int x, int y) center, int radius)
     {
+        int radiusSquare = radius * radius;
         for (int dx = -radius; dx <= radius; dx++)
         {
             for (int dy = -radius; dy <= radius; dy++)
             {
-                var dr = Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2));
-                if (dr <= radius)
+                if (dx * dx + dy * dy <= radiusSquare)
                 {
                     Particles.TryAdd(new Particle(center.x + dx, center.y + dy), true);
                 }
@@ -64,14 +62,14 @@ public class ParticleService : IDisposable
         }
     }
 
-    public void EraseParticles((float x, float y) center, int radius)
+    public void EraseParticles((int x, int y) center, int radius)
     {
+        int radiusSquare = radius * radius;
         for (int dx = -radius; dx < radius; dx++)
         {
             for (int dy = -radius; dy < radius; dy++)
             {
-                var dr = Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2));
-                if (dr <= radius)
+                if (dx * dx + dy * dy <= radiusSquare)
                 {
                     Particles.TryRemove(new Particle(center.x + dx, center.y + dy), out _);
                 }
@@ -81,15 +79,17 @@ public class ParticleService : IDisposable
 
     private void Tick()
     {
+        Ticking = true;
+
         ConcurrentBag<Particle> newParticles = [];
         HashSet<Particle> checkedParticles = [];
 
         foreach (var particle in Particles.Keys)
         {
             checkedParticles.Add(particle);
-            foreach (var offset in NeighborOffsets)
+            foreach (var (dx, dy) in NeighborOffsets)
             {
-                checkedParticles.Add(new Particle(particle.X + offset.dx, particle.Y + offset.dy));
+                checkedParticles.Add(new Particle(particle.X + dx, particle.Y + dy));
             }
         }
 
@@ -107,6 +107,8 @@ public class ParticleService : IDisposable
         Particles = new ConcurrentDictionary<Particle, bool>(
             newParticles.Distinct().Select(p => new KeyValuePair<Particle, bool>(p, true))
         );
+
+        Ticking = false;
     }
 
     private int FindAliveNeighbors(Particle particle)
