@@ -32,6 +32,7 @@ namespace MauiCanvasCore
 
         private unsafe void UpdateBitmap()
         {
+            ParticlesBitmap.Erase(SKColors.Transparent);
             var pixels = (uint*)ParticlesBitmap.GetPixels();
 
             foreach (var particle in ParticleService.GetParticles)
