@@ -1,5 +1,3 @@
-using System.Collections.Concurrent;
-
 namespace MauiCanvasCore.Services;
 
 public struct Particle(int x, int y)
@@ -21,7 +19,8 @@ public struct Particle(int x, int y)
 
 public class ParticleService : IDisposable
 {
-    private ConcurrentDictionary<Particle, bool> Particles = new();
+    private HashSet<Particle> Particles = [];
+    private bool ParticlesLock = false;
     private readonly System.Timers.Timer LoopTimer = new(100);
     private readonly (int dx, int dy)[] NeighborOffsets =
     {
@@ -30,7 +29,7 @@ public class ParticleService : IDisposable
         (-1, -1), (0, -1), (1, -1),
     };
 
-    public IEnumerable<Particle> GetParticles => Particles.Keys;
+    public IEnumerable<Particle> GetParticles => Particles;
 
     public ParticleService()
     {
@@ -49,6 +48,12 @@ public class ParticleService : IDisposable
 
     public void AddParticles((int x, int y) center, int radius)
     {
+        if (ParticlesLock)
+        {
+            return;
+        }
+        ParticlesLock = true;
+
         int radiusSquare = radius * radius;
         for (int dx = -radius; dx <= radius; dx++)
         {
@@ -56,14 +61,23 @@ public class ParticleService : IDisposable
             {
                 if (dx * dx + dy * dy <= radiusSquare)
                 {
-                    Particles.TryAdd(new Particle(center.x + dx, center.y + dy), true);
+                    Particles.Add(new Particle(center.x + dx, center.y + dy));
                 }
             }
         }
+
+        ParticlesLock = false;
     }
 
     public void EraseParticles((int x, int y) center, int radius)
     {
+        if (ParticlesLock)
+        {
+            return;
+        }
+        ParticlesLock = true;
+
+
         int radiusSquare = radius * radius;
         for (int dx = -radius; dx < radius; dx++)
         {
@@ -71,20 +85,26 @@ public class ParticleService : IDisposable
             {
                 if (dx * dx + dy * dy <= radiusSquare)
                 {
-                    Particles.TryRemove(new Particle(center.x + dx, center.y + dy), out _);
+                    Particles.Remove(new Particle(center.x + dx, center.y + dy));
                 }
             }
         }
+
+        ParticlesLock = false;
     }
 
     private void Tick()
     {
-        Ticking = true;
+        if (ParticlesLock)
+        {
+            return;
+        }
+        ParticlesLock = true;
 
-        ConcurrentBag<Particle> newParticles = [];
+        HashSet<Particle> newParticles = [];
         HashSet<Particle> checkedParticles = [];
 
-        foreach (var particle in Particles.Keys)
+        foreach (var particle in Particles)
         {
             checkedParticles.Add(particle);
             foreach (var (dx, dy) in NeighborOffsets)
@@ -93,22 +113,20 @@ public class ParticleService : IDisposable
             }
         }
 
-        Parallel.ForEach(checkedParticles, particle =>
+        foreach (var particle in checkedParticles)
         {
-            var wasAlive = Particles.ContainsKey(particle);
+            var wasAlive = Particles.Contains(particle);
             var aliveNeighbors = FindAliveNeighbors(particle);
             var isAlive = (wasAlive && (aliveNeighbors == 2 || aliveNeighbors == 3)) || (!wasAlive && aliveNeighbors == 3);
             if (isAlive)
             {
                 newParticles.Add(particle);
             }
-        });
+        }
 
-        Particles = new ConcurrentDictionary<Particle, bool>(
-            newParticles.Distinct().Select(p => new KeyValuePair<Particle, bool>(p, true))
-        );
+        Particles = newParticles;
 
-        Ticking = false;
+        ParticlesLock = false;
     }
 
     private int FindAliveNeighbors(Particle particle)
@@ -119,7 +137,7 @@ public class ParticleService : IDisposable
         foreach (var offset in NeighborOffsets)
         {
             neighbor = new Particle(particle.X + offset.dx, particle.Y + offset.dy);
-            if (Particles.ContainsKey(neighbor))
+            if (Particles.Contains(neighbor))
             {
                 neighbors++;
                 if (neighbors > 3)
