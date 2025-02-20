@@ -5,7 +5,6 @@ public struct Particle(int x, int y)
     public int X { get; set; } = x;
     public int Y { get; set; } = y;
 
-
     public override bool Equals(object? obj)
     {
         return obj is Particle p && p.X == X && p.Y == Y;
