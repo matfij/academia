@@ -1,9 +1,19 @@
 namespace MauiCanvasCore.Services;
 
-public struct Particle(int x, int y)
+public enum ParticleColor
+{
+    Defaul = 0,
+    Red = 0xFF1122,
+    Green = 0x11FF22,
+    Blue = 0x2211FF,
+}
+
+public struct Particle(int x, int y, ParticleColor? color)
 {
     public int X { get; set; } = x;
     public int Y { get; set; } = y;
+
+    public ParticleColor? Color = color ?? ParticleColor.Defaul;
 
     public override bool Equals(object? obj)
     {
@@ -45,7 +55,7 @@ public class ParticleService : IDisposable
         LoopTimer.Stop();
     }
 
-    public void AddParticles((int x, int y) center, int radius)
+    public void AddParticles((int x, int y) center, int radius, ParticleColor color)
     {
         if (ParticlesLock)
         {
@@ -60,7 +70,7 @@ public class ParticleService : IDisposable
             {
                 if (dx * dx + dy * dy <= radiusSquare)
                 {
-                    Particles.Add(new Particle(center.x + dx, center.y + dy));
+                    Particles.Add(new Particle(center.x + dx, center.y + dy, color));
                 }
             }
         }
@@ -84,7 +94,7 @@ public class ParticleService : IDisposable
             {
                 if (dx * dx + dy * dy <= radiusSquare)
                 {
-                    Particles.Remove(new Particle(center.x + dx, center.y + dy));
+                    Particles.Remove(new Particle(center.x + dx, center.y + dy, ParticleColor.Defaul));
                 }
             }
         }
@@ -108,7 +118,7 @@ public class ParticleService : IDisposable
             checkedParticles.Add(particle);
             foreach (var (dx, dy) in NeighborOffsets)
             {
-                checkedParticles.Add(new Particle(particle.X + dx, particle.Y + dy));
+                checkedParticles.Add(new Particle(particle.X + dx, particle.Y + dy, particle.Color));
             }
         }
 
@@ -131,11 +141,11 @@ public class ParticleService : IDisposable
     private int FindAliveNeighbors(Particle particle)
     {
         int neighbors = 0;
-        var neighbor = new Particle(particle.X, particle.Y);
+        var neighbor = new Particle(particle.X, particle.Y, ParticleColor.Defaul);
 
         foreach (var offset in NeighborOffsets)
         {
-            neighbor = new Particle(particle.X + offset.dx, particle.Y + offset.dy);
+            neighbor = new Particle(particle.X + offset.dx, particle.Y + offset.dy, ParticleColor.Defaul);
             if (Particles.Contains(neighbor))
             {
                 neighbors++;

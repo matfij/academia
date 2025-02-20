@@ -7,19 +7,19 @@ namespace MauiCanvasCore
     public partial class MainPage : ContentPage
     {
         private static readonly (int x, int y) CanvasSize = (1200, 600);
-
         private readonly ParticleService ParticleService;
         private readonly System.Timers.Timer PaintTimer;
-        private (float x, float y) CanvasScale = (1, 1);
-        private (float x, float y, float r) Cursor = (0, 0, 10);
         private readonly SKPaint CursorPaint = new()
         {
-            Color = SKColors.Red,
+            Color = SKColors.GhostWhite,
             IsAntialias = true,
             Style = SKPaintStyle.Stroke,
             StrokeWidth = 2
         };
         private readonly SKBitmap ParticlesBitmap = new(CanvasSize.x, CanvasSize.y);
+        private (float x, float y) CanvasScale = (1, 1);
+        private (float x, float y, float r) Cursor = (0, 0, 10);
+        private ParticleColor particleColor = ParticleColor.Green;
 
         public MainPage(ParticleService particleService)
         {
@@ -40,7 +40,7 @@ namespace MauiCanvasCore
                 int index = ((int)particle.X) + (int)(particle.Y * CanvasSize.x);
                 if (index >= 0 && index < CanvasSize.x * CanvasSize.y)
                 {
-                    pixels[index] = 0xFFFFFF;
+                    pixels[index] = (uint)particle.Color;
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace MauiCanvasCore
                 var centerY = (int)(args.Location.Y / CanvasScale.y);
                 if (args.MouseButton == SKMouseButton.Left)
                 {
-                    ParticleService.AddParticles((x: centerX, y: centerY), (int)Cursor.r);
+                    ParticleService.AddParticles((x: centerX, y: centerY), (int)Cursor.r, particleColor);
                 }
                 if (args.MouseButton == SKMouseButton.Right)
                 {
