@@ -3,8 +3,9 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "m:battle": "npx playwright tests/mistwood-battle test --headed",
-        "g:park": "npx playwright test tests/green-emporium-seeder --headed"
+        "m:battle": "npx playwright test tests/mw-battle --headed",
+        "g:park": "npx playwright test tests/ge-park --headed",
+        "g:water": "npx playwright test tests/ge-water-garden --headed"
     },
     "author": "",
     "license": "ISC",

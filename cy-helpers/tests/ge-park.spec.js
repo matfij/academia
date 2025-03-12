@@ -16,9 +16,9 @@ test('Green emporium restore park - horizontal', async ({ page }) => {
     await page.waitForSelector('#park_quick', { timeout: 10_000 });
     await page.locator('#park_quick').click();
 
-    if (page.getByText('Nie ma dekoracji do odnowienia.')) {
-        return console.log('Green emporium restore park not needed');
-    }
+    // if (page.getByText('Nie ma dekoracji do odnowienia.')) {
+    //     return console.log('Green emporium restore park not needed');
+    // }
 
     let decorationIndex = 0;
 
