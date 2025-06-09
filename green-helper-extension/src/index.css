@@ -1,0 +1,28 @@
+:root {
+  --color-dark: #3a302f;
+  --color-light: #be9a66;
+  --color-primary: #903932;
+
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.main-wrapper {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  width: 24rem;
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-light);
+  background: var(--color-dark);
+  z-index: 100;
+}
+
+.main-wrapper:hover {
+  cursor: move;
+}
