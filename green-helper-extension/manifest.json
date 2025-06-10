@@ -3,6 +3,11 @@
   "name": "Green Helper",
   "description": "Automation tool for common gardening tasks",
   "version": "0.0.0",
+  "permissions": ["scripting", "activeTab", "tabs"],
+  "host_permissions": [
+    "https://www.zieloneimperium.pl/*",
+    "https://s1.zieloneimperium.pl/*"
+  ],
   "content_scripts": [
     {
       "js": ["src/main.js"],

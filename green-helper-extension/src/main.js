@@ -40,12 +40,14 @@ const setup = async () => {
     };
   };
 
-  document.getElementById("test-button").addEventListener("click", async () => {
-    const { test } = await import(
-      chrome.runtime.getURL("src/handlers/test.js")
-    );
-    test();
-  });
+  document
+    .getElementById("renew-park-button")
+    .addEventListener("click", async () => {
+      const script = document.createElement("script");
+      script.src = chrome.runtime.getURL("src/handlers/renew-park.js");
+      script.onload = () => script.remove();
+      (document.head || document.documentElement).appendChild(script);
+    });
 };
 
 setup();
