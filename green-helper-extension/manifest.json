@@ -19,7 +19,12 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["src/index.html", "src/index.css", "src/handlers/*"],
+      "resources": [
+        "src/index.html",
+        "src/index.css",
+        "src/utils.js",
+        "src/handlers/*"
+      ],
       "matches": [
         "https://www.zieloneimperium.pl/*",
         "https://s1.zieloneimperium.pl/*"

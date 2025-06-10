@@ -1,4 +1,7 @@
 const setup = async () => {
+  /*
+   * Inject floating dialog
+   */
   const css = await fetch(chrome.runtime.getURL("src/index.css")).then((res) =>
     res.text()
   );
@@ -13,6 +16,9 @@ const setup = async () => {
   root.innerHTML = html;
   document.body.appendChild(root);
 
+  /*
+   * Enable dialog drag & drop
+   */
   let offsetX = 0;
   let offsetY = 0;
   let startX = 0;
@@ -40,6 +46,16 @@ const setup = async () => {
     };
   };
 
+  /*
+   * Inject common utility scripts
+   */
+  const script = document.createElement("script");
+  script.src = chrome.runtime.getURL("src/utils.js");
+  (document.head || document.documentElement).appendChild(script);
+
+  /*
+   * Append event listeners to dialog buttons
+   */
   document
     .getElementById("renew-park-button")
     .addEventListener("click", async () => {
