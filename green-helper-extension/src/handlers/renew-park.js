@@ -4,15 +4,16 @@
   );
   for (let tile = 1; tile <= 204; tile++) {
     try {
-      await window.GreenHelper.wait(100);
       park.setTile(tile);
+      await window.GreenHelper.wait(100);
       const renew = await window.GreenHelper.waitForLabel(
         "Upłynął czas przydatności",
         "#park_renewitem_commit_duration",
-        400
+        500
       );
       if (renew) {
         park.renewItemCommitCommit(tile);
+        await window.GreenHelper.wait(100);
         console.log("Renewed for tile", tile);
       }
       basedialog.close();
