@@ -23,6 +23,7 @@
         "src/index.html",
         "src/index.css",
         "src/utils.js",
+        "src/stock-prices.js",
         "src/handlers/*"
       ],
       "matches": [

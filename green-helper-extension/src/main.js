@@ -53,6 +53,9 @@ const setup = async () => {
   script.src = chrome.runtime.getURL("src/utils.js");
   (document.head || document.documentElement).appendChild(script);
 
+  script.src = chrome.runtime.getURL("src/stock-prices.js");
+  (document.head || document.documentElement).appendChild(script);
+
   /*
    * Append event listeners to dialog buttons
    */
@@ -79,6 +82,15 @@ const setup = async () => {
     .addEventListener("click", async () => {
       const script = document.createElement("script");
       script.src = chrome.runtime.getURL("src/handlers/renew-park.js");
+      script.onload = () => script.remove();
+      (document.head || document.documentElement).appendChild(script);
+    });
+
+  document
+    .getElementById("compare-prices-button")
+    .addEventListener("click", async () => {
+      const script = document.createElement("script");
+      script.src = chrome.runtime.getURL("src/handlers/compare-prices.js");
       script.onload = () => script.remove();
       (document.head || document.documentElement).appendChild(script);
     });
