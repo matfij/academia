@@ -60,10 +60,19 @@ const setup = async () => {
    * Append event listeners to dialog buttons
    */
   document
-    .getElementById("sow-garden-button")
+    .getElementById("sow-garden-button-1")
     .addEventListener("click", async () => {
       const script = document.createElement("script");
-      script.src = chrome.runtime.getURL("src/handlers/sow-garden.js");
+      script.src = chrome.runtime.getURL("src/handlers/sow-garden-1.js");
+      script.onload = () => script.remove();
+      (document.head || document.documentElement).appendChild(script);
+    });
+
+  document
+    .getElementById("sow-garden-button-2")
+    .addEventListener("click", async () => {
+      const script = document.createElement("script");
+      script.src = chrome.runtime.getURL("src/handlers/sow-garden-2.js");
       script.onload = () => script.remove();
       (document.head || document.documentElement).appendChild(script);
     });
