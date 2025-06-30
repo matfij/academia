@@ -87,6 +87,15 @@ const setup = async () => {
     });
 
   document
+    .getElementById("trim-bonsai-button")
+    .addEventListener("click", async () => {
+      const script = document.createElement("script");
+      script.src = chrome.runtime.getURL("src/handlers/trim-bonsai.js");
+      script.onload = () => script.remove();
+      (document.head || document.documentElement).appendChild(script);
+    });
+
+  document
     .getElementById("renew-park-button")
     .addEventListener("click", async () => {
       const script = document.createElement("script");
