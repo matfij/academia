@@ -1,9 +1,7 @@
 (async () => {
   const skipTiles = [17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204];
 
-  console.log(
-    "\n====================== SOW GARDEN [2] STARTED ======================\n"
-  );
+  console.log("\n====================== SOW GARDEN [2] STARTED ======================\n");
 
   for (let tile = 1; tile <= 204; tile++) {
     try {
@@ -18,7 +16,5 @@
     }
   }
 
-  console.log(
-    "\n====================== SOW GARDEN [2] COMPLETE ======================\n"
-  );
+  console.log("\n====================== SOW GARDEN [2] COMPLETE ======================\n");
 })();

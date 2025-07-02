@@ -1,7 +1,5 @@
 (async () => {
-  console.log(
-    "\n====================== RENEW PARK STARTED ======================\n"
-  );
+  console.log("\n====================== RENEW PARK STARTED ======================\n");
   for (let tile = 1; tile <= 204; tile++) {
     try {
       park.setTile(tile);
@@ -21,7 +19,5 @@
       console.error("Renew error at tile", tile, e);
     }
   }
-  console.log(
-    "\n====================== RENEW PARK COMPLETE ======================\n"
-  );
+  console.log("\n====================== RENEW PARK COMPLETE ======================\n");
 })();

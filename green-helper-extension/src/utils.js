@@ -1,7 +1,6 @@
 window.GreenHelper = window.GreenHelper || {};
 
-window.GreenHelper.wait = (ms) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+window.GreenHelper.wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 window.GreenHelper.isVisible = (el) => {
   const style = window.getComputedStyle(el);

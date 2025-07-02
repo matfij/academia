@@ -2,16 +2,12 @@ const setup = async () => {
   /*
    * Inject floating dialog
    */
-  const css = await fetch(chrome.runtime.getURL("src/index.css")).then((res) =>
-    res.text()
-  );
+  const css = await fetch(chrome.runtime.getURL("src/index.css")).then((res) => res.text());
   const style = document.createElement("style");
   style.textContent = css;
   document.head.appendChild(style);
 
-  const html = await fetch(chrome.runtime.getURL("src/index.html")).then(
-    (res) => res.text()
-  );
+  const html = await fetch(chrome.runtime.getURL("src/index.html")).then((res) => res.text());
   const root = document.createElement("div");
   root.innerHTML = html;
   document.body.appendChild(root);
@@ -59,59 +55,54 @@ const setup = async () => {
   /*
    * Append event listeners to dialog buttons
    */
-  document
-    .getElementById("sow-garden-button-1")
-    .addEventListener("click", async () => {
-      const script = document.createElement("script");
-      script.src = chrome.runtime.getURL("src/handlers/sow-garden-1.js");
-      script.onload = () => script.remove();
-      (document.head || document.documentElement).appendChild(script);
-    });
+  document.getElementById("sow-garden-button-1").addEventListener("click", async () => {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL("src/handlers/sow-garden-1.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
+  });
 
-  document
-    .getElementById("sow-garden-button-2")
-    .addEventListener("click", async () => {
-      const script = document.createElement("script");
-      script.src = chrome.runtime.getURL("src/handlers/sow-garden-2.js");
-      script.onload = () => script.remove();
-      (document.head || document.documentElement).appendChild(script);
-    });
+  document.getElementById("sow-garden-button-2").addEventListener("click", async () => {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL("src/handlers/sow-garden-2.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
+  });
 
-  document
-    .getElementById("sow-water-garden-button")
-    .addEventListener("click", async () => {
-      const script = document.createElement("script");
-      script.src = chrome.runtime.getURL("src/handlers/sow-water-garden.js");
-      script.onload = () => script.remove();
-      (document.head || document.documentElement).appendChild(script);
-    });
+  document.getElementById("sow-water-garden-button").addEventListener("click", async () => {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL("src/handlers/sow-water-garden.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
+  });
 
-  document
-    .getElementById("trim-bonsai-button")
-    .addEventListener("click", async () => {
-      const script = document.createElement("script");
-      script.src = chrome.runtime.getURL("src/handlers/trim-bonsai.js");
-      script.onload = () => script.remove();
-      (document.head || document.documentElement).appendChild(script);
-    });
+  document.getElementById("trim-bonsai-button").addEventListener("click", async () => {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL("src/handlers/trim-bonsai.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
+  });
 
-  document
-    .getElementById("renew-park-button")
-    .addEventListener("click", async () => {
-      const script = document.createElement("script");
-      script.src = chrome.runtime.getURL("src/handlers/renew-park.js");
-      script.onload = () => script.remove();
-      (document.head || document.documentElement).appendChild(script);
-    });
+  document.getElementById("manage-bird-post-button").addEventListener("click", async () => {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL("src/handlers/manage-bird-post.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
+  });
 
-  document
-    .getElementById("compare-prices-button")
-    .addEventListener("click", async () => {
-      const script = document.createElement("script");
-      script.src = chrome.runtime.getURL("src/handlers/compare-prices.js");
-      script.onload = () => script.remove();
-      (document.head || document.documentElement).appendChild(script);
-    });
+  document.getElementById("renew-park-button").addEventListener("click", async () => {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL("src/handlers/renew-park.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
+  });
+
+  document.getElementById("compare-prices-button").addEventListener("click", async () => {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL("src/handlers/compare-prices.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
+  });
 };
 
 setup();

@@ -4,17 +4,11 @@
   "description": "Automation tool for common gardening tasks",
   "version": "0.0.0",
   "permissions": ["scripting", "activeTab", "tabs"],
-  "host_permissions": [
-    "https://www.zieloneimperium.pl/*",
-    "https://s1.zieloneimperium.pl/*"
-  ],
+  "host_permissions": ["https://www.zieloneimperium.pl/*", "https://s1.zieloneimperium.pl/*"],
   "content_scripts": [
     {
       "js": ["src/main.js"],
-      "matches": [
-        "https://www.zieloneimperium.pl/*",
-        "https://s1.zieloneimperium.pl/*"
-      ]
+      "matches": ["https://www.zieloneimperium.pl/*", "https://s1.zieloneimperium.pl/*"]
     }
   ],
   "web_accessible_resources": [
@@ -26,10 +20,7 @@
         "src/stock-prices.js",
         "src/handlers/*"
       ],
-      "matches": [
-        "https://www.zieloneimperium.pl/*",
-        "https://s1.zieloneimperium.pl/*"
-      ]
+      "matches": ["https://www.zieloneimperium.pl/*", "https://s1.zieloneimperium.pl/*"]
     }
   ]
 }

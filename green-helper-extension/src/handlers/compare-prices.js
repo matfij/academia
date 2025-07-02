@@ -6,9 +6,7 @@
 
     const productPrice = parseFloat(
       document
-        .querySelector(
-          `body > div.marketContainer > table > tbody > tr:nth-child(${row}) > td:nth-child(4)`
-        )
+        .querySelector(`body > div.marketContainer > table > tbody > tr:nth-child(${row}) > td:nth-child(4)`)
         .textContent.replace(".", "")
         .replace(",", ".")
     );
@@ -27,9 +25,7 @@
     }
 
     document
-      .querySelector(
-        `body > div.marketContainer > table > tbody > tr:nth-child(${row}) > td:nth-child(4)`
-      )
+      .querySelector(`body > div.marketContainer > table > tbody > tr:nth-child(${row}) > td:nth-child(4)`)
       .appendChild(priceDiffLabel);
   }
 })();

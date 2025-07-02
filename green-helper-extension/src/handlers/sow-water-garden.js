@@ -1,7 +1,5 @@
 (async () => {
-  console.log(
-    "\n====================== SOW WATER GARDEN STARTED ======================\n"
-  );
+  console.log("\n====================== SOW WATER GARDEN STARTED ======================\n");
   for (let tile = 1; tile <= 204; tile++) {
     try {
       await window.GreenHelper.wait(10);
@@ -11,7 +9,5 @@
       console.error("Sow error at tile", tile, e);
     }
   }
-  console.log(
-    "\n====================== SOW WATER GARDEN COMPLETE ======================\n"
-  );
+  console.log("\n====================== SOW WATER GARDEN COMPLETE ======================\n");
 })();
