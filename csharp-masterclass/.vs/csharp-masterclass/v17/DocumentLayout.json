@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\mateu\\Desktop\\Code\\academia\\csharp-masterclass\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4168B2F6-0CC2-4061-B5F3-851C288362E8}|tickets-data-aggregator\\tickets-data-aggregator.csproj|c:\\users\\mateu\\desktop\\code\\academia\\csharp-masterclass\\tickets-data-aggregator\\ticketsreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4168B2F6-0CC2-4061-B5F3-851C288362E8}|tickets-data-aggregator\\tickets-data-aggregator.csproj|solutionrelative:tickets-data-aggregator\\ticketsreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4168B2F6-0CC2-4061-B5F3-851C288362E8}|tickets-data-aggregator\\tickets-data-aggregator.csproj|c:\\users\\mateu\\desktop\\code\\academia\\csharp-masterclass\\tickets-data-aggregator\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4168B2F6-0CC2-4061-B5F3-851C288362E8}|tickets-data-aggregator\\tickets-data-aggregator.csproj|solutionrelative:tickets-data-aggregator\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4168B2F6-0CC2-4061-B5F3-851C288362E8}|tickets-data-aggregator\\TicketsDataAggregator.csproj|c:\\users\\mateu\\desktop\\code\\academia\\csharp-masterclass\\tickets-data-aggregator\\ticketsdataaggregator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{4168B2F6-0CC2-4061-B5F3-851C288362E8}|tickets-data-aggregator\\TicketsDataAggregator.csproj|solutionrelative:tickets-data-aggregator\\ticketsdataaggregator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TicketsDataAggregator",
+              "DocumentMoniker": "C:\\Users\\mateu\\Desktop\\Code\\academia\\csharp-masterclass\\tickets-data-aggregator\\TicketsDataAggregator.csproj",
+              "RelativeDocumentMoniker": "tickets-data-aggregator\\TicketsDataAggregator.csproj",
+              "ToolTip": "C:\\Users\\mateu\\Desktop\\Code\\academia\\csharp-masterclass\\tickets-data-aggregator\\TicketsDataAggregator.csproj",
+              "RelativeToolTip": "tickets-data-aggregator\\TicketsDataAggregator.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-07-07T18:36:53.379Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TicketsReader.cs",
+              "DocumentMoniker": "C:\\Users\\mateu\\Desktop\\Code\\academia\\csharp-masterclass\\tickets-data-aggregator\\TicketsReader.cs",
+              "RelativeDocumentMoniker": "tickets-data-aggregator\\TicketsReader.cs",
+              "ToolTip": "C:\\Users\\mateu\\Desktop\\Code\\academia\\csharp-masterclass\\tickets-data-aggregator\\TicketsReader.cs",
+              "RelativeToolTip": "tickets-data-aggregator\\TicketsReader.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAA1wBUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T18:36:22.091Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\mateu\\Desktop\\Code\\academia\\csharp-masterclass\\tickets-data-aggregator\\Program.cs",
+              "RelativeDocumentMoniker": "tickets-data-aggregator\\Program.cs",
+              "ToolTip": "C:\\Users\\mateu\\Desktop\\Code\\academia\\csharp-masterclass\\tickets-data-aggregator\\Program.cs",
+              "RelativeToolTip": "tickets-data-aggregator\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T18:31:13.429Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
