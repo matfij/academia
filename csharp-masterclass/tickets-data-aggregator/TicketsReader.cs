@@ -5,33 +5,20 @@ namespace TicketsDataAggregator;
 
 interface ITicketsReader
 {
-    public string ReadAll();
+    public string Read(string path);
 }
 
 internal class PdfTicketsReader : ITicketsReader
 {
-    private const string _format = "*.pdf";
-    private const string _path = @"C:\Users\mateu\Downloads\Tickets\Tickets";
-
-    public string ReadAll()
+    public string Read(string path)
     {
-        if (!Directory.Exists(_path))
-        {
-            throw new DirectoryNotFoundException();
-        }
-
-        var fileEntries = Directory.GetFiles(_path, _format);
-
         var builder = new StringBuilder();
 
-        foreach (var entry in fileEntries)
-        {
-            using var document = PdfDocument.Open(entry);
+        using var document = PdfDocument.Open(path);
 
-            foreach (var page in document.GetPages())
-            {
-                builder.AppendLine(page.Text);
-            }
+        foreach (var page in document.GetPages())
+        {
+            builder.AppendLine(page.Text);
         }
 
         return builder.ToString();
