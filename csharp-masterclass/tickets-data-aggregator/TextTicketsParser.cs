@@ -10,7 +10,7 @@ interface ITicketsParser
 internal class TextTicketsParser : ITicketsParser
 {
     private readonly string[] _separators = ["Title:", "Date:", "Time:", "Visit us:"];
-    private readonly Dictionary<string, string> _domainCultureMapping = new Dictionary<string, string>()
+    private readonly Dictionary<string, string> _domainCultureMapping = new()
     {
         { "com", "en-US" },
         { "jp", "ja" },
