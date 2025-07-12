@@ -1,19 +1,19 @@
 (async () => {
-  console.log("\n====================== SOW WATER GARDEN (INNER) STARTED ======================\n");
+  console.log("\n====================== SOW WATER GARDEN (OUTER) STARTED ======================\n");
 
   const size = {
     width: 17,
     height: 12,
   };
 
-  const isInner = (x, y) => x > 2 && x < 16 && y > 2 && y < 11;
+  const isOuter = (x, y) => x <= 2 || x >= 16 || y <= 2 || y >= 11;
 
   let row = 1;
   let col = 1;
 
   for (let tile = 1; tile <= 204; tile++) {
     try {
-      if (isInner(col, row)) {
+      if (isOuter(col, row)) {
         await window.GreenHelper.wait(25);
         document.querySelector(`#wgGrid${tile}`).click();
         console.log("Sowed tile", tile);
@@ -29,5 +29,5 @@
     }
   }
 
-  console.log("\n====================== SOW WATER GARDEN (INNER) COMPLETE ======================\n");
+  console.log("\n====================== SOW WATER GARDEN (OUTER) COMPLETE ======================\n");
 })();

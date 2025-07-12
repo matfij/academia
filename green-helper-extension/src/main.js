@@ -83,6 +83,13 @@ const setup = async () => {
     (document.head || document.documentElement).appendChild(script);
   });
 
+  document.getElementById("sow-water-garden-outer-button").addEventListener("click", async () => {
+    const script = document.createElement("script");
+    script.src = chrome.runtime.getURL("src/handlers/sow-water-garden-outer.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
+  });
+
   document.getElementById("fertilize-mushrooms-button").addEventListener("click", () => {
     const script = document.createElement("script");
     script.src = chrome.runtime.getURL("src/handlers/fertilize-mushrooms.js");
