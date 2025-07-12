@@ -76,9 +76,9 @@ const setup = async () => {
     (document.head || document.documentElement).appendChild(script);
   });
 
-  document.getElementById("sow-water-garden-button").addEventListener("click", async () => {
+  document.getElementById("sow-water-garden-inner-button").addEventListener("click", async () => {
     const script = document.createElement("script");
-    script.src = chrome.runtime.getURL("src/handlers/sow-water-garden.js");
+    script.src = chrome.runtime.getURL("src/handlers/sow-water-garden-inner.js");
     script.onload = () => script.remove();
     (document.head || document.documentElement).appendChild(script);
   });
