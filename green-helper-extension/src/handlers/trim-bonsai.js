@@ -3,9 +3,10 @@
 
   for (let tree = 1; tree <= 10; tree++) {
     for (let branch = 1; branch <= 10; branch++) {
+      await window.GreenHelper.wait(10);
       const branchElement = document.querySelector(`#bonsai_branch${branch}`);
       if (branchElement) {
-        await window.GreenHelper.wait(100);
+        await window.GreenHelper.wait(150);
         branchElement.click();
         console.log(`Trimmed tree: ${tree}, branch: ${branch}`);
       } else {
