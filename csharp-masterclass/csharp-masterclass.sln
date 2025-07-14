@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketsDataAggregator", "tickets-data-aggregator\TicketsDataAggregator.csproj", "{4168B2F6-0CC2-4061-B5F3-851C288362E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericTypes", "NumericTypes\NumericTypes.csproj", "{AA423D07-5D2F-42D5-A0DC-858BAFBF7FC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4168B2F6-0CC2-4061-B5F3-851C288362E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4168B2F6-0CC2-4061-B5F3-851C288362E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4168B2F6-0CC2-4061-B5F3-851C288362E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA423D07-5D2F-42D5-A0DC-858BAFBF7FC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA423D07-5D2F-42D5-A0DC-858BAFBF7FC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA423D07-5D2F-42D5-A0DC-858BAFBF7FC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA423D07-5D2F-42D5-A0DC-858BAFBF7FC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

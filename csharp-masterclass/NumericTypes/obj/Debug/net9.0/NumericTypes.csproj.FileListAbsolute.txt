@@ -1,0 +1,15 @@
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\bin\Debug\net9.0\NumericTypes.exe
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\bin\Debug\net9.0\NumericTypes.deps.json
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\bin\Debug\net9.0\NumericTypes.runtimeconfig.json
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\bin\Debug\net9.0\NumericTypes.dll
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\bin\Debug\net9.0\NumericTypes.pdb
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\NumericTypes.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\NumericTypes.AssemblyInfoInputs.cache
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\NumericTypes.AssemblyInfo.cs
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\NumericTypes.csproj.CoreCompileInputs.cache
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\NumericTypes.sourcelink.json
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\NumericTypes.dll
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\refint\NumericTypes.dll
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\NumericTypes.pdb
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\NumericTypes.genruntimeconfig.cache
+C:\Users\mateu\Desktop\Code\academia\csharp-masterclass\NumericTypes\obj\Debug\net9.0\ref\NumericTypes.dll
