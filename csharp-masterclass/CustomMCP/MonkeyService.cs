@@ -1,4 +1,3 @@
-
 using System.Net.Http.Json;
 
 namespace CustomMCP;
@@ -6,8 +5,8 @@ namespace CustomMCP;
 internal class MonkeyService
 {
     private const string _baseUrl = "https://www.montemagno.com/monkeys.json";
-    HttpClient _httpClient = new();
-    List<Monkey>? _monkeys;
+    private readonly HttpClient _httpClient = new();
+    private List<Monkey>? _monkeys;
 
     public async Task<List<Monkey>> GetAll()
     {
@@ -16,7 +15,7 @@ internal class MonkeyService
             return _monkeys;
         }
 
-        var response = await _httpClient.GetAsync("");
+        var response = await _httpClient.GetAsync(_baseUrl);
         if (response.IsSuccessStatusCode)
         {
             _monkeys = await response.Content.ReadFromJsonAsync<List<Monkey>>() ?? [];
