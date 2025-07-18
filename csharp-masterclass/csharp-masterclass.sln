@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericTypes", "NumericType
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomMCP", "CustomMCP\CustomMCP.csproj", "{4826309E-9346-4117-AD05-7E7F478C61E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Events", "Events\Events.csproj", "{688B9AE3-ED59-4CF3-92DB-AD1E32A5DD4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4826309E-9346-4117-AD05-7E7F478C61E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4826309E-9346-4117-AD05-7E7F478C61E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4826309E-9346-4117-AD05-7E7F478C61E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{688B9AE3-ED59-4CF3-92DB-AD1E32A5DD4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{688B9AE3-ED59-4CF3-92DB-AD1E32A5DD4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{688B9AE3-ED59-4CF3-92DB-AD1E32A5DD4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{688B9AE3-ED59-4CF3-92DB-AD1E32A5DD4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
