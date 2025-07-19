@@ -7,4 +7,9 @@
 * objects can cancel listening
 * 
 * Observer design patter - allows objects to notify other object of some event
+* 
+* Delegate - type representing method with a particular shape
+* 
+* Event - special type of multicast delegate that enables to notify other classes
+* when something happens
 */
