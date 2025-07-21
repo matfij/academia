@@ -13,10 +13,29 @@
 //priceChangeNotifier.ChangePrice();
 
 
-var bank = new BankAccount(5000);
-var user = new User(100, bank.Balance);
-bank.OnBalanceDecreased += user.ReduceFunds;
+//var bank = new BankAccount(5000);
+//var user = new User(100, bank.Balance);
 
-bank.DecreaseBalance(178);
+//bank.OnBalanceDecreased += user.ReduceFunds;
 
-Console.WriteLine(user.Funds);
+//bank.DecreaseBalance(178);
+
+//Console.WriteLine(user.Funds);
+
+//bank.OnBalanceDecreased -= user.ReduceFunds;
+//bank.DecreaseBalance(9000);
+
+//Console.WriteLine(user.Funds);
+
+
+var weatherDataAggregator = new WeatherDataAggregator();
+var weatherStation = new WeatherStation();
+var weatherBaloon = new WeatherBaloon();
+
+weatherStation.WeatherMeasured += weatherDataAggregator.GetNotifiedAboutNewData;
+weatherBaloon.WeatherMeasured += weatherDataAggregator.GetNotifiedAboutNewData;
+
+weatherStation.Measure();
+weatherBaloon.Measure();
+
+Console.WriteLine(weatherDataAggregator.WeatherHistory);

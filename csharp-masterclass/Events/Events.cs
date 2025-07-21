@@ -1,37 +1,35 @@
 ﻿namespace Events;
 
-public delegate void OnBalanceDecreased(decimal balance);
+//public delegate void OnBalanceDecreased(decimal balance);
 
-public class BankAccount
+public class BalanceDecreasedEventArgs(decimal decrease) : EventArgs
 {
-    public decimal Balance { get; private set; }
+    public decimal Decrease { get; set; } = decrease;
+}
 
-    public BankAccount(decimal initialBalance)
-    {
-        Balance = initialBalance;
-    }
+public class BankAccount(decimal initialBalance)
+{
+    public decimal Balance { get; private set; } = initialBalance;
 
-    public event OnBalanceDecreased OnBalanceDecreased;
+    public event EventHandler<BalanceDecreasedEventArgs>? OnBalanceDecreased;
 
     public void DecreaseBalance(decimal price)
     {
         Balance -= price;
-        OnBalanceDecreased(price);
+        OnBalanceDecreased?.Invoke(
+            this,
+            new BalanceDecreasedEventArgs(price));
     }
 
 }
 
-public class User
+public class User(decimal cash, decimal moneyInBank)
 {
-    public decimal Funds { get; private set; }
+    public decimal Funds { get; private set; } = cash + moneyInBank;
 
-    public User(decimal cash, decimal moneyInBank)
+    public void ReduceFunds(object? sender, BalanceDecreasedEventArgs args)
     {
-        Funds = cash + moneyInBank;
-    }
-
-    public void ReduceFunds(decimal balanceReduced)
-    {
-        Funds -= balanceReduced;
+        Console.WriteLine(sender);
+        Funds -= args.Decrease;
     }
 }
