@@ -1,5 +1,6 @@
 ﻿
 
+
 namespace NumericTypesSuggesterForm
 {
     partial class MainForm
@@ -30,62 +31,112 @@ namespace NumericTypesSuggesterForm
         /// </summary>
         private void InitializeComponent()
         {
-            CounterLabel = new Label();
-            IncreaseButton = new Button();
-            HideCheckbox = new CheckBox();
-            DateTextBox = new TextBox();
+            MinValueLabel = new Label();
+            IsFloatCheckbox = new CheckBox();
+            MinValueTextBox = new TextBox();
+            MaxValueTextBox = new TextBox();
+            MaxValueLabel = new Label();
+            IsPreciseCheckbox = new CheckBox();
+            SuggestedTypeLabel = new Label();
+            SuggestedType = new Label();
             SuspendLayout();
             // 
-            // CounterLabel
+            // MinValueLabel
             // 
-            CounterLabel.AutoSize = true;
-            CounterLabel.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            CounterLabel.Location = new Point(77, 50);
-            CounterLabel.Name = "CounterLabel";
-            CounterLabel.Size = new Size(46, 54);
-            CounterLabel.TabIndex = 0;
-            CounterLabel.Text = "0";
+            MinValueLabel.AutoSize = true;
+            MinValueLabel.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            MinValueLabel.Location = new Point(224, 108);
+            MinValueLabel.Name = "MinValueLabel";
+            MinValueLabel.Size = new Size(157, 41);
+            MinValueLabel.TabIndex = 0;
+            MinValueLabel.Text = "Min value";
             // 
-            // IncreaseButton
+            // IsFloatCheckbox
             // 
-            IncreaseButton.Cursor = Cursors.Hand;
-            IncreaseButton.Location = new Point(104, 223);
-            IncreaseButton.Name = "IncreaseButton";
-            IncreaseButton.Size = new Size(112, 34);
-            IncreaseButton.TabIndex = 1;
-            IncreaseButton.Text = "++";
-            IncreaseButton.UseVisualStyleBackColor = true;
-            IncreaseButton.Click += IncreaseButton_Click;
+            IsFloatCheckbox.AutoSize = true;
+            IsFloatCheckbox.Font = new Font("Segoe UI", 15F);
+            IsFloatCheckbox.Location = new Point(455, 283);
+            IsFloatCheckbox.Name = "IsFloatCheckbox";
+            IsFloatCheckbox.Size = new Size(132, 45);
+            IsFloatCheckbox.TabIndex = 2;
+            IsFloatCheckbox.Text = "Is float";
+            IsFloatCheckbox.UseVisualStyleBackColor = true;
+            IsFloatCheckbox.CheckedChanged += IsFloatCheckbox_CheckedChange;
             // 
-            // HideCheckbox
+            // MinValueTextBox
             // 
-            HideCheckbox.AutoSize = true;
-            HideCheckbox.Location = new Point(143, 319);
-            HideCheckbox.Name = "HideCheckbox";
-            HideCheckbox.Size = new Size(134, 29);
-            HideCheckbox.TabIndex = 2;
-            HideCheckbox.Text = "Hide button";
-            HideCheckbox.UseVisualStyleBackColor = true;
-            HideCheckbox.CheckedChanged += HideCheckbox_CheckedChange;
+            MinValueTextBox.Font = new Font("Segoe UI", 15F);
+            MinValueTextBox.Location = new Point(455, 102);
+            MinValueTextBox.Name = "MinValueTextBox";
+            MinValueTextBox.Size = new Size(515, 47);
+            MinValueTextBox.TabIndex = 3;
+            MinValueTextBox.KeyPress += ValueTextBox_KeyPressed;
+            MinValueTextBox.TextChanged += MinValueTextBox_TextChanged;
             // 
-            // DateTextBox
+            // MaxValueTextBox
             // 
-            DateTextBox.Font = new Font("Segoe UI", 15F);
-            DateTextBox.Location = new Point(254, 105);
-            DateTextBox.Name = "DateTextBox";
-            DateTextBox.Size = new Size(333, 47);
-            DateTextBox.TabIndex = 3;
-            DateTextBox.KeyPress += this.DateTextBox_KeyPress;
+            MaxValueTextBox.Font = new Font("Segoe UI", 15F);
+            MaxValueTextBox.Location = new Point(455, 200);
+            MaxValueTextBox.Name = "MaxValueTextBox";
+            MaxValueTextBox.Size = new Size(515, 47);
+            MaxValueTextBox.TabIndex = 4;
+            MaxValueTextBox.KeyPress += ValueTextBox_KeyPressed;
+            MaxValueTextBox.TextChanged += MaxValueTextBox_TextChanged;
+            // 
+            // MaxValueLabel
+            // 
+            MaxValueLabel.AutoSize = true;
+            MaxValueLabel.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            MaxValueLabel.Location = new Point(218, 203);
+            MaxValueLabel.Name = "MaxValueLabel";
+            MaxValueLabel.Size = new Size(163, 41);
+            MaxValueLabel.TabIndex = 5;
+            MaxValueLabel.Text = "Max value";
+            // 
+            // IsPreciseCheckbox
+            // 
+            IsPreciseCheckbox.AutoSize = true;
+            IsPreciseCheckbox.Font = new Font("Segoe UI", 15F);
+            IsPreciseCheckbox.Location = new Point(455, 334);
+            IsPreciseCheckbox.Name = "IsPreciseCheckbox";
+            IsPreciseCheckbox.Size = new Size(167, 45);
+            IsPreciseCheckbox.TabIndex = 6;
+            IsPreciseCheckbox.Text = "Is precise";
+            IsPreciseCheckbox.UseVisualStyleBackColor = true;
+            IsPreciseCheckbox.CheckedChanged += IsPreciseCheckbox_CheckedChange;
+            // 
+            // SuggestedTypeLabel
+            // 
+            SuggestedTypeLabel.AutoSize = true;
+            SuggestedTypeLabel.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            SuggestedTypeLabel.Location = new Point(143, 436);
+            SuggestedTypeLabel.Name = "SuggestedTypeLabel";
+            SuggestedTypeLabel.Size = new Size(238, 41);
+            SuggestedTypeLabel.TabIndex = 7;
+            SuggestedTypeLabel.Text = "Suggested type";
+            // 
+            // SuggestedType
+            // 
+            SuggestedType.AutoSize = true;
+            SuggestedType.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            SuggestedType.Location = new Point(455, 436);
+            SuggestedType.Name = "SuggestedType";
+            SuggestedType.Size = new Size(0, 41);
+            SuggestedType.TabIndex = 8;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(DateTextBox);
-            Controls.Add(HideCheckbox);
-            Controls.Add(IncreaseButton);
-            Controls.Add(CounterLabel);
+            ClientSize = new Size(1131, 579);
+            Controls.Add(SuggestedType);
+            Controls.Add(SuggestedTypeLabel);
+            Controls.Add(IsPreciseCheckbox);
+            Controls.Add(MaxValueLabel);
+            Controls.Add(MaxValueTextBox);
+            Controls.Add(MinValueTextBox);
+            Controls.Add(IsFloatCheckbox);
+            Controls.Add(MinValueLabel);
             Name = "MainForm";
             Text = "Numeric Types Suggester";
             ResumeLayout(false);
@@ -94,9 +145,13 @@ namespace NumericTypesSuggesterForm
 
         #endregion
 
-        private Label CounterLabel;
-        private Button IncreaseButton;
-        private CheckBox HideCheckbox;
-        private TextBox DateTextBox;
+        private Label MinValueLabel;
+        private CheckBox IsFloatCheckbox;
+        private TextBox MinValueTextBox;
+        private TextBox MaxValueTextBox;
+        private Label MaxValueLabel;
+        private CheckBox IsPreciseCheckbox;
+        private Label SuggestedTypeLabel;
+        private Label SuggestedType;
     }
 }
