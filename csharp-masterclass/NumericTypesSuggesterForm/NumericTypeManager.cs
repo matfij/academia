@@ -19,7 +19,7 @@ internal class NumericTypeManager
     ];
     private readonly List<(BigInteger Min, BigInteger Max, string Type)> _floatRangeToType = 
     [
-        ( (BigInteger) float.MinValue, (BigInteger) float.MaxValue,  "float"  ),
+        ( (BigInteger) float.MinValue,  (BigInteger) float.MaxValue,  "float"  ),
         ( (BigInteger) double.MinValue, (BigInteger) double.MaxValue, "double" ),
     ];
 

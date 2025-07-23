@@ -70,8 +70,8 @@ namespace NumericTypesSuggesterForm
             MinValueTextBox.Name = "MinValueTextBox";
             MinValueTextBox.Size = new Size(515, 47);
             MinValueTextBox.TabIndex = 3;
-            MinValueTextBox.KeyPress += ValueTextBox_KeyPressed;
             MinValueTextBox.TextChanged += MinValueTextBox_TextChanged;
+            MinValueTextBox.KeyPress += ValueTextBox_KeyPressed;
             // 
             // MaxValueTextBox
             // 
@@ -80,8 +80,8 @@ namespace NumericTypesSuggesterForm
             MaxValueTextBox.Name = "MaxValueTextBox";
             MaxValueTextBox.Size = new Size(515, 47);
             MaxValueTextBox.TabIndex = 4;
-            MaxValueTextBox.KeyPress += ValueTextBox_KeyPressed;
             MaxValueTextBox.TextChanged += MaxValueTextBox_TextChanged;
+            MaxValueTextBox.KeyPress += ValueTextBox_KeyPressed;
             // 
             // MaxValueLabel
             // 
@@ -103,6 +103,7 @@ namespace NumericTypesSuggesterForm
             IsPreciseCheckbox.TabIndex = 6;
             IsPreciseCheckbox.Text = "Is precise";
             IsPreciseCheckbox.UseVisualStyleBackColor = true;
+            IsPreciseCheckbox.Visible = false;
             IsPreciseCheckbox.CheckedChanged += IsPreciseCheckbox_CheckedChange;
             // 
             // SuggestedTypeLabel

@@ -18,10 +18,9 @@ namespace NumericTypesSuggesterForm
 
         private void ValueTextBox_KeyPressed(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsAsciiDigit(e.KeyChar) && !char.IsControl(e.KeyChar) && e.KeyChar != '-')
+            if (!ValidateNumericInput(e.KeyChar, (TextBox)sender))
             {
                 e.Handled = true;
-                return;
             }
         }
 
@@ -30,6 +29,7 @@ namespace NumericTypesSuggesterForm
             _minValue = BigInteger.TryParse(MinValueTextBox.Text, out var value) ? value : null;
             _typeManager.SuggestType(_minValue, _maxValue, _isFloat, _isPrecise);
             SuggestedType.Text = _typeManager.SuggestedType;
+            ValidateNumericFields();
         }
 
         private void MaxValueTextBox_TextChanged(object sender, EventArgs e)
@@ -37,6 +37,7 @@ namespace NumericTypesSuggesterForm
             _maxValue = BigInteger.TryParse(MaxValueTextBox.Text, out var value) ? value : null;
             _typeManager.SuggestType(_minValue, _maxValue, _isFloat, _isPrecise);
             SuggestedType.Text = _typeManager.SuggestedType;
+            ValidateNumericFields();
         }
 
         private void IsFloatCheckbox_CheckedChange(object sender, EventArgs e)
@@ -52,6 +53,40 @@ namespace NumericTypesSuggesterForm
             _isPrecise = IsPreciseCheckbox.Checked;
             _typeManager.SuggestType(_minValue, _maxValue, _isFloat, _isPrecise);
             SuggestedType.Text = _typeManager.SuggestedType;
+        }
+
+        private void ValidateNumericFields()
+        {
+            if (!IsInputComplete())
+            {
+                return;
+            }
+            if (_maxValue < _minValue)
+            {
+                MaxValueTextBox.BackColor = Color.Red;
+            }
+            else
+            {
+                MaxValueTextBox.BackColor = Color.White;
+            }
+        }
+
+        private bool ValidateNumericInput(char key, TextBox sender)
+        {
+            var isDigit = char.IsAsciiDigit(key);
+            var isControl = char.IsControl(key);
+            var isValidMinusSign =
+                key == '-'
+                && sender.SelectionStart == 0
+                && !sender.Text.Contains('-');
+            return isDigit || isControl || isValidMinusSign;
+        }
+
+        private bool IsInputComplete()
+        {
+            return 
+                MinValueTextBox.Text.Length > 0 && MinValueTextBox.Text != "-"
+                && MaxValueTextBox.Text.Length > 0 && MaxValueTextBox.Text != "-";
         }
     }
 }
