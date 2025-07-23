@@ -4,7 +4,9 @@ namespace NumericTypesSuggesterForm;
 
 internal class NumericTypeManager
 {
-    public string SuggestedType { get; private set; }
+    private string _suggestedType;
+
+    public event EventHandler<string>? SuggestedTypeChange;
 
     private readonly List<(BigInteger Min, BigInteger Max, string Type)> _intRangeToType =
     [
@@ -17,7 +19,7 @@ internal class NumericTypeManager
         ( (BigInteger) ulong.MinValue,  (BigInteger) ulong.MaxValue,  "ulong" ),
         ( (BigInteger) long.MinValue,   (BigInteger) long.MaxValue,   "long"  ),
     ];
-    private readonly List<(BigInteger Min, BigInteger Max, string Type)> _floatRangeToType = 
+    private readonly List<(BigInteger Min, BigInteger Max, string Type)> _floatRangeToType =
     [
         ( (BigInteger) float.MinValue,  (BigInteger) float.MaxValue,  "float"  ),
         ( (BigInteger) double.MinValue, (BigInteger) double.MaxValue, "double" ),
@@ -26,7 +28,7 @@ internal class NumericTypeManager
 
     public NumericTypeManager()
     {
-        SuggestedType = "Unknown";
+        _suggestedType = "Unknown";
     }
 
     public void SuggestType(
@@ -37,37 +39,56 @@ internal class NumericTypeManager
     {
         if (minValue is null || maxValue is null || minValue > maxValue)
         {
-            SuggestedType = "Unknown";
-            return;
+            _suggestedType = "Unknown";
         }
-
-        if (isPrecise == true)
+        else if (isPrecise == true)
         {
-            SuggestedType = "Decimal";
-            return;
+            SuggestDecimalType(minValue, maxValue);
         }
-
-        if (isFloat == true)
+        else if (isFloat == true)
         {
-            foreach (var rangeType in _floatRangeToType)
-            {
-                if (minValue > rangeType.Min && maxValue < rangeType.Max)
-                {
-                    SuggestedType = rangeType.Type;
-                    break;
-                }
-            }
+            SuggestFloatType(minValue, maxValue);
         }
         else
         {
-            foreach (var rangeType in _intRangeToType)
+            SuggestIntegerType(minValue, maxValue);
+        }
+        SuggestedTypeChange?.Invoke(this, _suggestedType);
+    }
+
+    private void SuggestIntegerType(BigInteger? minValue, BigInteger? maxValue)
+    {
+        foreach (var rangeType in _intRangeToType)
+        {
+            if (minValue > rangeType.Min && maxValue < rangeType.Max)
             {
-                if (minValue > rangeType.Min && maxValue < rangeType.Max)
-                {
-                    SuggestedType = rangeType.Type;
-                    break;
-                }
+                _suggestedType = rangeType.Type;
+                break;
             }
+        }
+    }
+
+    private void SuggestFloatType(BigInteger? minValue, BigInteger? maxValue)
+    {
+        foreach (var rangeType in _floatRangeToType)
+        {
+            if (minValue > rangeType.Min && maxValue < rangeType.Max)
+            {
+                _suggestedType = rangeType.Type;
+                break;
+            }
+        }
+    }
+
+    private void SuggestDecimalType(BigInteger? minValue, BigInteger? maxValue)
+    {
+        if (minValue > (BigInteger)Decimal.MinValue && maxValue < (BigInteger)Decimal.MaxValue)
+        {
+            _suggestedType = "Decimal";
+        }
+        else
+        {
+            _suggestedType = "Impossible representation";
         }
     }
 }

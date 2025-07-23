@@ -14,6 +14,7 @@ namespace NumericTypesSuggesterForm
         {
             InitializeComponent();
             _typeManager = new NumericTypeManager();
+            _typeManager.SuggestedTypeChange += (sender, type) => SuggestedType.Text = type;
         }
 
         private void ValueTextBox_KeyPressed(object sender, KeyPressEventArgs e)
@@ -28,7 +29,6 @@ namespace NumericTypesSuggesterForm
         {
             _minValue = BigInteger.TryParse(MinValueTextBox.Text, out var value) ? value : null;
             _typeManager.SuggestType(_minValue, _maxValue, _isFloat, _isPrecise);
-            SuggestedType.Text = _typeManager.SuggestedType;
             ValidateNumericFields();
         }
 
@@ -36,7 +36,6 @@ namespace NumericTypesSuggesterForm
         {
             _maxValue = BigInteger.TryParse(MaxValueTextBox.Text, out var value) ? value : null;
             _typeManager.SuggestType(_minValue, _maxValue, _isFloat, _isPrecise);
-            SuggestedType.Text = _typeManager.SuggestedType;
             ValidateNumericFields();
         }
 
@@ -45,14 +44,12 @@ namespace NumericTypesSuggesterForm
             IsPreciseCheckbox.Visible = IsFloatCheckbox.Checked;
             _isFloat = IsFloatCheckbox.Checked;
             _typeManager.SuggestType(_minValue, _maxValue, _isFloat, _isPrecise);
-            SuggestedType.Text = _typeManager.SuggestedType;
         }
 
         private void IsPreciseCheckbox_CheckedChange(object sender, EventArgs e)
         {
             _isPrecise = IsPreciseCheckbox.Checked;
             _typeManager.SuggestType(_minValue, _maxValue, _isFloat, _isPrecise);
-            SuggestedType.Text = _typeManager.SuggestedType;
         }
 
         private void ValidateNumericFields()
