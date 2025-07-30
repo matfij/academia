@@ -6,7 +6,7 @@ public class NumericUtils
     {
         var sum = 0;
 
-        for (int i = 0; i < max; i += 2)
+        for (int i = 0; i <= max; i += 2)
         {
             sum += i;
         }
