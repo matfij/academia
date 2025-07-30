@@ -29,6 +29,27 @@ internal class NumericUtilsTest
         Assert.AreEqual(expected, sum, $"Expected is not equal to {expected} for {max}");
     }
 
+    [Test]
+    public void GetEvenSumUpTo_ShallThrowError_ForNegativeInput()
+    {
+        var max = -2;
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => NumericUtils.GetEvenSumUpTo(max));
+
+        Assert.AreEqual("max", exception!.ParamName, $"Wrong exception parameter was returned");
+    }
+
+    [Test]
+    public void DifferentKindOfAssertions()
+    {
+        Assert.DoesNotThrow(() => Console.WriteLine("Not throw"));
+        Assert.False(2 + 2 < 1);
+        Assert.Null(null);
+        Assert.NotNull('c');
+
+        CollectionAssert.AreEquivalent(new int[] { 1, 2, 3 }, new int[] { 3, 2, 1 });
+    }
+
     private static IEnumerable<object> GenerateTestCases()
     {
         return new[]

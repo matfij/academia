@@ -4,6 +4,8 @@ public class NumericUtils
 {
     public static int GetEvenSumUpTo(int max)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(max);
+
         var sum = 0;
 
         for (int i = 0; i <= max; i += 2)
