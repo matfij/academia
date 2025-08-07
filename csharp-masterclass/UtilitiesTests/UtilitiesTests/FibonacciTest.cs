@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Utilities;
 
-namespace UtilitiesTests;
+namespace UtilitiesTests.UtilitiesTests;
 
 [TestFixture]
 internal class FibonacciTest
@@ -20,7 +20,7 @@ internal class FibonacciTest
         var exception = Assert.Throws<ArgumentException>(() => Fibonacci.Generate(47));
 
         Assert.AreEqual(
-            "n cannot be larger than 46, as it will cause numeric overflow.", 
+            "n cannot be larger than 46, as it will cause numeric overflow.",
             exception!.Message,
             "Invalid exception message");
     }

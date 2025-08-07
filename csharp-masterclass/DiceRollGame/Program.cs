@@ -3,12 +3,11 @@ using UserCommunication;
 
 var random = new Random();
 var dice = new Dice(random);
-var userCommunication = new ConsoleUserCommunication();
+var console = new SystemConsole();
+var userCommunication = new ConsoleUserCommunication(console);
 var guessingGame = new GuessingGame(dice, userCommunication);
 
 GameResult gameResult = guessingGame.Play();
 guessingGame.PrintResult(gameResult);
 
 Console.ReadKey();
-
-

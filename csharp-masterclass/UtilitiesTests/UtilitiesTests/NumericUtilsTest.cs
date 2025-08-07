@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Utilities;
 
-namespace UtilitiesTests;
+namespace UtilitiesTests.UtilitiesTests;
 
 [TestFixture]
 internal class NumericUtilsTest

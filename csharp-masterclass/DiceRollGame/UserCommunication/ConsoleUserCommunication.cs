@@ -1,20 +1,28 @@
 ﻿namespace UserCommunication;
 
-public class ConsoleUserCommunication : IUserCommunication
+public interface IUserCommunication
 {
+    int ReadInteger(string prompt);
+    void ShowMessage(string message);
+}
+
+public class ConsoleUserCommunication(IConsole console) : IUserCommunication
+{
+    private readonly IConsole _console = console;
+
     public int ReadInteger(string prompt)
     {
         int result;
         do
         {
-            Console.WriteLine(prompt);
+            ShowMessage(prompt);
         }
-        while (!int.TryParse(Console.ReadLine(), out result));
+        while (!int.TryParse(_console.ReadLine(), out result));
         return result;
     }
 
     public void ShowMessage(string message)
     {
-        Console.WriteLine(message);
+        _console.WriteLine(message);
     }
 }

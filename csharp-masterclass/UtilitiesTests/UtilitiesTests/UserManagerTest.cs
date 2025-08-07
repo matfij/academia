@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Utilities;
 
-namespace UtilitiesTests;
+namespace UtilitiesTests.UtilitiesTests;
 
 [TestFixture]
 public class UserManagerTest
@@ -49,7 +49,7 @@ public class UserManagerTest
         _userManager.Save(id, name);
 
         _mockRepository.Verify(
-            mock => mock.Save(It.Is<string>(id => IsGuid(id)), name), 
+            mock => mock.Save(It.Is<string>(id => IsGuid(id)), name),
             Times.Once());
     }
 }
