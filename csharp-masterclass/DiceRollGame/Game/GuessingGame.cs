@@ -2,6 +2,12 @@
 
 namespace Game;
 
+public enum GameResult
+{
+    Victory,
+    Loss
+}
+
 public class GuessingGame
 {
     private readonly IDice _dice;
@@ -39,8 +45,8 @@ public class GuessingGame
     public void PrintResult(GameResult gameResult)
     {
         string message = gameResult == GameResult.Victory
-            ? "You win!"
-            : "You lose :(";
+            ? "You won!"
+            : "You lost :(";
 
         _userCommunication.ShowMessage(message);
     }

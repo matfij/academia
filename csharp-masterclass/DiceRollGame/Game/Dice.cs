@@ -1,5 +1,10 @@
 ﻿namespace Game;
 
+public interface IDice
+{
+    int Roll();
+}
+
 public class Dice : IDice
 {
     private readonly Random _random;
