@@ -1,4 +1,5 @@
-﻿using UserCommunication;
+﻿using DiceRollGame;
+using UserCommunication;
 
 namespace Game;
 
@@ -25,18 +26,17 @@ public class GuessingGame
     public GameResult Play()
     {
         var diceRollResult = _dice.Roll();
-        _userCommunication.ShowMessage(
-            $"Dice rolled. Guess what number it shows in {InitialTries} tries.");
+        _userCommunication.ShowMessage(String.Format(Resource.GameIntroduction, diceRollResult));
 
         var triesLeft = InitialTries;
         while (triesLeft > 0)
         {
-            var guess = _userCommunication.ReadInteger("Enter a number:");
+            var guess = _userCommunication.ReadInteger(Resource.EnterNumberMessage);
             if (guess == diceRollResult)
             {
                 return GameResult.Victory;
             }
-            _userCommunication.ShowMessage("Wrong number.");
+            _userCommunication.ShowMessage(Resource.WrongNumber);
             --triesLeft;
         }
         return GameResult.Loss;
@@ -45,8 +45,8 @@ public class GuessingGame
     public void PrintResult(GameResult gameResult)
     {
         string message = gameResult == GameResult.Victory
-            ? "You won!"
-            : "You lost :(";
+            ? Resource.YouWon
+            : Resource.YouLost;
 
         _userCommunication.ShowMessage(message);
     }

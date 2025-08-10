@@ -28,7 +28,7 @@ internal class GuessingGameTest
     public void Play_ShallReturnLoseResult_WhenDiceResultNotGuessed()
     {
         _userCommunicationMock
-            .SetupSequence(mock => mock.ReadInteger("Provide int"))
+            .SetupSequence(mock => mock.ReadInteger(It.IsAny<string>()))
             .Returns(1)
             .Returns(1)
             .Returns(1);
