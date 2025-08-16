@@ -8,6 +8,23 @@ internal class Methods
     // usually avoid boolean parameters - split method
     // one method should do only one job at a single level of abstraction
 
+    // worst comments:
+    // Capitan obvious - what the statement does
+    // what should be done 
+    // commented code
+
+    // justifiable comments:
+    // TODO comments with proper format and static analysis (warn)
+    // doc comments in class libraries
+    // explaining hacks in case of deadlines
+
+    // static methods
+    // should be used for private methods that don't relay on class state - better performance 
+    // should not be used for public methods - this makes DI impossible since static members can't
+    // implement an interface - runtime determines which virtual method to run based on instance not class
+    // when dealing with static methods that must be mocked for tests use a non-static wrapper 
+    // public static methods are acceptable in scenarios in which implementation will never change - Math, extension methods
+
     private const int _minLength = 3;
     private const int _maxLength = 25;
 
