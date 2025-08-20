@@ -1,4 +1,6 @@
-﻿// CPU - fetches, decodes and executes instructions from memory,
+﻿using Multithreading;
+
+// CPU - fetches, decodes and executes instructions from memory,
 // performs arithmetic and logic operations.
 
 // Scheduler - determines which process/thread to run next and for how long.
@@ -17,18 +19,29 @@
 // Asynchronous - tasks run independently of the main program flow,
 // without blocking the main thread.
 
-static void PrintSigns(char sign, int count)
-{
-    Console.WriteLine($"Thread ID for {sign}: {Environment.CurrentManagedThreadId}");
-    Enumerable.Repeat(sign, count).ToList().ForEach(Console.Write);
-}
+// Benefits of multithreading and asynchronous programming:
+// improved performance
+// increased responsiveness
 
-Console.WriteLine($"Cores count: {Environment.ProcessorCount}");
+// Thread pool - mechanism for creating and managing thread to minimize overhead
+// of creating and removing threads
 
-Thread plusThread = new (() => PrintSigns('+', 250));
-Thread minusThread = new (() => PrintSigns('-', 250));
 
-plusThread.Start();
-minusThread.Start();
+//static void PrintSigns(char sign, int count)
+//{
+//    Console.WriteLine($"Thread ID for {sign}: {Environment.CurrentManagedThreadId}");
+//    Enumerable.Repeat(sign, count).ToList().ForEach(Console.Write);
+//}
 
-Console.WriteLine($"Main thread ID: {Environment.CurrentManagedThreadId}");
+//Console.WriteLine($"Cores count: {Environment.ProcessorCount}");
+
+//Thread plusThread = new (() => PrintSigns('+', 250));
+//Thread minusThread = new (() => PrintSigns('-', 250));
+
+//plusThread.Start();
+//minusThread.Start();
+
+//Console.WriteLine($"Main thread ID: {Environment.CurrentManagedThreadId}");
+
+
+TaskParallelLibrary.Run();
