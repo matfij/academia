@@ -44,6 +44,15 @@
 //Console.WriteLine($"Main thread ID: {Environment.CurrentManagedThreadId}");
 
 
-var result = TaskParallelLibrary.FormatSquaredNumbersFrom1To(5).Result;
+//var result5 = TaskParallelLibrary.FormatSquaredNumbersFrom1To(5);
+//var result10 = TaskParallelLibrary.FormatSquaredNumbersFrom1To(10);
+//var result15 = TaskParallelLibrary.FormatSquaredNumbersFrom1To(15);
 
-Console.WriteLine(result);
+//await Task.Factory.ContinueWhenAll([result5, result10, result15], (results)
+//    => Console.WriteLine(string.Join(" | ", results.ToList().Select(result => result.Result))));
+
+
+TaskParallelLibrary.TaskToCancel();
+
+
+Console.ReadKey();

@@ -8,6 +8,17 @@ internal static class TaskParallelLibrary
 
     // Continuation - action that will be executed after Task is completed
 
+    // Task lifecycle
+    // created - task object exists
+    // waiting for activation  - if async function - starts immediately and return a task which is not yer running
+    // waiting to run - task has ben scheduled
+    // running - delegate is actively executing on some thread
+    // waiting for children to complete - wait until al inner (child) tasks return result
+    // canceled | ran to completion | failed
+
+    // Task.Run() is hot - run immediately
+    // new Task() is cold - needs Start()
+
     public static void Run()
     {
         Console.WriteLine("Start");
@@ -32,6 +43,24 @@ internal static class TaskParallelLibrary
             .ContinueWith((task) => string.Join(", ", task.Result));
     }
 
+    public static void TaskToCancel()
+    {
+        var cancellationToken = new CancellationTokenSource();
+
+        var endlessTask = new Task(() => EndlessWork(cancellationToken.Token), cancellationToken.Token);
+        endlessTask.Start();
+
+        var input = '.';
+        do
+        {
+            Console.WriteLine("Give input");
+            input = Console.ReadKey().KeyChar;
+        }
+        while (input != 'x');
+
+        cancellationToken.Cancel();
+    }
+
     public static void PrintSign(char sign, int count)
     { 
         Enumerable.Repeat(sign, count).ToList().ForEach(Console.Write);
@@ -42,5 +71,14 @@ internal static class TaskParallelLibrary
         Console.WriteLine($"Inside {nameof(CalculateLength)}");
         Thread.Sleep(2000);
         return input.Length;
+    }
+
+    private static void EndlessWork(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            Console.WriteLine("Working...");
+            Thread.Sleep(1000);
+        }
     }
 }
