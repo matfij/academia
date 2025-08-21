@@ -6,6 +6,8 @@ internal static class TaskParallelLibrary
     // lightweight, fast and scalable, higher abstraction level
     // runs independently of the main thread
 
+    // Continuation - action that will be executed after Task is completed
+
     public static void Run()
     {
         Console.WriteLine("Start");
@@ -20,6 +22,14 @@ internal static class TaskParallelLibrary
 
         Console.WriteLine("End");
         Console.ReadKey();
+    }
+
+    public static Task<string> FormatSquaredNumbersFrom1To(int n)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(n, 0);
+        return Task
+            .Run(() => Enumerable.Range(1, n).Select(n => n*n))
+            .ContinueWith((task) => string.Join(", ", task.Result));
     }
 
     public static void PrintSign(char sign, int count)

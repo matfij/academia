@@ -44,4 +44,6 @@
 //Console.WriteLine($"Main thread ID: {Environment.CurrentManagedThreadId}");
 
 
-TaskParallelLibrary.Run();
+var result = TaskParallelLibrary.FormatSquaredNumbersFrom1To(5).Result;
+
+Console.WriteLine(result);
