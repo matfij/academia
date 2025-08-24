@@ -52,7 +52,8 @@
 //    => Console.WriteLine(string.Join(" | ", results.ToList().Select(result => result.Result))));
 
 
-TaskParallelLibrary.TaskToCancel();
+//TaskParallelLibrary.TaskToCancel();
 
+TaskParallelLibrary.Run();
 
 Console.ReadKey();
