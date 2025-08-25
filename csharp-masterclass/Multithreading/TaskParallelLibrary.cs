@@ -104,13 +104,17 @@ internal static class TaskParallelLibrary
 
         var endlessTask = new Task(() => EndlessWork(cancellationToken.Token), cancellationToken.Token);
         endlessTask.Start();
+        endlessTask.ContinueWith(task =>
+        {
+            Console.WriteLine($"Task {task.Id} has ben canceled.");
+        }, TaskContinuationOptions.OnlyOnCanceled);
 
         var input = '.';
         do
         {
             Console.WriteLine("Give input");
             input = Console.ReadKey().KeyChar;
-        }
+        }   
         while (input != 'x');
 
         cancellationToken.Cancel();

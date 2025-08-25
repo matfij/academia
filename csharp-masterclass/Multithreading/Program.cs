@@ -54,6 +54,8 @@
 
 //TaskParallelLibrary.TaskToCancel();
 
-TaskParallelLibrary.Run();
+//TaskParallelLibrary.Run();
+
+Synchronization.Run();
 
 Console.ReadKey();
