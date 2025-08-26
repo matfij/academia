@@ -2,8 +2,8 @@
 
 internal interface IUserInterface
 {
-    public T GetValue<T>(Func<string, T> parse);
-    public void PrintMessage(string message);
+    T GetValue<T>(Func<string, T> parse);
+    void PrintMessage(string message);
 }
 
 internal class ConsoleUserInterface : IUserInterface

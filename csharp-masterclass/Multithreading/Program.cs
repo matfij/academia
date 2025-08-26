@@ -61,7 +61,9 @@ using Multithreading.QuoteFinder;
 
 //AsyncAwait.Run();
 
-var quoteFinder = new QuoteFinder(new ConsoleUserInterface());
+var quoteFinder = new QuoteFinder(
+    new ConsoleUserInterface(),
+    new HttpQuoteRepository());
 
 quoteFinder.Run();
 
