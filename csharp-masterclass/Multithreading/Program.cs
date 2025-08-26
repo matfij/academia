@@ -1,4 +1,5 @@
 ﻿using Multithreading;
+using Multithreading.QuoteFinder;
 
 // CPU - fetches, decodes and executes instructions from memory,
 // performs arithmetic and logic operations.
@@ -58,6 +59,10 @@
 
 //Synchronization.Run();
 
-AsyncAwait.Run();
+//AsyncAwait.Run();
+
+var quoteFinder = new QuoteFinder(new ConsoleUserInterface());
+
+quoteFinder.Run();
 
 Console.ReadKey();

@@ -9,9 +9,14 @@ internal class AsyncAwait
     // Thread.Sleep - blocks thread execution
     // Task.Delay - blocks only method it is used in, the caller continues execution
 
+    // awaiting task will propagate exception & crush the application (like .Wait() or .Result)
+    // otherwise exception will not be propagated 
+
     public static void Run()
     {
         _ = RunHeavyJob();
+
+        _ = RunHeavyCalculationWithException(); // result will be faulted, but program will not crush
 
         Console.WriteLine("Doing another work");
     }
@@ -28,5 +33,13 @@ internal class AsyncAwait
         //Thread.Sleep(2000);
         await Task.Delay(2000);
         return "Heavy calculation completed";
+    }
+
+    private static async Task RunHeavyCalculationWithException()
+    {
+        Console.WriteLine("Start heavy calculation with exception");
+        Console.WriteLine("Start heavy calculation with exception");
+        await Task.Delay(2000);
+        throw new Exception("Run out of water!");
     }
 }
