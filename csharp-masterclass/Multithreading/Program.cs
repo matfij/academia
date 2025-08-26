@@ -56,6 +56,8 @@
 
 //TaskParallelLibrary.Run();
 
-Synchronization.Run();
+//Synchronization.Run();
+
+AsyncAwait.Run();
 
 Console.ReadKey();
