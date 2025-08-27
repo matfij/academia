@@ -1,4 +1,6 @@
-﻿namespace Multithreading.QuoteFinder;
+﻿using System.Diagnostics;
+
+namespace Multithreading.QuoteFinder;
 
 internal class QuoteFinder(
     IUserInterface userInterface,
@@ -19,23 +21,22 @@ internal class QuoteFinder(
         _userInterface.PrintMessage("Enter number of words per page:");
         var limit = _userInterface.GetValue<int>(int.Parse);
 
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         List<Quote> quotes = [];
         try
         {
-            for (int i = 0; i < page; i++)
-            {
-                var newQuotes = await _quoteRepository.Read(i, limit);
-                quotes.AddRange(newQuotes);
-            }
+            quotes = (await _quoteRepository.ReadParallel(page, limit)).ToList();
+            //quotes = (await _quoteRepository.ReadSequential(page, limit)).ToList();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($" Unable to read quotes: {ex.Message}");
+            Console.WriteLine($"Unable to read quotes: {ex.Message}");
         }
 
-        foreach (Quote quote in quotes)
-        {
-            Console.WriteLine(quote);
-        }
+        stopwatch.Stop();
+
+        Console.WriteLine($"Downloaded {quotes.Count} quotes in {stopwatch.Elapsed.TotalMilliseconds} ms.");
     }
 }
