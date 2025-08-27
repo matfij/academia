@@ -63,7 +63,8 @@ using Multithreading.QuoteFinder;
 
 var quoteFinder = new QuoteFinder(
     new ConsoleUserInterface(),
-    new HttpQuoteRepository());
+    new HttpQuoteRepository(),
+    new QuoteFilter());
 
 quoteFinder.Run();
 

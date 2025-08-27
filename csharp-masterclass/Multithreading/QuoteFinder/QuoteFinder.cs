@@ -4,10 +4,12 @@ namespace Multithreading.QuoteFinder;
 
 internal class QuoteFinder(
     IUserInterface userInterface,
-    IQuoteRepository quoteRepository)
+    IQuoteRepository quoteRepository,
+    IQuoteFilter quoteFilter)
 {
     private readonly IUserInterface _userInterface = userInterface;
     private readonly IQuoteRepository _quoteRepository = quoteRepository;
+    private readonly IQuoteFilter _quoteFilter = quoteFilter;
 
     public async void Run()
     {
@@ -36,7 +38,15 @@ internal class QuoteFinder(
         }
 
         stopwatch.Stop();
-
         Console.WriteLine($"Downloaded {quotes.Count} quotes in {stopwatch.Elapsed.TotalMilliseconds} ms.");
+
+        var filteredQuotes = await _quoteFilter.FilterBy(quotes, targetWord);
+
+        Console.WriteLine($"Matching quotes count: {filteredQuotes.Count()}");
+
+        foreach (Quote quote in filteredQuotes)
+        {
+            Console.WriteLine($"\"{quote.Body.Replace("\n", " ")}\"");
+        }
     }
 }
