@@ -23,30 +23,35 @@ internal class QuoteFinder(
         _userInterface.PrintMessage("Enter number of words per page:");
         var limit = _userInterface.GetValue<int>(int.Parse);
 
+        _userInterface.PrintMessage("Enable parallel run (0 - no, 1 - yes):");
+        var useParallel = _userInterface.GetValue<bool>(
+            (string input) => int.Parse(input) == 1 || (int.Parse(input) == 0 ? false : throw new ArgumentOutOfRangeException()));
+
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
         List<Quote> quotes = [];
         try
         {
-            quotes = (await _quoteRepository.ReadParallel(page, limit)).ToList();
-            //quotes = (await _quoteRepository.ReadSequential(page, limit)).ToList();
+            quotes = useParallel
+                ? (await _quoteRepository.ReadParallelAsync(page, limit)).ToList()
+                : (await _quoteRepository.ReadSequentialAsync(page, limit)).ToList();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unable to read quotes: {ex.Message}");
+            _userInterface.PrintMessage($"Unable to read quotes: {ex.Message}");
         }
 
         stopwatch.Stop();
-        Console.WriteLine($"Downloaded {quotes.Count} quotes in {stopwatch.Elapsed.TotalMilliseconds} ms.");
+        _userInterface.PrintMessage($"Downloaded {quotes.Count} quotes in {stopwatch.Elapsed.TotalMilliseconds} ms.");
 
-        var filteredQuotes = await _quoteFilter.FilterBy(quotes, targetWord);
+        var filteredQuotes = await _quoteFilter.FilterByAsync(quotes, targetWord);
 
-        Console.WriteLine($"Matching quotes count: {filteredQuotes.Count()}");
+        _userInterface.PrintMessage($"Matching quotes count: {filteredQuotes.Count()}");
 
         foreach (Quote quote in filteredQuotes)
         {
-            Console.WriteLine($"\"{quote.Body.Replace("\n", " ")}\"");
+            _userInterface.PrintMessage($"\"{quote.Body.Replace("\n", " ")}\"");
         }
     }
 }

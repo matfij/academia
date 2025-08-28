@@ -4,25 +4,21 @@ namespace Multithreading.QuoteFinder;
 
 internal interface IQuoteRepository
 {
-    Task<IEnumerable<Quote>> ReadParallel(int pages, int limit);
-    Task<IEnumerable<Quote>> ReadSequential(int pages, int limit);
+    Task<IEnumerable<Quote>> ReadParallelAsync(int pages, int limit);
+    Task<IEnumerable<Quote>> ReadSequentialAsync(int pages, int limit);
 }
 
-internal class HttpQuoteRepository : IQuoteRepository
+internal class HttpQuoteRepository : IQuoteRepository, IDisposable
 {
     private const string _baseUrl = "https://jsonplaceholder.typicode.com";
-    private HttpClient _httpClient;
+    private const int _firstPage = 1;
+    private readonly HttpClient _httpClient = new();
 
-    public HttpQuoteRepository()
-    {
-        _httpClient = new HttpClient();
-    }
-
-    public async Task<IEnumerable<Quote>> ReadParallel(int pages, int limit)
+    public async Task<IEnumerable<Quote>> ReadParallelAsync(int pages, int limit)
     {
         var readTasks = Enumerable
-            .Range(1, pages)
-            .Select(page => Read(page, limit))
+            .Range(_firstPage, pages)
+            .Select(page => ReadAsync(page, limit))
             .ToList();
 
         var results = await Task.WhenAll(readTasks);
@@ -30,20 +26,20 @@ internal class HttpQuoteRepository : IQuoteRepository
         return results.SelectMany(result => result);
     }
 
-    public async Task<IEnumerable<Quote>> ReadSequential(int pages, int limit)
+    public async Task<IEnumerable<Quote>> ReadSequentialAsync(int pages, int limit)
     {
         var allQuotes = new List<Quote>();
 
-        for (int page = 1; page <= pages; page++)
+        for (int page = _firstPage; page <= pages; page++)
         {
-            var quotes = await Read(page, limit);
+            var quotes = await ReadAsync(page, limit);
             allQuotes.AddRange(quotes);
         }
 
         return allQuotes;
     }
 
-    private async Task<IEnumerable<Quote>> Read(int page, int limit)
+    private async Task<IEnumerable<Quote>> ReadAsync(int page, int limit)
     {
         var url = $"{_baseUrl}/posts?_page={page}&_limit={limit}";
 
@@ -56,5 +52,10 @@ internal class HttpQuoteRepository : IQuoteRepository
         var quotes = JsonConvert.DeserializeObject<IEnumerable<Quote>>(data);
 
         return quotes ?? [];
+    }
+
+    public void Dispose()
+    {
+        _httpClient.Dispose();
     }
 }
