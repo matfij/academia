@@ -1,0 +1,111 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+node-repl-history
+
+# Serverless Framework
+.serverless/
+.serverless_plugins/
+.webpack/
+serverless-state.json
+.serverless/*.zip
+.serverless/*.tgz
+
+# Build / output
+dist/
+build/
+coverage/
+coverage/*
+*.log
+*.tmp
+*.temp
+*.tgz
+
+# Environment / secrets
+.env
+.env.*.local
+.env.local
+!.env.example
+secrets.yml
+
+# AWS / SAM
+.aws/
+.aws-sam/
+
+# TypeScript
+*.tsbuildinfo
+
+# Editor / IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.cache/
+```// filepath: c:\Users\mateu\Desktop\Code\academia\aws-serverless-framework\.gitignore
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+node-repl-history
+
+# Serverless Framework
+.serverless/
+.serverless_plugins/
+.webpack/
+serverless-state.json
+.serverless/*.zip
+.serverless/*.tgz
+
+# Build / output
+dist/
+build/
+coverage/
+coverage/*
+*.log
+*.tmp
+*.temp
+*.tgz
+
+# Environment / secrets
+.env
+.env.*.local
+.env.local
+!.env.example
+secrets.yml
+
+# AWS / SAM
+.aws/
+.aws-sam/
+
+# TypeScript
+*.tsbuildinfo
+
+# Editor / IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.cache/
