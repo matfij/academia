@@ -8,6 +8,12 @@ In order to deploy the example, you need to run the following command:
 serverless deploy
 ```
 
+Partial, quick deployment (code, configuration) can be done with
+
+```
+serverless deploy function -f function-name
+```
+
 After running deploy, you should see output similar to:
 
 ```
@@ -34,6 +40,12 @@ Which should result in response similar to:
 
 ```json
 { "message": "Go Serverless v4! Your function executed successfully!" }
+```
+
+Invocation can also be done with sls commands:
+
+```
+sls invoke local -f function-name --data '{ "foo": "bar" }'
 ```
 
 ### Local development
