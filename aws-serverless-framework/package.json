@@ -2,12 +2,16 @@
   "name": "aws-serverless-framework",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "sls dev",
+    "build": "sls package",
     "deploy": "sls deploy",
     "remove": "sls remove"
   },
-  "dependencies": {
-    "serverless": "^4.21.1"
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.156",
+    "esbuild": "^0.25.11",
+    "serverless-esbuild": "^1.55.1"
   }
 }
