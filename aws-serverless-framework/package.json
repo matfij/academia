@@ -10,8 +10,6 @@
     "remove": "sls remove"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.156",
-    "esbuild": "^0.25.11",
-    "serverless-esbuild": "^1.55.1"
+    "@types/aws-lambda": "^8.10.156"
   }
 }

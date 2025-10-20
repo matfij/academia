@@ -9,8 +9,8 @@ provider:
   # domain: api.example.com
 
 functions:
-  hello:
-    handler: src/handler.hello
+  echo:
+    handler: src/handler.echo
     events:
       - httpApi:
           path: /

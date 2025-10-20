@@ -1,10 +1,18 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
-export const hello = async (
+export const echo = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  const body = {
+    message: `Request context: ${JSON.stringify(
+      event.requestContext,
+      null,
+      2
+    )}`,
+  };
+
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: "Hello from TypeScript + Vite!" }),
+    body: JSON.stringify(body),
   };
 };
