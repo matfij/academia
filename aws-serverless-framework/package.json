@@ -9,7 +9,12 @@
     "deploy": "sls deploy",
     "remove": "sls remove"
   },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.913.0",
+    "@aws-sdk/lib-dynamodb": "^3.913.0"
+  },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.156"
+    "@types/aws-lambda": "^8.10.156",
+    "@types/node": "^24.9.1"
   }
 }

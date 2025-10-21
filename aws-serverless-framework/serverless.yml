@@ -2,19 +2,48 @@ org: matfij
 app: consultant
 service: workout-composer
 
+build:
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    target: node20
+    platform: node
+    keepNames: true
+
 provider:
   name: aws
   region: eu-central-1
   runtime: nodejs20.x
   # domain: api.example.com
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:PutItem"
+            - "dynamodb:Get*"
+            - "dynamodb:Scan*"
+            - "dynamodb:UpdateItem"
+            - "dynamodb:DeleteItem"
+          Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-customerTable-${sls:stage}
 
 functions:
   echo:
-    handler: src/handler.echo
+    handler: src/handlers/echo.echo
     events:
       - httpApi:
           path: /
           method: get
+
+  create-customer:
+    handler: src/handlers/createCustomer.createCustomer
+    events:
+      - httpApi:
+          path: /customers
+          method: post
+    environment:
+      DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
 
 resources:
   Resources:
@@ -29,12 +58,3 @@ resources:
           - AttributeName: primary_key
             KeyType: HASH
         TableName: ${self:service}-customerTable-${sls:stage}
-
-build:
-  esbuild:
-    bundle: true
-    minify: false
-    sourcemap: true
-    target: node20
-    platform: node
-    keepNames: true
