@@ -16,6 +16,7 @@ provider:
   region: eu-central-1
   runtime: nodejs20.x
   # domain: api.example.com
+
   iam:
     role:
       statements:
@@ -37,11 +38,20 @@ functions:
           method: get
 
   create-customer:
-    handler: src/handlers/createCustomer.createCustomer
+    handler: src/handlers/create-customer.createCustomer
     events:
       - httpApi:
           path: /customers
           method: post
+    environment:
+      DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
+
+  get-customers:
+    handler: src/handlers/get-customers.getCustomers
+    events:
+      - httpApi:
+          path: /customers
+          method: get
     environment:
       DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
 
