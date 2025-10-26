@@ -1,70 +1,51 @@
-org: matfij
 app: consultant
 service: workout-composer
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20
+  region: eu-central-1
+  stage: dev
+
+environment:
+  WORKOUTS_BUCKET: !Ref WorkoutsBucket
+  WORKOUTS_TABLE: !Ref WorkoutsTable
 
 build:
   esbuild:
+    platform: node
     bundle: true
     minify: false
     sourcemap: true
     target: node20
-    platform: node
     keepNames: true
+    exclude:
+      - "@aws-sdk/*" # loaded from Lambda layer
 
-provider:
-  name: aws
-  region: eu-central-1
-  runtime: nodejs20.x
-  # domain: api.example.com
+plugins:
+  - serverless-setup-functions
 
-  iam:
-    role:
-      statements:
-        - Effect: "Allow"
-          Action:
-            - "dynamodb:PutItem"
-            - "dynamodb:Get*"
-            - "dynamodb:Scan*"
-            - "dynamodb:UpdateItem"
-            - "dynamodb:DeleteItem"
-          Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-customerTable-${sls:stage}
+iam:
+  role:
+    statements:
+      - Effect: "Allow"
+        Action:
+          - s3:PutObject
+          - s3:GetObject
+          - s3:DeleteObject
+        Resource: !Sub "${WorkoutsBucket.Arn}/*"
 
-functions:
-  echo:
-    handler: src/handlers/echo.echo
-    events:
-      - httpApi:
-          path: /
-          method: get
+      - Effect: "Allow"
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:GetItem
+          - dynamodb:UpdateItem
+          - dynamodb:Query
+          - dynamodb:Scan
+        Resource: !GetAtt WorkoutsTable.Arn
 
-  create-customer:
-    handler: src/handlers/create-customer.createCustomer
-    events:
-      - httpApi:
-          path: /customers
-          method: post
-    environment:
-      DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
-
-  get-customers:
-    handler: src/handlers/get-customers.getCustomers
-    events:
-      - httpApi:
-          path: /customers
-          method: get
-    environment:
-      DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
-
-resources:
-  Resources:
-    CustomerTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: primary_key
-            AttributeType: S
-        BillingMode: PAY_PER_REQUEST
-        KeySchema:
-          - AttributeName: primary_key
-            KeyType: HASH
-        TableName: ${self:service}-customerTable-${sls:stage}
+      - Effect: "Allow"
+        Action:
+          - states:StartExecution
+        Resource: !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:WorkoutProcessorStateMachine-${self:provider.stage}"
