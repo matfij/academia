@@ -4,13 +4,38 @@ frameworkVersion: "4"
 
 provider:
   name: aws
-  runtime: nodejs20
+  runtime: nodejs20.x
   region: eu-central-1
   stage: dev
 
-environment:
-  WORKOUTS_BUCKET: !Ref WorkoutsBucket
-  WORKOUTS_TABLE: !Ref WorkoutsTable
+  environment:
+    STAGE: ${self:provider.stage}
+    WORKOUTS_BUCKET: !Ref WorkoutsBucket
+    # WORKOUTS_TABLE: !Ref WorkoutsTable
+
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+          Resource: !Sub "${WorkoutsBucket.Arn}/*"
+
+        # - Effect: "Allow"
+        #   Action:
+        #     - dynamodb:PutItem
+        #     - dynamodb:GetItem
+        #     - dynamodb:UpdateItem
+        #     - dynamodb:Query
+        #     - dynamodb:Scan
+        #   Resource: !GetAtt WorkoutsTable.Arn
+
+        - Effect: "Allow"
+          Action:
+            - states:StartExecution
+          Resource: !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:WorkoutProcessorStateMachine-${self:provider.stage}"
 
 build:
   esbuild:
@@ -23,29 +48,45 @@ build:
     exclude:
       - "@aws-sdk/*" # loaded from Lambda layer
 
-plugins:
-  - serverless-setup-functions
+# plugins:
+#   - serverless-setup-functions
 
-iam:
-  role:
-    statements:
-      - Effect: "Allow"
-        Action:
-          - s3:PutObject
-          - s3:GetObject
-          - s3:DeleteObject
-        Resource: !Sub "${WorkoutsBucket.Arn}/*"
+functions:
+  upload-workout:
+    handler: src/functions/upload-workout.handler
+    timeout: 1
+    memorySize: 256
+    events:
+      - httpApi:
+          path: /workouts/upload
+          method: POST
 
-      - Effect: "Allow"
-        Action:
-          - dynamodb:PutItem
-          - dynamodb:GetItem
-          - dynamodb:UpdateItem
-          - dynamodb:Query
-          - dynamodb:Scan
-        Resource: !GetAtt WorkoutsTable.Arn
-
-      - Effect: "Allow"
-        Action:
-          - states:StartExecution
-        Resource: !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:WorkoutProcessorStateMachine-${self:provider.stage}"
+resources:
+  Resources:
+    WorkoutsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:app}-${self:service}-workouts-${self:provider.stage}
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        LifecycleConfiguration:
+          Rules:
+            - Id: DeleteOldFiles
+              Status: Enabled
+              ExpirationInDays: 14
+      # NotificationConfiguration:
+      #   LambdaConfigurations:
+      #     - Events: s3:ObjectCreated:*
+      #       Function: !GetAtt TriggerStepFunctionLambdaFunction.Arn
+      #       Filter:
+      #         S3Key:
+      #           Rules:
+      #             - Name: prefix
+      #               Value: "uploads/"
