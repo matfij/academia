@@ -36,8 +36,6 @@ export const formatErrorResponse = (
   statusCode = 500,
   details?: Record<string, string>
 ): APIGatewayProxyResult => {
-  console.error("Error response:", { message, statusCode, details });
-
   return formatResponse(
     {
       success: false,

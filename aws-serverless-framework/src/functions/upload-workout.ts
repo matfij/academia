@@ -13,7 +13,7 @@ import { config } from "../definitions/config";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const awsRegion = getEnvVar<string>("AWS_REGION");
-const workoutBucket = getEnvVar<string>("WORKOUT_BUCKET");
+const workoutBucket = getEnvVar<string>("WORKOUTS_BUCKET");
 // const workoutTable = getEnvVar<string>("WORKOUT_TABLE");
 
 const s3Client = new S3Client({ region: awsRegion });

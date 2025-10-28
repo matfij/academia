@@ -12,6 +12,7 @@ provider:
     STAGE: ${self:provider.stage}
     WORKOUTS_BUCKET: !Ref WorkoutsBucket
     # WORKOUTS_TABLE: !Ref WorkoutsTable
+    # AWS_REGION is automatically provided
 
   iam:
     role:
@@ -54,7 +55,7 @@ build:
 functions:
   upload-workout:
     handler: src/functions/upload-workout.handler
-    timeout: 1
+    timeout: 5
     memorySize: 256
     events:
       - httpApi:

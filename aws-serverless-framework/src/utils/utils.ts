@@ -1,5 +1,5 @@
 export const getEnvVar = <T>(
-  name: "AWS_REGION" | "WORKOUT_BUCKET" | "WORKOUT_TABLE"
+  name: "AWS_REGION" | "WORKOUTS_BUCKET" | "WORKOUT_TABLE"
 ) => process.env[name] as T;
 
 export const parseRequestBody = <T>(body: string | null): T | null => {
