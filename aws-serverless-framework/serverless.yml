@@ -11,7 +11,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     WORKOUTS_BUCKET: !Ref WorkoutsBucket
-    # WORKOUTS_TABLE: !Ref WorkoutsTable
+    WORKOUTS_TABLE: !Ref WorkoutsTable
     # AWS_REGION is automatically provided
 
   iam:
@@ -24,14 +24,14 @@ provider:
             - s3:DeleteObject
           Resource: !Sub "${WorkoutsBucket.Arn}/*"
 
-        # - Effect: "Allow"
-        #   Action:
-        #     - dynamodb:PutItem
-        #     - dynamodb:GetItem
-        #     - dynamodb:UpdateItem
-        #     - dynamodb:Query
-        #     - dynamodb:Scan
-        #   Resource: !GetAtt WorkoutsTable.Arn
+        - Effect: "Allow"
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource: !GetAtt WorkoutsTable.Arn
 
         - Effect: "Allow"
           Action:
@@ -49,8 +49,8 @@ build:
     exclude:
       - "@aws-sdk/*" # loaded from Lambda layer
 
-# plugins:
-#   - serverless-setup-functions
+plugins:
+  - serverless-step-functions
 
 functions:
   upload-workout:
@@ -91,3 +91,26 @@ resources:
       #           Rules:
       #             - Name: prefix
       #               Value: "uploads/"
+
+    WorkoutsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:app}-${self:service}-workouts-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: workoutId
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: N
+        KeySchema:
+          - AttributeName: workoutId
+            KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+          - Key: Application
+            Value: ${self:app}

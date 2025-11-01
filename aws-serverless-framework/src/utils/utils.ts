@@ -1,5 +1,5 @@
 export const getEnvVar = <T>(
-  name: "AWS_REGION" | "WORKOUTS_BUCKET" | "WORKOUT_TABLE"
+  name: "AWS_REGION" | "WORKOUTS_BUCKET" | "WORKOUTS_TABLE"
 ) => process.env[name] as T;
 
 export const parseRequestBody = <T>(body: string | null): T | null => {
@@ -12,3 +12,6 @@ export const parseRequestBody = <T>(body: string | null): T | null => {
     return null;
   }
 };
+
+export const getDynamoWorkoutItemTTL = () =>
+  Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
