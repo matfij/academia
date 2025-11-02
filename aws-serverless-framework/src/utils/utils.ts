@@ -19,3 +19,8 @@ export const parseRequestBody = <T>(body: string | null): T | null => {
 
 export const getDynamoWorkoutItemTTL = () =>
   Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
+
+export const logAction = (
+  status: "INFO" | "SUCCESS" | "ERROR",
+  message: string
+) => console.log(`${status}: ${message}`);

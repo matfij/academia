@@ -1,5 +1,6 @@
 export const config = {
   presignedURLTTL: 300,
+  s3UploadFolder: "uploads",
 };
 
 export const validation = {

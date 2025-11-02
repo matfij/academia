@@ -5,7 +5,6 @@ export interface EnhanceWorkoutRequest {
   userId: string;
   s3Key: string;
   s3Bucket: string;
-  enhancePrompt: string;
   timestamp: number;
 }
 
@@ -16,7 +15,7 @@ export interface EnhanceWorkoutResult extends EnhanceWorkoutRequest {
   tokensUsed?: number;
 }
 
-export interface ValidationResult extends EnhanceWorkoutRequest {
+export interface ValidateWorkoutResult extends EnhanceWorkoutRequest {
   isValid: boolean;
   errors?: ValidationError[];
   workout: WorkoutPlan;
