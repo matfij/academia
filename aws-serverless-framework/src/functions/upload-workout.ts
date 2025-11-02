@@ -16,9 +16,9 @@ import { randomUUID } from "node:crypto";
 import { config } from "../definitions/config";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-const awsRegion = getEnvVar<string>("AWS_REGION");
-const workoutBucket = getEnvVar<string>("WORKOUTS_BUCKET");
-const workoutTable = getEnvVar<string>("WORKOUTS_TABLE");
+const awsRegion = getEnvVar("AWS_REGION");
+const workoutBucket = getEnvVar("WORKOUTS_BUCKET");
+const workoutTable = getEnvVar("WORKOUTS_TABLE");
 
 const s3Client = new S3Client({ region: awsRegion });
 const dynamoRawClient = new DynamoDBClient({ region: awsRegion });

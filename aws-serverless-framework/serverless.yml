@@ -36,7 +36,7 @@ provider:
         - Effect: "Allow"
           Action:
             - states:StartExecution
-          Resource: !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:WorkoutProcessorStateMachine-${self:provider.stage}"
+          Resource: !GetAtt WorkoutConsultantStateMachine.Arn
 
 build:
   esbuild:
@@ -53,7 +53,7 @@ plugins:
   - serverless-step-functions
 
 functions:
-  upload-workout:
+  UploadWorkout:
     handler: src/functions/upload-workout.handler
     timeout: 5
     memorySize: 256
@@ -61,6 +61,55 @@ functions:
       - httpApi:
           path: /workouts/upload
           method: POST
+
+  StartConsultant:
+    handler: src/functions/start-consultant.handler
+    timeout: 5
+    memorySize: 256
+    environment:
+      STATE_MACHINE_ARN: !GetAtt WorkoutConsultantStateMachine.Arn
+    events:
+      - s3:
+          bucket: !Ref WorkoutsBucket
+          event: s3:ObjectCreated:*
+          existing: true
+          rules:
+            - prefix: uploads/
+
+  ValidateWorkout:
+    handler: src/functions/validate-workout.handler
+    timeout: 5
+    memorySize: 128
+
+stepFunctions:
+  stateMachines:
+    WorkoutConsultantStateMachine:
+      name: WorkoutConsultantStateMachine
+      definition:
+        StartAt: ValidateWorkout
+        States:
+          ValidateWorkout:
+            Type: Task
+            Resource: !GetAtt ValidateWorkoutLambdaFunction.Arn
+            TimeoutSeconds: 30
+            ResultPath: "$"
+            End: true # Next: OptimizeWorkout
+            Catch:
+              - ErrorEquals:
+                  - "ValidationError"
+                  - "States.TaskFailed"
+                ResultPath: "$.error"
+                Next: HandleFailure
+            Retry:
+              - ErrorEquals: ["States.TaskFailed"]
+                IntervalSeconds: 5
+                MaxAttempts: 3
+                BackoffRate: 2.0
+
+          HandleFailure:
+            Type: Pass
+            Result: "Workout validation failed"
+            End: true
 
 resources:
   Resources:
@@ -82,15 +131,6 @@ resources:
             - Id: DeleteOldFiles
               Status: Enabled
               ExpirationInDays: 14
-      # NotificationConfiguration:
-      #   LambdaConfigurations:
-      #     - Events: s3:ObjectCreated:*
-      #       Function: !GetAtt TriggerStepFunctionLambdaFunction.Arn
-      #       Filter:
-      #         S3Key:
-      #           Rules:
-      #             - Name: prefix
-      #               Value: "uploads/"
 
     WorkoutsTable:
       Type: AWS::DynamoDB::Table

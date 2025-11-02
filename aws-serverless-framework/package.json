@@ -2,7 +2,6 @@
   "name": "workout-composer-consultant",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "sls dev",
     "build": "sls package",
