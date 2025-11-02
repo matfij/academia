@@ -5,7 +5,6 @@ export interface EnhanceWorkoutRequest {
   userId: string;
   s3Key: string;
   s3Bucket: string;
-  timestamp: number;
 }
 
 export interface EnhanceWorkoutResult extends EnhanceWorkoutRequest {

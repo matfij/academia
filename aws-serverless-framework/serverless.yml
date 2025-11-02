@@ -140,13 +140,9 @@ resources:
         AttributeDefinitions:
           - AttributeName: workoutId
             AttributeType: S
-          - AttributeName: createdAt
-            AttributeType: N
         KeySchema:
           - AttributeName: workoutId
             KeyType: HASH
-          - AttributeName: createdAt
-            KeyType: RANGE
         StreamSpecification:
           StreamViewType: NEW_AND_OLD_IMAGES
         Tags:

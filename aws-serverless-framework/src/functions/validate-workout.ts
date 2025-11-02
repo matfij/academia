@@ -11,6 +11,8 @@ import { updateWorkout } from "../services/update-workout";
 import { downloadFromS3 } from "../services/download-from-s3";
 import { validateWorkout } from "../services/validate-workout";
 import { WorkoutPlan } from "../definitions/types";
+import { getWorkout } from "../services/get-workout";
+import { WorkoutItem } from "../definitions/entities";
 
 const awsRegion = getEnvVar("AWS_REGION");
 const workoutsTable = getEnvVar("WORKOUTS_TABLE");
@@ -32,10 +34,16 @@ export const handler: Handler<
       `Workout validation started: ${JSON.stringify({ request })}`
     );
 
-    await updateWorkout(
+    const workoutItem = (await getWorkout(
       request.workoutId,
-      request.timestamp,
-      { status: "validating" },
+      workoutsTable,
+      dynamoClient
+    )) as WorkoutItem;
+
+    logAction("INFO", `workoutItem: ${JSON.stringify({ workoutItem })}`);
+
+    await updateWorkout(
+      { ...workoutItem, status: "validating" },
       workoutsTable,
       dynamoClient
     );
@@ -51,9 +59,8 @@ export const handler: Handler<
     const isValid = errors.length === 0;
 
     await updateWorkout(
-      request.workoutId,
-      request.timestamp,
       {
+        ...workoutItem,
         status: isValid ? "valid" : "invalid",
         ...(errors.length > 0 && {
           error: `Validation failed: ${errors.length} error(s)`,
@@ -81,17 +88,6 @@ export const handler: Handler<
     return result;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-
-    await updateWorkout(
-      request.workoutId,
-      request.timestamp,
-      {
-        status: "failed",
-        error: errorMessage,
-      },
-      workoutsTable,
-      dynamoClient
-    );
 
     const errorResult: ValidateWorkoutResult = {
       ...request,

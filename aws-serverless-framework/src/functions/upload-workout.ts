@@ -39,7 +39,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }
 
     const workoutId = randomUUID();
-    const timestamp = Date.now();
     const s3Key = `uploads/${body.userId}/${workoutId}/${body.fileName}.json`;
 
     const command = new PutObjectCommand({
@@ -50,7 +49,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         workoutId,
         userId: body.userId,
         enhancePrompt: body.enhancePrompt,
-        uploadedAt: timestamp.toString(),
+        uploadedAt: Date.now().toString(),
       },
     });
 
@@ -62,7 +61,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       TableName: workoutTable,
       Item: {
         workoutId,
-        createdAt: timestamp,
         userId: body.userId,
         enhancePrompt: body.enhancePrompt,
         status: "pending",

@@ -36,7 +36,6 @@ export const handler: S3Handler = async (event) => {
         userId,
         s3Key: key,
         s3Bucket: bucket,
-        timestamp: Date.now(),
       };
 
       const command = new StartExecutionCommand({

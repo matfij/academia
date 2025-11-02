@@ -1,6 +1,5 @@
 export interface WorkoutItem {
-  workoutId: string; // partition key
-  createdAt: number; // sort key
+  workoutId: string;
   userId: string;
   enhancePrompt: string;
   status:
