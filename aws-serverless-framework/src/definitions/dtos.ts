@@ -16,11 +16,11 @@ export interface EnhanceWorkoutResult extends EnhanceWorkoutRequest {
 
 export interface ValidateWorkoutResult extends EnhanceWorkoutRequest {
   isValid: boolean;
-  errors?: ValidationError[];
+  errors?: ValidationDetail[];
   workout: WorkoutPlan;
 }
 
-export interface ValidationError {
+export interface ValidationDetail {
   field: string;
   error: string;
 }

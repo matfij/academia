@@ -1,9 +1,9 @@
-import { ValidationError } from "../definitions/dtos";
+import { ValidationDetail } from "../definitions/dtos";
 import { WorkoutPlan } from "../definitions/types";
 import { validation } from "../definitions/config";
 
-export const validateWorkout = (workout: WorkoutPlan): ValidationError[] => {
-  const errors: ValidationError[] = [];
+export const validateWorkout = (workout: WorkoutPlan): ValidationDetail[] => {
+  const errors: ValidationDetail[] = [];
 
   if (!workout.exercises || !Array.isArray(workout.exercises)) {
     errors.push({

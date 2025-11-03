@@ -13,6 +13,7 @@ import { validateWorkout } from "../services/validate-workout";
 import { WorkoutPlan } from "../definitions/types";
 import { getWorkout } from "../services/get-workout";
 import { WorkoutItem } from "../definitions/entities";
+import { ValidationError } from "../definitions/errors";
 
 const awsRegion = getEnvVar("AWS_REGION");
 const workoutsTable = getEnvVar("WORKOUTS_TABLE");
@@ -73,6 +74,13 @@ export const handler: Handler<
       dynamoClient
     );
 
+    if (!isValid) {
+      throw new ValidationError(
+        `Validation failed: ${errors.length} error(s)`,
+        errors
+      );
+    }
+
     const result: ValidateWorkoutResult = {
       ...request,
       isValid,
@@ -88,16 +96,7 @@ export const handler: Handler<
     return result;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-
-    const errorResult: ValidateWorkoutResult = {
-      ...request,
-      isValid: false,
-      errors: [{ field: "general", error: errorMessage }],
-      workout: {} as WorkoutPlan,
-    };
-
     logAction("ERROR", `Workout validation failed: ${errorMessage}`);
-
-    return errorResult;
+    throw error;
   }
 };

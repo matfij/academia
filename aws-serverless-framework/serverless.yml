@@ -56,7 +56,7 @@ functions:
   UploadWorkout:
     handler: src/functions/upload-workout.handler
     timeout: 5
-    memorySize: 256
+    memorySize: 128
     events:
       - httpApi:
           path: /workouts/upload
@@ -65,7 +65,7 @@ functions:
   StartConsultant:
     handler: src/functions/start-consultant.handler
     timeout: 5
-    memorySize: 256
+    memorySize: 128
     environment:
       STATE_MACHINE_ARN: !GetAtt WorkoutConsultantStateMachine.Arn
     events:
@@ -81,6 +81,11 @@ functions:
     timeout: 5
     memorySize: 128
 
+  EnhanceWorkout:
+    handler: src/functions/enhance-workout.handler
+    timeout: 15
+    memorySize: 512
+
 stepFunctions:
   stateMachines:
     WorkoutConsultantStateMachine:
@@ -93,10 +98,27 @@ stepFunctions:
             Resource: !GetAtt ValidateWorkoutLambdaFunction.Arn
             TimeoutSeconds: 30
             ResultPath: "$"
-            End: true # Next: OptimizeWorkout
+            Next: EnhanceWorkout
             Catch:
               - ErrorEquals:
                   - "ValidationError"
+                  - "States.TaskFailed"
+                ResultPath: "$.error"
+                Next: HandleFailure
+            Retry:
+              - ErrorEquals: ["States.TaskFailed"]
+                IntervalSeconds: 5
+                MaxAttempts: 1
+                BackoffRate: 2.0
+
+          EnhanceWorkout:
+            Type: Task
+            Resource: !GetAtt EnhanceWorkoutLambdaFunction.Arn
+            TimeoutSeconds: 900
+            ResultPath: "$"
+            End: true # Next: SaveOptimizedWorkout
+            Catch:
+              - ErrorEquals:
                   - "States.TaskFailed"
                 ResultPath: "$.error"
                 Next: HandleFailure
