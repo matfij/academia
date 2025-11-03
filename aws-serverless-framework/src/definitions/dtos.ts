@@ -18,6 +18,7 @@ export interface ValidateWorkoutResult extends EnhanceWorkoutRequest {
   isValid: boolean;
   errors?: ValidationDetail[];
   workout: WorkoutPlan;
+  enhancePrompt: string;
 }
 
 export interface ValidationDetail {

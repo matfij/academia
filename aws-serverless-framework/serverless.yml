@@ -38,6 +38,11 @@ provider:
             - states:StartExecution
           Resource: !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:WorkoutConsultantStateMachine"
 
+        - Effect: "Allow"
+          Action:
+            - bedrock:InvokeModel
+          Resource:
+            - !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/anthropic.claude*"
 build:
   esbuild:
     platform: node
@@ -116,7 +121,7 @@ stepFunctions:
             Resource: !GetAtt EnhanceWorkoutLambdaFunction.Arn
             TimeoutSeconds: 900
             ResultPath: "$"
-            End: true # Next: SaveOptimizedWorkout
+            End: true
             Catch:
               - ErrorEquals:
                   - "States.TaskFailed"

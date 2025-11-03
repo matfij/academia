@@ -86,6 +86,7 @@ export const handler: Handler<
       isValid,
       workout,
       ...(errors.length > 0 && { errors }),
+      enhancePrompt: workoutItem.enhancePrompt,
     };
 
     logAction(

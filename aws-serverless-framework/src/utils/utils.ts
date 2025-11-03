@@ -4,6 +4,7 @@ export const getEnvVar = <T = string>(
     | "WORKOUTS_BUCKET"
     | "WORKOUTS_TABLE"
     | "STATE_MACHINE_ARN"
+    | "OPENAI_API_KEY"
 ) => process.env[name] as T;
 
 export const parseRequestBody = <T>(body: string | null): T | null => {
