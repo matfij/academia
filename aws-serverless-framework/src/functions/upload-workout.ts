@@ -8,7 +8,7 @@ import {
 } from "../utils/utils";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyHandlerV2 } from "aws-lambda";
 import {
   formatErrorResponse,
   formatSuccessResponse,
@@ -27,14 +27,14 @@ const s3Client = new S3Client({ region: awsRegion });
 const dynamoRawClient = new DynamoDBClient({ region: awsRegion });
 const dynamoClient = DynamoDBDocumentClient.from(dynamoRawClient);
 
-export const handler: APIGatewayProxyHandler = async (event) => {
+export const handler: APIGatewayProxyHandlerV2 = async (event) => {
   try {
     logAction(
       "INFO",
       `Workout upload started ${JSON.stringify({ eventBody: event.body })}`
     );
 
-    const body = parseRequestBody<UploadUrlRequest>(event.body);
+    const body = parseRequestBody<UploadUrlRequest>(event.body as string);
     if (!body) {
       return formatErrorResponse("Invalid request body");
     }

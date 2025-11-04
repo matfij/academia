@@ -67,6 +67,15 @@ functions:
           path: /workouts/upload
           method: POST
 
+  GetWorkoutStatus:
+    handler: src/functions/get-workout-status.handler
+    timeout: 5
+    memorySize: 128
+    events:
+      - httpApi:
+          path: /workouts/status/{workoutId}
+          method: GET
+
   StartConsultant:
     handler: src/functions/start-consultant.handler
     timeout: 5

@@ -2,6 +2,7 @@ import { S3Handler } from "aws-lambda";
 import { SFNClient, StartExecutionCommand } from "@aws-sdk/client-sfn";
 import { getEnvVar, logAction } from "../utils/utils";
 import { EnhanceWorkoutRequest } from "../definitions/dtos";
+import { appConfig } from "../definitions/config";
 
 const sfnArn = getEnvVar("STATE_MACHINE_ARN");
 
@@ -23,7 +24,7 @@ export const handler: S3Handler = async (event) => {
         `Processing task: ${JSON.stringify({ record, bucket, key })}`
       );
 
-      const keyParts = key.split("/");
+      const keyParts = key.replace(`.${appConfig.itemFormat}`, "").split("/");
       if (keyParts.length < 0 || keyParts[0] !== "uploads") {
         console.log("Invalid S3 ket format:", key);
         return;
