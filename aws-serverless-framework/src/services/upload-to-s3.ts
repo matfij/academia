@@ -9,13 +9,11 @@ export const uploadToS3 = async (
 ) => {
   try {
     logAction("INFO", `Uploading item to S3: ${s3Key}`);
-
     const command = new PutObjectCommand({
       Bucket: s3Bucket,
       Key: s3Key,
       Body: JSON.stringify(item),
     });
-
     await s3Client.send(command);
     logAction("SUCCESS", `Uploaded item to S3: ${s3Key}`);
   } catch (error) {

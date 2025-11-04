@@ -28,15 +28,15 @@ const dynamoClient = DynamoDBDocumentClient.from(dynamoRawClient, {
 export const handler: Handler<
   EnhanceWorkoutRequest,
   ValidateWorkoutResult
-> = async (request) => {
+> = async (input) => {
   try {
     logAction(
       "INFO",
-      `Workout validation started: ${JSON.stringify({ request })}`
+      `Workout validation started: ${JSON.stringify({ input })}`
     );
 
     const workoutItem = (await getWorkout(
-      request.workoutId,
+      input.workoutId,
       workoutsTable,
       dynamoClient
     )) as WorkoutItem;
@@ -51,7 +51,7 @@ export const handler: Handler<
 
     const workoutData = await downloadFromS3(
       workoutsBucket,
-      request.s3Key,
+      input.s3Key,
       s3Client
     );
     const workout = JSON.parse(workoutData) as WorkoutPlan;
@@ -82,7 +82,7 @@ export const handler: Handler<
     }
 
     const result: ValidateWorkoutResult = {
-      ...request,
+      ...input,
       isValid,
       workout,
       ...(errors.length > 0 && { errors }),

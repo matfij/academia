@@ -1,3 +1,5 @@
+import { appConfig } from "../definitions/config";
+
 export const getEnvVar = <T = string>(
   name:
     | "AWS_REGION"
@@ -20,6 +22,12 @@ export const parseRequestBody = <T>(body: string | null): T | null => {
 
 export const getDynamoWorkoutItemTTL = () =>
   Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
+
+export const getS3UploadsPath = (userId: string, name: string) =>
+  `${appConfig.s3UploadFolder}/${userId}/${name}.json`;
+
+export const getS3EnhancedPath = (userId: string, name: string) =>
+  `${appConfig.s3EnhancedFolder}/${userId}/${name}_enhanced.json`;
 
 export const logAction = (
   status: "INFO" | "SUCCESS" | "ERROR",

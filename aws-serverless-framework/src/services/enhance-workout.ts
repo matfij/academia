@@ -9,7 +9,7 @@ const maxTokens = 4096;
 const bedrockModel = "anthropic.claude-3-5-sonnet-20240620-v1:0";
 const modelTemperature = 0.7;
 
-export const enhanceWorkoutWithGPT = async (
+export const enhanceWorkout = async (
   workout: WorkoutPlan,
   enhancePrompt: string,
   bedrockClient: BedrockRuntimeClient
@@ -54,7 +54,13 @@ export const enhanceWorkoutWithGPT = async (
   }
 };
 
-const formatInputPrompt = (workout: WorkoutPlan, enhancePrompt: string) => {
+const formatInputPrompt = (
+  workout: WorkoutPlan,
+  enhancePrompt: string
+): {
+  systemPrompt: string;
+  userPrompt: string;
+} => {
   return {
     systemPrompt: `You are a helpful assistant that enhances workout plans. Return the enhanced workout plan in the same format as the input and nothing else.`,
     userPrompt: ` The workout plan is: "${JSON.stringify(

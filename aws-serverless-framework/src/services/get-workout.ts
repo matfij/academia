@@ -9,7 +9,6 @@ export const getWorkout = async (
 ): Promise<WorkoutItem | null> => {
   try {
     logAction("INFO", `Fetching workout ${workoutId}`);
-
     const result = await dynamoClient.send(
       new GetCommand({
         TableName: workoutsTable,
@@ -18,14 +17,11 @@ export const getWorkout = async (
         },
       })
     );
-
     if (!result.Item) {
       logAction("INFO", `Workout ${workoutId} not found`);
       return null;
     }
-
     logAction("SUCCESS", `Workout ${workoutId} retrieved successfully`);
-
     return result.Item as WorkoutItem;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

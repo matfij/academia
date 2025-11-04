@@ -1,7 +1,9 @@
-export const config = {
+export const appConfig = {
   presignedURLTTL: 300,
   s3UploadFolder: "uploads",
-};
+  s3EnhancedFolder: "enhanced",
+  itemFormat: "json",
+} as const;
 
 export const validation = {
   minSets: 1,
@@ -16,4 +18,4 @@ export const validation = {
   maxRestTime: 600,
   minNotesLength: 0,
   maxNotesLength: 1000,
-};
+} as const;

@@ -2,6 +2,7 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import {
   getDynamoWorkoutItemTTL,
   getEnvVar,
+  getS3UploadsPath,
   logAction,
   parseRequestBody,
 } from "../utils/utils";
@@ -14,7 +15,7 @@ import {
 } from "../utils/format-response";
 import { UploadUrlRequest } from "../definitions/dtos";
 import { randomUUID } from "node:crypto";
-import { config } from "../definitions/config";
+import { appConfig } from "../definitions/config";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { WorkoutItem } from "../definitions/entities";
 
@@ -39,7 +40,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }
 
     const workoutId = randomUUID();
-    const s3Key = `uploads/${body.userId}/${workoutId}/${body.fileName}.json`;
+    const s3Key = getS3UploadsPath(body.userId, workoutId);
 
     const command = new PutObjectCommand({
       Bucket: workoutBucket,
@@ -54,7 +55,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     });
 
     const uploadUrl = await getSignedUrl(s3Client, command, {
-      expiresIn: config.presignedURLTTL,
+      expiresIn: appConfig.presignedURLTTL,
     });
 
     const putWorkoutCommand = new PutCommand({
@@ -80,7 +81,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     return formatSuccessResponse({
       workoutId,
       uploadUrl,
-      expiresIn: config.presignedURLTTL,
+      expiresIn: appConfig.presignedURLTTL,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

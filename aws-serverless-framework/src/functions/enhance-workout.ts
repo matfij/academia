@@ -1,7 +1,7 @@
 import { Handler } from "aws-lambda";
 import { ValidateWorkoutResult } from "../definitions/dtos";
-import { getEnvVar, logAction } from "../utils/utils";
-import { enhanceWorkoutWithGPT as enhanceWorkout } from "../services/enhance-workout";
+import { getEnvVar, getS3EnhancedPath, logAction } from "../utils/utils";
+import { enhanceWorkout } from "../services/enhance-workout";
 import { updateWorkout } from "../services/update-workout";
 import { getWorkout } from "../services/get-workout";
 import { WorkoutItem } from "../definitions/entities";
@@ -22,19 +22,17 @@ const dynamoClient = DynamoDBDocumentClient.from(dynamoRawClient, {
 const s3Client = new S3Client({ region: awsRegion });
 const bedrockClient = new BedrockRuntimeClient({ region: awsRegion });
 
-export const handler: Handler<ValidateWorkoutResult> = async (
-  validationResult
-) => {
+export const handler: Handler<ValidateWorkoutResult> = async (input) => {
   try {
     logAction(
       "INFO",
       `Started enhance workout: ${JSON.stringify({
-        workout: validationResult.workout,
+        workout: input.workout,
       })}`
     );
 
     const workout = (await getWorkout(
-      validationResult.workoutId,
+      input.workoutId,
       workoutsTable,
       dynamoClient
     )) as WorkoutItem;
@@ -46,12 +44,12 @@ export const handler: Handler<ValidateWorkoutResult> = async (
     );
 
     const enhancedWorkout = await enhanceWorkout(
-      validationResult.workout,
-      validationResult.enhancePrompt,
+      input.workout,
+      input.enhancePrompt,
       bedrockClient
     );
 
-    const s3Key = `enhanced/${validationResult.userId}/${validationResult.workoutId}/enhanced.json`;
+    const s3Key = getS3EnhancedPath(input.userId, input.workoutId);
     await uploadToS3(enhancedWorkout, s3Key, workoutsBucket, s3Client);
 
     await updateWorkout(
