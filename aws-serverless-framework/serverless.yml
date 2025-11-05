@@ -2,6 +2,9 @@ app: consultant
 service: workout-composer
 frameworkVersion: "4"
 
+plugins:
+  - serverless-step-functions
+
 provider:
   name: aws
   runtime: nodejs20.x
@@ -43,6 +46,7 @@ provider:
             - bedrock:InvokeModel
           Resource:
             - !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/anthropic.claude*"
+
 build:
   esbuild:
     platform: node
@@ -53,9 +57,6 @@ build:
     keepNames: true
     exclude:
       - "@aws-sdk/*" # loaded from Lambda layer
-
-plugins:
-  - serverless-step-functions
 
 functions:
   UploadWorkout:
