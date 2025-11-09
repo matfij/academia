@@ -1,23 +1,37 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import { useAuth } from "../lib/auth-context";
 
 export default function AuthScreen() {
   const theme = useTheme();
+  const router = useRouter();
+  const { signIn, signUp } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const onAuth = () => {
+  const onAuth = async () => {
     if (!email || !password) {
       setError("Provide email and password");
-    }  
+    }
+
+    let error = "";
+    if (isSignUp) {
+      error = (await signUp(email, password)) ?? "";
+    } else {
+      error = (await signIn(email, password)) ?? "";
+    }
+
+    if (error) {
+      setError(error);
+      return;
+    }
+
+    router.replace("/");
   };
-
-  const onSignIn = () => {};
-
-  const onSignUp = () => {};
 
   return (
     <KeyboardAvoidingView
@@ -31,15 +45,15 @@ export default function AuthScreen() {
           label="Email"
           autoCapitalize="none"
           keyboardType="email-address"
-          placeholder="example.@gmail.com"
+          placeholder="example@gmail.com"
           mode="outlined"
           value={email}
           onChangeText={setEmail}
         />
         <TextInput
           label="Password"
+          secureTextEntry
           autoCapitalize="none"
-          keyboardType="email-address"
           mode="outlined"
           value={password}
           onChangeText={setPassword}

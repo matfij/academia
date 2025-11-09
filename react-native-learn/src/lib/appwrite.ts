@@ -3,7 +3,7 @@ import { getEnvVar } from "./utils";
 
 export const awClient = new Client()
   .setEndpoint(getEnvVar("EXPO_PUBLIC_APPWRITE_ENDPOINT"))
-  .setProject(getEnvVar("EXPO_PUBLIC_APPWRITE_PROJECT_NAME"))
-  .setPlatform(getEnvVar("EXPO_PUBLIC_APPWRITE_PROJECT_ID"));
+  .setProject(getEnvVar("EXPO_PUBLIC_APPWRITE_PROJECT_ID"))
+  .setPlatform(getEnvVar("EXPO_PUBLIC_APPWRITE_PROJECT_NAME"));
 
-const awAccount = new Account(awClient);
+export const awAccount = new Account(awClient);
