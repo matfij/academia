@@ -75,7 +75,7 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   wrapper: {
     height: "100%",
-    marginVertical: "30%",
+    marginVertical: "10%",
     gap: 16,
     padding: 16,
     backgroundColor: "#f5f5f5",

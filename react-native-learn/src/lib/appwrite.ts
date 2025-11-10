@@ -1,4 +1,4 @@
-import { Account, Client } from "react-native-appwrite";
+import { Account, Client, TablesDB } from "react-native-appwrite";
 import { getEnvVar } from "./utils";
 
 export const awClient = new Client()
@@ -7,3 +7,5 @@ export const awClient = new Client()
   .setPlatform(getEnvVar("EXPO_PUBLIC_APPWRITE_PROJECT_NAME"));
 
 export const awAccount = new Account(awClient);
+
+export const awDatabase = new TablesDB(awClient);

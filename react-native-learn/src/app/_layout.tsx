@@ -24,7 +24,6 @@ const RouteGuard = (props: ComponentProps) => {
   const { user, isLoadingUser } = useAuth();
 
   useEffect(() => {
-    return;
     if (!user && !isLoadingUser && segments[0] !== "auth") {
       router.replace("/auth");
     } else if (user && !isLoadingUser && segments[0] === "auth") {
