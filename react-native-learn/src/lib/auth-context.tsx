@@ -25,7 +25,6 @@ export const AuthProvider = (props: ComponentProps) => {
     try {
       setIsLoadingUser(true);
       const session = await awAccount.get();
-      console.log({ session });
       setUser(session);
     } catch {
       setUser(undefined);
@@ -46,24 +45,29 @@ export const AuthProvider = (props: ComponentProps) => {
     }
   };
 
+  const signIn = async (email: string, password: string) => {
+    try {
+      await awAccount.createEmailPasswordSession({
+        email,
+        password,
+      });
+      await new Promise<void>((resolve) => setTimeout(resolve, 200));
+      const session = await awAccount.get();
+      setUser(session);
+    } catch (error) {
+      if (error instanceof Error) {
+        return error.message;
+      }
+      return "Unable to sign in";
+    }
+  };
+
   const signOut = async () => {
     try {
       await awAccount.deleteSessions();
       setUser(undefined);
     } catch (error) {
       console.warn(error);
-    }
-  };
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      await awAccount.createEmailPasswordSession({ email, password });
-      getUser();
-    } catch (error) {
-      if (error instanceof Error) {
-        return error.message;
-      }
-      return "Unable to sign in";
     }
   };
 

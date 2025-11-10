@@ -1,16 +1,19 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "../lib/auth-context";
 import { ComponentProps } from "../lib/types";
 
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <RouteGuard>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </RouteGuard>
+      <SafeAreaProvider>
+        <RouteGuard>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+        </RouteGuard>
+      </SafeAreaProvider>
     </AuthProvider>
   );
 }
@@ -21,7 +24,7 @@ const RouteGuard = (props: ComponentProps) => {
   const { user, isLoadingUser } = useAuth();
 
   useEffect(() => {
-    console.log({ user, isLoadingUser });
+    return;
     if (!user && !isLoadingUser && segments[0] !== "auth") {
       router.replace("/auth");
     } else if (user && !isLoadingUser && segments[0] === "auth") {

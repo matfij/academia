@@ -9,7 +9,7 @@ export default function AuthScreen() {
   const router = useRouter();
   const { signIn, signUp } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("hard.dadg@gmail.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
