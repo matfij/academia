@@ -1,9 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Query } from "react-native-appwrite";
 import { Surface, Text } from "react-native-paper";
-import { awDatabase } from "../../lib/appwrite";
+import { awClient, awDatabase } from "../../lib/appwrite";
 import { useAuth } from "../../lib/auth-context";
 import { Habit } from "../../lib/types";
 import { getEnvVar } from "../../lib/utils";
@@ -13,7 +13,35 @@ export default function Index() {
   const [habits, setHabits] = useState<Habit[]>([]);
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
+
     void fetchHabits();
+
+    const channel = `databases.${getEnvVar(
+      "EXPO_PUBLIC_APPWRITE_DATABASE_ID"
+    )}.tables.${getEnvVar(
+      "EXPO_PUBLIC_APPWRITE_DATABASE_HABITS_TABLE_ID"
+    )}.rows`;
+
+    const habitsSubscription = awClient.subscribe(channel, (response) => {
+      if (response.events.includes("databases.*.tables.*.rows.*.create")) {
+        void fetchHabits();
+      } else if (
+        response.events.includes("databases.*.tables.*.rows.*.update")
+      ) {
+        void fetchHabits();
+      } else if (
+        response.events.includes("databases.*.tables.*.rows.*.delete")
+      ) {
+        void fetchHabits();
+      }
+    });
+
+    return () => {
+      habitsSubscription();
+    };
   }, [user]);
 
   const fetchHabits = async () => {
@@ -44,23 +72,29 @@ export default function Index() {
           </Text>
         </View>
       ) : (
-        habits.map((habit) => (
-          <Surface key={habit.$id} style={styles.habitWrapper}>
-            <Text style={styles.habitTitle}>{habit.title}</Text>
-            <Text style={styles.habitDescription}>{habit.description}</Text>
-            <View style={styles.habitFooter}>
-              <View style={styles.habitBadge}>
-                <MaterialCommunityIcons name="fire" size={18} color="#ff9800" />
-                <Text style={styles.streakLabel}>
-                  {habit.streakCount} day streak
-                </Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {habits.map((habit) => (
+            <Surface key={habit.$id} style={styles.habitWrapper}>
+              <Text style={styles.habitTitle}>{habit.title}</Text>
+              <Text style={styles.habitDescription}>{habit.description}</Text>
+              <View style={styles.habitFooter}>
+                <View style={styles.habitBadge}>
+                  <MaterialCommunityIcons
+                    name="fire"
+                    size={18}
+                    color="#ff9800"
+                  />
+                  <Text style={styles.streakLabel}>
+                    {habit.streakCount} day streak
+                  </Text>
+                </View>
+                <View style={styles.frequencyBadge}>
+                  <Text style={styles.frequencyLabel}>{habit.frequency}</Text>
+                </View>
               </View>
-              <View style={styles.frequencyBadge}>
-                <Text style={styles.frequencyLabel}>{habit.frequency}</Text>
-              </View>
-            </View>
-          </Surface>
-        ))
+            </Surface>
+          ))}
+        </ScrollView>
       )}
     </View>
   );
@@ -87,13 +121,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   habitWrapper: {
-    width: "100%",
+    width: "98%",
     padding: 12,
+    marginLeft: "1%",
     marginBottom: 16,
     borderRadius: 16,
     backgroundColor: "#f7f2fa",
     shadowColor: "#010203",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
