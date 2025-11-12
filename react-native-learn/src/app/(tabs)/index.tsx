@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Query } from "react-native-appwrite";
+import { Swipeable } from "react-native-gesture-handler";
 import { Surface, Text } from "react-native-paper";
 import { awClient, awDatabase } from "../../lib/appwrite";
 import { useAuth } from "../../lib/auth-context";
@@ -11,6 +12,7 @@ import { getEnvVar } from "../../lib/utils";
 export default function Index() {
   const { user, signOut } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
+  const habitCardRefs = useRef<{ [key: string]: any }>({});
 
   useEffect(() => {
     if (!user) {
@@ -60,6 +62,30 @@ export default function Index() {
     }
   };
 
+  const renderLeftActions = () => (
+    <View style={styles.swipeLeftWrapper}>
+      <MaterialCommunityIcons
+        name="check-circle-outline"
+        size={32}
+        color="#fff"
+      />
+    </View>
+  );
+
+  const renderRightActions = () => (
+    <View style={styles.swipeRightWrapper}>
+      <MaterialCommunityIcons name="trash-can-outline" size={32} color="#fff" />
+    </View>
+  );
+
+  const onDeleteHabit = async (id: string) => {
+    console.log("deleting", id);
+  };
+
+  const onCompleteHabit = async (id: string) => {
+    console.log("completing", id);
+  };
+
   return (
     <View style={styles.mainWrapper}>
       <Text variant="headlineSmall" style={styles.title}>
@@ -74,25 +100,41 @@ export default function Index() {
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           {habits.map((habit) => (
-            <Surface key={habit.$id} style={styles.habitWrapper}>
-              <Text style={styles.habitTitle}>{habit.title}</Text>
-              <Text style={styles.habitDescription}>{habit.description}</Text>
-              <View style={styles.habitFooter}>
-                <View style={styles.habitBadge}>
-                  <MaterialCommunityIcons
-                    name="fire"
-                    size={18}
-                    color="#ff9800"
-                  />
-                  <Text style={styles.streakLabel}>
-                    {habit.streakCount} day streak
-                  </Text>
+            <Swipeable
+              key={habit.$id}
+              overshootLeft={false}
+              overshootRight={false}
+              renderLeftActions={renderLeftActions}
+              renderRightActions={renderRightActions}
+              onSwipeableOpen={(direction) =>
+                direction === "left"
+                  ? onCompleteHabit(habit.$id)
+                  : onDeleteHabit(habit.$id)
+              }
+              // ref={(_ref) => {
+              //   habitCardRefs.current[habit.$id] = _ref;
+              // }}
+            >
+              <Surface style={styles.habitWrapper}>
+                <Text style={styles.habitTitle}>{habit.title}</Text>
+                <Text style={styles.habitDescription}>{habit.description}</Text>
+                <View style={styles.habitFooter}>
+                  <View style={styles.habitBadge}>
+                    <MaterialCommunityIcons
+                      name="fire"
+                      size={18}
+                      color="#ff9800"
+                    />
+                    <Text style={styles.streakLabel}>
+                      {habit.streakCount} day streak
+                    </Text>
+                  </View>
+                  <View style={styles.frequencyBadge}>
+                    <Text style={styles.frequencyLabel}>{habit.frequency}</Text>
+                  </View>
                 </View>
-                <View style={styles.frequencyBadge}>
-                  <Text style={styles.frequencyLabel}>{habit.frequency}</Text>
-                </View>
-              </View>
-            </Surface>
+              </Surface>
+            </Swipeable>
           ))}
         </ScrollView>
       )}
@@ -170,5 +212,25 @@ const styles = StyleSheet.create({
     color: "#7c4dff",
     fontWeight: "bold",
     textTransform: "capitalize",
+  },
+  swipeLeftWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    backgroundColor: "#4caf50",
+    borderRadius: 16,
+    marginBottom: 16,
+    marginTop: 2,
+    paddingLeft: 16,
+  },
+  swipeRightWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-end",
+    backgroundColor: "#e53935",
+    borderRadius: 16,
+    marginBottom: 16,
+    marginTop: 2,
+    paddingRight: 16,
   },
 });
