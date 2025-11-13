@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import type { Models } from "react-native-appwrite";
 
+export type xD = any;
+
 export interface ComponentProps {
   children: ReactNode;
 }

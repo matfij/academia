@@ -1,18 +1,20 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useEffect, useRef, useState } from "react";
+import { ComponentRef, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Query } from "react-native-appwrite";
-import { Swipeable } from "react-native-gesture-handler";
+import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { Surface, Text } from "react-native-paper";
 import { awClient, awDatabase } from "../../lib/appwrite";
 import { useAuth } from "../../lib/auth-context";
-import { Habit, HabitCompletionInput, HabitInput } from "../../lib/types";
+import { Habit, HabitCompletionInput, HabitInput, xD } from "../../lib/types";
 import { generateId, getEnvVar } from "../../lib/utils";
 
 export default function Index() {
   const { user, signOut } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
-  const habitCardRefs = useRef<{ [key: string]: any }>({});
+  const habitCardRefs = useRef<{
+    [key: string]: ComponentRef<typeof Swipeable>;
+  }>({});
 
   useEffect(() => {
     if (!user) {
@@ -80,6 +82,15 @@ export default function Index() {
     </View>
   );
 
+  const onHabitSwipe = async (id: string, direction: "left" | "right") => {
+    if (direction === "right") {
+      await onCompleteHabit(id);
+    } else {
+      await onDeleteHabit(id);
+    }
+    habitCardRefs.current[id].close();
+  };
+
   const onDeleteHabit = async (id: string) => {
     try {
       await awDatabase.deleteRow({
@@ -141,10 +152,13 @@ export default function Index() {
               overshootRight={false}
               renderLeftActions={renderLeftActions}
               renderRightActions={renderRightActions}
+              ref={
+                ((ref: ComponentRef<typeof Swipeable>) => {
+                  habitCardRefs.current[habit.$id] = ref;
+                }) as xD
+              }
               onSwipeableOpen={(direction) =>
-                direction === "left"
-                  ? onCompleteHabit(habit.$id)
-                  : onDeleteHabit(habit.$id)
+                onHabitSwipe(habit.$id, direction)
               }
             >
               <Surface style={styles.habitWrapper}>
@@ -180,7 +194,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#f5f5f5",
     justifyContent: "center",
-    alignItems: "center",
+    // alignItems: "stretch",
   },
   emptyWrapper: {
     flex: 1,
@@ -195,16 +209,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   habitWrapper: {
-    width: "98%",
+    flex: 1,
     padding: 12,
-    marginLeft: "1%",
+    marginHorizontal: 8,
     marginBottom: 16,
     borderRadius: 16,
     backgroundColor: "#f7f2fa",
-    shadowColor: "#010203",
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    // shadowColor: "#010203",
+    // shadowOffset: { width: 2, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 16,
     elevation: 4,
   },
   habitTitle: {
@@ -247,6 +261,7 @@ const styles = StyleSheet.create({
   },
   swipeLeftWrapper: {
     flex: 1,
+    marginHorizontal: 8,
     justifyContent: "center",
     alignItems: "flex-start",
     backgroundColor: "#4caf50",
@@ -257,6 +272,7 @@ const styles = StyleSheet.create({
   },
   swipeRightWrapper: {
     flex: 1,
+    marginHorizontal: 8,
     justifyContent: "center",
     alignItems: "flex-end",
     backgroundColor: "#e53935",
