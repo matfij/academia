@@ -17,3 +17,10 @@ export interface HabitInput {
   streakCount: number;
   lastCompleted: number;
 }
+
+export interface HabitCompletion extends Models.Row, HabitCompletionInput {}
+
+export interface HabitCompletionInput {
+  userId: string;
+  habitId: string;
+}

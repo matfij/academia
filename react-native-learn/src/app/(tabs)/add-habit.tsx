@@ -33,8 +33,8 @@ export default function AddHabitScreen() {
 
     try {
       await awDatabase.createRow({
-        databaseId: getEnvVar("EXPO_PUBLIC_APPWRITE_DATABASE_ID"),
-        tableId: getEnvVar("EXPO_PUBLIC_APPWRITE_DATABASE_HABITS_TABLE_ID"),
+        databaseId: getEnvVar("APPWRITE_DATABASE_ID"),
+        tableId: getEnvVar("APPWRITE_DATABASE_HABITS_TABLE_ID"),
         rowId: generateId(),
         data: {
           userId: user?.$id,

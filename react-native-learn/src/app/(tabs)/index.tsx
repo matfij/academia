@@ -6,8 +6,8 @@ import { Swipeable } from "react-native-gesture-handler";
 import { Surface, Text } from "react-native-paper";
 import { awClient, awDatabase } from "../../lib/appwrite";
 import { useAuth } from "../../lib/auth-context";
-import { Habit } from "../../lib/types";
-import { getEnvVar } from "../../lib/utils";
+import { Habit, HabitCompletionInput, HabitInput } from "../../lib/types";
+import { generateId, getEnvVar } from "../../lib/utils";
 
 export default function Index() {
   const { user, signOut } = useAuth();
@@ -22,10 +22,8 @@ export default function Index() {
     void fetchHabits();
 
     const channel = `databases.${getEnvVar(
-      "EXPO_PUBLIC_APPWRITE_DATABASE_ID"
-    )}.tables.${getEnvVar(
-      "EXPO_PUBLIC_APPWRITE_DATABASE_HABITS_TABLE_ID"
-    )}.rows`;
+      "APPWRITE_DATABASE_ID"
+    )}.tables.${getEnvVar("APPWRITE_DATABASE_HABITS_TABLE_ID")}.rows`;
 
     const habitsSubscription = awClient.subscribe(channel, (response) => {
       if (response.events.includes("databases.*.tables.*.rows.*.create")) {
@@ -52,8 +50,8 @@ export default function Index() {
     }
     try {
       const response = await awDatabase.listRows<Habit>({
-        databaseId: getEnvVar("EXPO_PUBLIC_APPWRITE_DATABASE_ID"),
-        tableId: getEnvVar("EXPO_PUBLIC_APPWRITE_DATABASE_HABITS_TABLE_ID"),
+        databaseId: getEnvVar("APPWRITE_DATABASE_ID"),
+        tableId: getEnvVar("APPWRITE_DATABASE_HABITS_TABLE_ID"),
         queries: [Query.equal("userId", user?.$id)],
       });
       setHabits(response.rows);
@@ -67,23 +65,60 @@ export default function Index() {
       <MaterialCommunityIcons
         name="check-circle-outline"
         size={32}
-        color="#fff"
+        color="#f5f5f5"
       />
     </View>
   );
 
   const renderRightActions = () => (
     <View style={styles.swipeRightWrapper}>
-      <MaterialCommunityIcons name="trash-can-outline" size={32} color="#fff" />
+      <MaterialCommunityIcons
+        name="trash-can-outline"
+        size={32}
+        color="#f5f5f5"
+      />
     </View>
   );
 
   const onDeleteHabit = async (id: string) => {
-    console.log("deleting", id);
+    try {
+      await awDatabase.deleteRow({
+        databaseId: getEnvVar("APPWRITE_DATABASE_ID"),
+        tableId: getEnvVar("APPWRITE_DATABASE_HABITS_TABLE_ID"),
+        rowId: id,
+      });
+    } catch (error) {
+      console.warn(error);
+    }
   };
 
   const onCompleteHabit = async (id: string) => {
-    console.log("completing", id);
+    try {
+      const habit = habits.find((x) => x.$id === id);
+      if (!user || !habit) {
+        return;
+      }
+      await awDatabase.createRow({
+        databaseId: getEnvVar("APPWRITE_DATABASE_ID"),
+        tableId: getEnvVar("APPWRITE_DATABASE_HABIT_COMPLETIONS_TABLE_ID"),
+        rowId: generateId(),
+        data: {
+          userId: user.$id,
+          habitId: id,
+        } as HabitCompletionInput,
+      });
+      await awDatabase.updateRow({
+        databaseId: getEnvVar("APPWRITE_DATABASE_ID"),
+        tableId: getEnvVar("APPWRITE_DATABASE_HABITS_TABLE_ID"),
+        rowId: id,
+        data: {
+          lastCompleted: Date.now(),
+          streakCount: habit.streakCount + 1,
+        } as Partial<HabitInput>,
+      });
+    } catch (error) {
+      console.warn(error);
+    }
   };
 
   return (
@@ -111,9 +146,6 @@ export default function Index() {
                   ? onCompleteHabit(habit.$id)
                   : onDeleteHabit(habit.$id)
               }
-              // ref={(_ref) => {
-              //   habitCardRefs.current[habit.$id] = _ref;
-              // }}
             >
               <Surface style={styles.habitWrapper}>
                 <Text style={styles.habitTitle}>{habit.title}</Text>
