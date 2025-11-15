@@ -12,6 +12,9 @@ import { generateId, getEnvVar } from "../../lib/utils";
 export default function Index() {
   const { user, signOut } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [habitsCompletedToday, setHabitsCompletedToday] = useState<string[]>(
+    []
+  );
   const habitCardRefs = useRef<{
     [key: string]: ComponentRef<typeof Swipeable>;
   }>({});
@@ -22,24 +25,36 @@ export default function Index() {
     }
 
     void fetchHabits();
+    void fetchHabitsCompletedToday();
 
-    const channel = `databases.${getEnvVar(
+    const habitsChannel = `databases.${getEnvVar(
       "APPWRITE_DATABASE_ID"
     )}.tables.${getEnvVar("APPWRITE_DATABASE_HABITS_TABLE_ID")}.rows`;
+    const completionsChannel = `databases.${getEnvVar(
+      "APPWRITE_DATABASE_ID"
+    )}.tables.${getEnvVar(
+      "APPWRITE_DATABASE_HABIT_COMPLETIONS_TABLE_ID"
+    )}.rows`;
 
-    const habitsSubscription = awClient.subscribe(channel, (response) => {
-      if (response.events.includes("databases.*.tables.*.rows.*.create")) {
-        void fetchHabits();
-      } else if (
-        response.events.includes("databases.*.tables.*.rows.*.update")
-      ) {
-        void fetchHabits();
-      } else if (
-        response.events.includes("databases.*.tables.*.rows.*.delete")
-      ) {
-        void fetchHabits();
+    const habitsSubscription = awClient.subscribe(
+      [habitsChannel, completionsChannel],
+      (response) => {
+        console.log(response);
+        if (response.events.includes("databases.*.tables.*.rows.*.create")) {
+          void fetchHabits();
+          void fetchHabitsCompletedToday();
+        } else if (
+          response.events.includes("databases.*.tables.*.rows.*.update")
+        ) {
+          void fetchHabits();
+          void fetchHabitsCompletedToday();
+        } else if (
+          response.events.includes("databases.*.tables.*.rows.*.delete")
+        ) {
+          void fetchHabits();
+        }
       }
-    });
+    );
 
     return () => {
       habitsSubscription();
@@ -62,13 +77,39 @@ export default function Index() {
     }
   };
 
-  const renderLeftActions = () => (
+  const fetchHabitsCompletedToday = async () => {
+    if (!user) {
+      return;
+    }
+    try {
+      const todayTimestamp = new Date().setHours(0, 0, 0, 0);
+      const response = await awDatabase.listRows<Habit>({
+        databaseId: getEnvVar("APPWRITE_DATABASE_ID"),
+        tableId: getEnvVar("APPWRITE_DATABASE_HABITS_TABLE_ID"),
+        queries: [
+          Query.equal("userId", user.$id),
+          Query.greaterThanEqual("lastCompleted", todayTimestamp),
+        ],
+      });
+      setHabitsCompletedToday(response.rows.map((row) => row.$id));
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const isHabitCompleted = (id: string) => habitsCompletedToday.includes(id);
+
+  const renderLeftActions = (habitId: string) => (
     <View style={styles.swipeLeftWrapper}>
-      <MaterialCommunityIcons
-        name="check-circle-outline"
-        size={32}
-        color="#f5f5f5"
-      />
+      {isHabitCompleted(habitId) ? (
+        <Text style={{ color: "#fff" }}>Completed</Text>
+      ) : (
+        <MaterialCommunityIcons
+          name="check-circle-outline"
+          size={32}
+          color="#f5f5f5"
+        />
+      )}
     </View>
   );
 
@@ -106,7 +147,7 @@ export default function Index() {
   const onCompleteHabit = async (id: string) => {
     try {
       const habit = habits.find((x) => x.$id === id);
-      if (!user || !habit) {
+      if (!user || !habit || habitsCompletedToday.includes(id)) {
         return;
       }
       await awDatabase.createRow({
@@ -150,7 +191,7 @@ export default function Index() {
               key={habit.$id}
               overshootLeft={false}
               overshootRight={false}
-              renderLeftActions={renderLeftActions}
+              renderLeftActions={() => renderLeftActions(habit.$id)}
               renderRightActions={renderRightActions}
               ref={
                 ((ref: ComponentRef<typeof Swipeable>) => {
@@ -161,7 +202,12 @@ export default function Index() {
                 onHabitSwipe(habit.$id, direction)
               }
             >
-              <Surface style={styles.habitWrapper}>
+              <Surface
+                style={[
+                  styles.habitWrapper,
+                  isHabitCompleted(habit.$id) && styles.habitCompletedWrapper,
+                ]}
+              >
                 <Text style={styles.habitTitle}>{habit.title}</Text>
                 <Text style={styles.habitDescription}>{habit.description}</Text>
                 <View style={styles.habitFooter}>
@@ -194,7 +240,6 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#f5f5f5",
     justifyContent: "center",
-    // alignItems: "stretch",
   },
   emptyWrapper: {
     flex: 1,
@@ -215,11 +260,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 16,
     backgroundColor: "#f7f2fa",
-    // shadowColor: "#010203",
-    // shadowOffset: { width: 2, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 16,
+    shadowColor: "#010203",
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
     elevation: 4,
+  },
+  habitCompletedWrapper: {
+    opacity: 0.6,
   },
   habitTitle: {
     fontSize: 20,

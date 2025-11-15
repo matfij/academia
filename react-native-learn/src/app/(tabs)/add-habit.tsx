@@ -42,7 +42,7 @@ export default function AddHabitScreen() {
           description,
           frequency,
           streakCount: 0,
-          lastCompleted: Date.now(),
+          lastCompleted: 0,
         } as HabitInput,
       });
       router.back();
