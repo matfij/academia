@@ -175,9 +175,7 @@ export default function Index() {
 
   return (
     <View style={styles.mainWrapper}>
-      <Text variant="headlineSmall" style={styles.title}>
-        Today's habits
-      </Text>
+      <Text style={styles.mainTitle}>Today's habits</Text>
       {habits.length === 0 ? (
         <View style={styles.emptyWrapper}>
           <Text style={styles.emptyLabel}>
@@ -240,6 +238,13 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#f5f5f5",
     justifyContent: "center",
+  },
+  mainTitle: {
+    width: "98%",
+    marginHorizontal: "auto",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 8,
   },
   emptyWrapper: {
     flex: 1,

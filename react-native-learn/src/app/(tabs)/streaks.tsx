@@ -120,9 +120,29 @@ export default function StreaksScreen() {
 
   const rankedHabits = habitStreaks.sort((a, b) => b.bestStreak - a.bestStreak);
 
+  const topHabitBadgeStyles = [
+    styles.firstBadge,
+    styles.secondBadge,
+    styles.thirdBadge,
+  ];
+
   return (
     <View style={styles.mainWrapper}>
-      <Text>Habit Streaks</Text>
+      <Text style={styles.mainTitle}>Habit Streaks</Text>
+      {rankedHabits.length > 0 && (
+        <View style={styles.rankWrapper}>
+          <Text style={styles.rankTitle}>🎖️ Top streaks</Text>
+          {rankedHabits.slice(0, 3).map((habit, habitIndex) => (
+            <View key={`top-habit-${habit.$id}`} style={styles.rankItem}>
+              <View style={[styles.rankBadge, topHabitBadgeStyles[habitIndex]]}>
+                <Text style={styles.rankBadgeLabel}>{habitIndex + 1}</Text>
+              </View>
+              <Text style={styles.rankHabitTitle}>{habit.title}</Text>
+              <Text style={styles.rankHabitStreak}>{habit.bestStreak}</Text>
+            </View>
+          ))}
+        </View>
+      )}
       {habits.length === 0 ? (
         <View style={styles.emptyWrapper}>
           <Text style={styles.emptyLabel}>
@@ -133,7 +153,7 @@ export default function StreaksScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           {rankedHabits.map((habit, habitIndex) => (
             <Card
-              key={habit.$id}
+              key={`habit-${habit.$id}`}
               style={[
                 styles.habitWrapper,
                 habitIndex === 0 && styles.topHabitWrapper,
@@ -178,6 +198,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     justifyContent: "center",
   },
+  mainTitle: {
+    width: "98%",
+    marginHorizontal: "auto",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 8
+  },
   emptyWrapper: {
     flex: 1,
     justifyContent: "center",
@@ -187,6 +214,70 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
     color: "#666666",
+  },
+  rankWrapper: {
+    width: "98%",
+    marginHorizontal: "auto",
+    marginBottom: 24,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { height: 2, width: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  rankTitle: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 8,
+    color: "#7c4dff",
+    letterSpacing: 0.5,
+  },
+  rankItem: {
+    flexDirection: "row",
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#f0f0f0",
+    paddingTop: 8,
+  },
+  rankBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+    backgroundColor: "#e0e0e0",
+  },
+  firstBadge: {
+    backgroundColor: "#ffd700",
+  },
+  secondBadge: {
+    backgroundColor: "#c0c0c0",
+  },
+  thirdBadge: {
+    backgroundColor: "#cd7f32",
+  },
+  rankBadgeLabel: {
+    fontWeight: "bold",
+    color: "#fff",
+    fontSize: 16,
+  },
+  rankHabitTitle: {
+    flex: 1,
+    fontSize: 16,
+    color: "#333",
+    fontWeight: 600,
+  },
+  rankHabitStreak: {
+    fontSize: 14,
+    color: "#7c4dff",
+    fontWeight: "bold",
   },
   habitWrapper: {
     width: "98%",

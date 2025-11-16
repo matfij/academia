@@ -57,7 +57,7 @@ export default function AddHabitScreen() {
 
   return (
     <View style={styles.mainWrapper}>
-      <Text>Add Habit</Text>
+      <Text style={styles.mainTitle}>Add Habit</Text>
       <TextInput
         label="Title"
         mode="outlined"
@@ -100,6 +100,13 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 16,
     backgroundColor: "#f5f5f5",
+  },
+  mainTitle: {
+    width: "98%",
+    marginHorizontal: "auto",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 8,
   },
   frequencyWrapper: {
     marginTop: 8,
