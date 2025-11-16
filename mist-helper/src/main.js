@@ -1,0 +1,69 @@
+const main = async () => {
+  /*
+   * Inject floating dialog
+   */
+  const css = await fetch(chrome.runtime.getURL("src/index.css")).then((res) =>
+    res.text()
+  );
+  const style = document.createElement("style");
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  const html = await fetch(chrome.runtime.getURL("src/index.html")).then(
+    (res) => res.text()
+  );
+  const root = document.createElement("div");
+  root.innerHTML = html;
+  document.body.appendChild(root);
+
+  /*
+   * Enable dialog drag & drop
+   */
+  let offsetX = 0;
+  let offsetY = 0;
+  let startX = 0;
+  let startY = 0;
+
+  const container = document.getElementById("mist-helper");
+
+  container.onmousedown = (e) => {
+    e.preventDefault();
+    startX = e.clientX;
+    startY = e.clientY;
+    offsetX = container.offsetLeft;
+    offsetY = container.offsetTop;
+
+    document.onmousemove = (e) => {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      container.style.left = `${offsetX + dx}px`;
+      container.style.top = `${offsetY + dy}px`;
+    };
+
+    document.onmouseup = () => {
+      document.onmousemove = null;
+      document.onmouseup = null;
+    };
+  };
+
+  /*
+   * Inject common utility scripts
+   */
+  const script = document.createElement("script");
+  script.src = chrome.runtime.getURL("src/utils.js");
+  (document.head || document.documentElement).appendChild(script);
+
+  /*
+   * Append event listeners to dialog buttons
+   */
+  document
+    .getElementById("battle-casual-button")
+    .addEventListener("click", async () => {
+      const script = document.createElement("script");
+      script.src = chrome.runtime.getURL("src/handlers/battle-casual.js");
+      script.onload = () => script.remove();
+      (document.head || document.documentElement).appendChild(script);
+    });
+};
+
+main();

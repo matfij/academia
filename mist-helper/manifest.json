@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Mist Helper",
+  "description": "Utility tool for repetitive tasks",
+  "version": "0.0.0",
+  "permissions": ["scripting", "activeTab", "tabs"],
+  "host_permissions": ["https://mistwood.pl/*"],
+  "content_scripts": [
+    {
+      "js": ["src/main.js"],
+      "matches": ["https://mistwood.pl/*"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/index.html",
+        "src/index.css",
+        "src/utils.js",
+        "src/stock-prices.js",
+        "src/handlers/*"
+      ],
+      "matches": ["https://mistwood.pl/*"]
+    }
+  ]
+}
