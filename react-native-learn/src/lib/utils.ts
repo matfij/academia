@@ -11,3 +11,14 @@ export const getEnvVar = <T = string>(
 ) => process.env["EXPO_PUBLIC_" + name] as T;
 
 export const generateId = () => ID.unique();
+
+export const normalizeDate = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+export const gatDayDifference = (a: Date, b: Date) =>
+  Math.abs(
+    Math.round(
+      (normalizeDate(a).getTime() - normalizeDate(b).getTime()) /
+        (1000 * 60 * 60 * 24)
+    )
+  );
