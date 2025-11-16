@@ -247,6 +247,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyLabel: {
+    fontWeight: "bold",
+    marginBottom: 16,
     color: "#666666",
   },
   title: {
