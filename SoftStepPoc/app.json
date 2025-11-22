@@ -9,7 +9,10 @@
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "infoPlist": {
+                "NSMotionUsageDescription": "Allow $(PRODUCT_NAME) to access your motion data to count steps during activities."
+            }
         },
         "android": {
             "adaptiveIcon": {
@@ -19,7 +22,8 @@
                 "monochromeImage": "./assets/images/android-icon-monochrome.png"
             },
             "edgeToEdgeEnabled": true,
-            "predictiveBackGestureEnabled": false
+            "predictiveBackGestureEnabled": false,
+            "permissions": ["android.permission.ACTIVITY_RECOGNITION"]
         },
         "web": {
             "output": "static",
@@ -45,6 +49,12 @@
                     "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
                     "isAndroidBackgroundLocationEnabled": true,
                     "isAndroidForegroundServiceEnabled": true
+                }
+            ],
+            [
+                "expo-sensors",
+                {
+                    "motionPermission": "Allow $(PRODUCT_NAME) to access your device motion to count steps."
                 }
             ]
         ],
