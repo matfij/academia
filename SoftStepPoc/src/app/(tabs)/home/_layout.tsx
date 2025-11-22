@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { stopLocationUpdatesAsync } from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 import { AppState, Button, Text, View } from 'react-native';
-import { StepsCard, StepsCardHandle } from './_components/steps-card';
+import { StepsCardHandle } from './_components/steps-card-accelerometer';
+import { StepsCardPedometer } from './_components/steps-card-pedometer';
 import {
     LOCATION_STORAGE_KEY,
     LOCATION_TASK_NAME,
@@ -84,7 +85,8 @@ export default function HomePage() {
             )}
             {error && <Text style={{ color: 'red' }}>Error: {error}</Text>}
 
-            <StepsCard ref={stepsCardRef} />
+            {/* <StepsCardAccelerometer ref={stepsCardRef} /> */}
+            <StepsCardPedometer ref={stepsCardRef} />
 
             <Button title="Start" onPress={onStart} disabled={isTracking} />
             <Button title="Stop" onPress={onStop} disabled={!isTracking} />

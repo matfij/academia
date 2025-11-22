@@ -10,7 +10,7 @@ export interface StepsCardHandle {
     stop: () => Promise<void>;
 }
 
-export const StepsCard = forwardRef<StepsCardHandle>(function StepsCard(props, ref) {
+export const StepsCardAccelerometer = forwardRef<StepsCardHandle>(function StepsCard(props, ref) {
     const [isTracking, setIsTracking] = useState(false);
     const [currentStepCount, setCurrentStepCount] = useState(0);
 
