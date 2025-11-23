@@ -36,20 +36,9 @@ TaskManager.defineTask<{ locations: LocationObject[] }>(LOCATION_TASK_NAME, asyn
         console.error('Location task error:', error);
         return;
     }
-    if (data) {
-        try {
-            // Get existing locations
-            const stored = await AsyncStorage.getItem(LOCATION_STORAGE_KEY);
-            const locations = stored ? JSON.parse(stored) : [];
-
-            // Add new locations
-            locations.push(...data.locations);
-
-            // Save back
-            await AsyncStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locations));
-            console.log('Saved locations:', locations.length);
-        } catch (err) {
-            console.error('Failed to save location:', err);
-        }
-    }
+    const stored = await AsyncStorage.getItem(LOCATION_STORAGE_KEY);
+    const locations = stored ? JSON.parse(stored) : [];
+    locations.push(...data.locations);
+    await AsyncStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locations));
+    console.log('Saved locations:', locations.length);
 });
