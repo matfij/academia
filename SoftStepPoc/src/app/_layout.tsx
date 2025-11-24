@@ -4,6 +4,7 @@ import { useAuthStore } from '../common/store';
 
 export default function RootLayout() {
     const { username } = useAuthStore();
+
     return (
         <Stack>
             <StatusBar />
