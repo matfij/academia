@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'react-native';
-import { useAuthStore } from '../common/store';
+import { useAuthStore } from '../state/auth-store';
 
 export default function RootLayout() {
     const { username } = useAuthStore();

@@ -2,9 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
+import { ActivityReport } from '../common/types';
 import { calculateRouteLength } from './distance-manager';
 import { LOCATION_STORAGE_KEY, LOCATION_TASK_NAME, startLocationTracking } from './location-manager';
-import { getSpeed } from './speed-manager';
+import { getAverageSpeed, getCurrentSpeed, getTopSpeed } from './speed-manager';
 
 const REFRESH_TIME_MS = 1000;
 
@@ -13,6 +14,7 @@ export const useActivityTracking = () => {
     const [isTracking, setIsTracking] = useState(false);
     const [distance, setDistance] = useState(0);
     const [speed, setSpeed] = useState(0);
+    const [activityReport, setActivityReport] = useState<ActivityReport>();
 
     useEffect(() => {
         const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -37,7 +39,7 @@ export const useActivityTracking = () => {
                 const newDistance = Math.round(calculateRouteLength(locations));
                 setDistance(newDistance);
 
-                const newSpeed = Math.round(getSpeed(locations));
+                const newSpeed = Math.round(getCurrentSpeed(locations));
                 setSpeed(newSpeed);
             } catch (err) {
                 console.warn(err);
@@ -64,15 +66,41 @@ export const useActivityTracking = () => {
         if (isLocationTracked) {
             await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
             setIsTracking(false);
+            setSpeed(0);
             console.log('Background location service stopped.');
         }
+    };
+
+    const finish = async () => {
+        console.log('Finishing...');
+        await stop();
+
+        const locationsRaw = await AsyncStorage.getItem(LOCATION_STORAGE_KEY);
+        const locations = JSON.parse(locationsRaw ?? '[]') as Location.LocationObject[];
+
+        const newActivityReport: ActivityReport = {
+            duration: locations[locations.length - 1].timestamp - locations[0].timestamp,
+            distance: Math.round(calculateRouteLength(locations)),
+            averageSpeed: getAverageSpeed(locations),
+            topSpeed: getTopSpeed(locations),
+            route: locations.map((location) => location.coords),
+        };
+
+        setActivityReport(newActivityReport);
+        setDistance(0);
+        setSpeed(0);
+
+        await AsyncStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify([]));
+        console.log('Activity finished...');
     };
 
     return {
         isTracking,
         distance,
         speed,
+        activityReport,
         start,
         stop,
+        finish,
     };
 };

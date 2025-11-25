@@ -1,20 +1,13 @@
+import { useEffect } from 'react';
 import { Button, Text, View } from 'react-native';
 import { useActivityTracking } from '../../managers/use-activity-tracking';
 
 export default function HomePage() {
-    const { isTracking, distance, speed, start, stop } = useActivityTracking();
+    const { isTracking, distance, speed, activityReport, start, stop, finish } = useActivityTracking();
 
-    const onStart = async () => {
-        if (!isTracking) {
-            await start();
-        }
-    };
-
-    const onStop = async () => {
-        if (isTracking) {
-            await stop();
-        }
-    };
+    useEffect(() => {
+        console.log({ activityReport });
+    }, [activityReport]);
 
     return (
         <View
@@ -23,8 +16,9 @@ export default function HomePage() {
             <Text>Speed: {speed} (m/m)</Text>
             <Text>Total distance: {distance} (m)</Text>
 
-            <Button title="Start" onPress={onStart} disabled={isTracking} />
-            <Button title="Stop" onPress={onStop} disabled={!isTracking} />
+            <Button title="Start" onPress={start} disabled={isTracking} />
+            <Button title="Stop" onPress={stop} disabled={!isTracking} />
+            <Button title="Finish" onPress={finish} disabled={!isTracking} />
         </View>
     );
 }

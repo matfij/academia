@@ -13,7 +13,6 @@ export const LOCATION_TASK_NAME = 'background-location-task';
 export const LOCATION_STORAGE_KEY = 'tracked-locations';
 
 export const startLocationTracking = async () => {
-    await AsyncStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify([]));
     const foregroundPermission = await requestForegroundPermissionsAsync();
     if (foregroundPermission.status === PermissionStatus.GRANTED) {
         const backgroundPermission = await requestBackgroundPermissionsAsync();

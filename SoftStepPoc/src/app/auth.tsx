@@ -1,6 +1,6 @@
 import { Button } from '@react-navigation/elements';
 import { Text, View } from 'react-native';
-import { useAuthStore } from '../common/store';
+import { useAuthStore } from '../state/auth-store';
 
 export default function Auth() {
     const { singIn } = useAuthStore();
