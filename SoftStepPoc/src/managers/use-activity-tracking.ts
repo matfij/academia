@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import { calculateRouteLength } from './distance-manager';
 import { LOCATION_STORAGE_KEY, LOCATION_TASK_NAME, startLocationTracking } from './location-manager';
+import { getSpeed } from './speed-manager';
 
 const REFRESH_TIME_MS = 1000;
 
@@ -11,6 +12,7 @@ export const useActivityTracking = () => {
     const appState = useRef(AppState.currentState);
     const [isTracking, setIsTracking] = useState(false);
     const [distance, setDistance] = useState(0);
+    const [speed, setSpeed] = useState(0);
 
     useEffect(() => {
         const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -30,10 +32,13 @@ export const useActivityTracking = () => {
                 const locationsRaw = await AsyncStorage.getItem(LOCATION_STORAGE_KEY);
                 const locations = JSON.parse(locationsRaw ?? '[]') as Location.LocationObject[];
                 console.log('Total locations', locations.length);
-                const newDistance = Math.round(
-                    calculateRouteLength(locations.map((location) => location.coords)),
-                );
+
+                // TODO - cache length up to the point
+                const newDistance = Math.round(calculateRouteLength(locations));
                 setDistance(newDistance);
+
+                const newSpeed = Math.round(getSpeed(locations));
+                setSpeed(newSpeed);
             } catch (err) {
                 console.warn(err);
             }
@@ -66,6 +71,7 @@ export const useActivityTracking = () => {
     return {
         isTracking,
         distance,
+        speed,
         start,
         stop,
     };
