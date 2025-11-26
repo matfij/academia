@@ -6,6 +6,7 @@ import { ActivityReport } from '../common/types';
 import { calculateRouteLength } from './distance-manager';
 import { LOCATION_STORAGE_KEY, LOCATION_TASK_NAME, startLocationTracking } from './location-manager';
 import { getAverageSpeed, getCurrentSpeed, getTopSpeed } from './speed-manager';
+import { getActivityDuration } from './time-manager';
 
 const REFRESH_TIME_MS = 1000;
 
@@ -79,7 +80,7 @@ export const useActivityTracking = () => {
         const locations = JSON.parse(locationsRaw ?? '[]') as Location.LocationObject[];
 
         const newActivityReport: ActivityReport = {
-            duration: locations[locations.length - 1].timestamp - locations[0].timestamp,
+            duration: getActivityDuration(locations),
             distance: Math.round(calculateRouteLength(locations)),
             averageSpeed: getAverageSpeed(locations),
             topSpeed: getTopSpeed(locations),

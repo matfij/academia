@@ -1,13 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
+import { ActivityReportModal } from '../../components/activity-report-modal';
 import { useActivityTracking } from '../../managers/use-activity-tracking';
 
 export default function HomePage() {
     const { isTracking, distance, speed, activityReport, start, stop, finish } = useActivityTracking();
+    const [showReport, setShowReport] = useState(false);
 
     useEffect(() => {
-        console.log({ activityReport });
+        if (activityReport) {
+            setShowReport(true);
+        }
     }, [activityReport]);
+
+    const onCloseReport = () => {
+        setShowReport(false);
+    };
 
     return (
         <View
@@ -19,6 +27,14 @@ export default function HomePage() {
             <Button title="Start" onPress={start} disabled={isTracking} />
             <Button title="Stop" onPress={stop} disabled={!isTracking} />
             <Button title="Finish" onPress={finish} disabled={!isTracking} />
+
+            {activityReport && (
+                <ActivityReportModal
+                    visible={showReport}
+                    activityReport={activityReport}
+                    onClose={onCloseReport}
+                />
+            )}
         </View>
     );
 }
