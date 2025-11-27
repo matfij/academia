@@ -1,5 +1,5 @@
 import { LocationObject } from 'expo-location';
-import { Point } from '../common/types';
+import { Coordinate } from '../common/types';
 
 const EARTH_RADIUS_M = 6_371_000;
 
@@ -15,7 +15,7 @@ export const calculateRouteLength = (locations: LocationObject[]): number => {
     return total;
 };
 
-const calculateDistanceBetweenPoints = (a: Point, b: Point): number => {
+const calculateDistanceBetweenPoints = (a: Coordinate, b: Coordinate): number => {
     const aLat = degToRad(a.latitude);
     const bLat = degToRad(b.latitude);
     const latDiff = bLat - aLat;

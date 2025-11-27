@@ -4,7 +4,7 @@ export type ComponentProps = {
     children: ReactNode;
 };
 
-export type Point = {
+export type Coordinate = {
     latitude: number;
     longitude: number;
 };
@@ -14,5 +14,14 @@ export type ActivityReport = {
     distance: number;
     averageSpeed: number;
     topSpeed: number;
-    route: Point[];
+    route: Coordinate[];
+};
+
+export type Activity = {
+    title: string;
+    duration: number;
+    distance: number;
+    averageSpeed: number;
+    topSpeed: number;
+    route: Coordinate[];
 };

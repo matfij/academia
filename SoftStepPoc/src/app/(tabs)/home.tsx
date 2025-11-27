@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Button, ScrollView, Text, View } from 'react-native';
 import { ActivityReportModal } from '../../components/activity-report-modal';
+import { ActivityTile } from '../../components/activity-tile';
 import { useActivityTracking } from '../../managers/use-activity-tracking';
+import { mockActivityReport2 } from '../../mocks/activity-2';
 
 export default function HomePage() {
     const { isTracking, distance, speed, activityReport, start, stop, finish } = useActivityTracking();
@@ -35,6 +37,11 @@ export default function HomePage() {
                     onClose={onCloseReport}
                 />
             )}
+
+            <ScrollView>
+                {true && <ActivityTile activity={mockActivityReport2} />}
+                {true && <ActivityTile activity={mockActivityReport2} />}
+            </ScrollView>
         </View>
     );
 }
