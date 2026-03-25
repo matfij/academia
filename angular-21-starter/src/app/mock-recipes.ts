@@ -12,6 +12,7 @@ export const SPAGHETTI_CARBONARA: RecipeModel = {
     { name: 'black pepper', quantity: 'handful' },
     { name: 'salt', quantity: '1 tablespoon' },
   ],
+  imgUrl: './assets/sphagetti-carbonara.jpg',
 };
 
 export const CAPRESE_SALAD: RecipeModel = {
@@ -23,4 +24,5 @@ export const CAPRESE_SALAD: RecipeModel = {
     { name: 'basil', quantity: '5 leafs' },
     { name: 'EVOO', quantity: '50 ml' },
   ],
+  imgUrl: './assets/caprese-salad.jpg',
 };

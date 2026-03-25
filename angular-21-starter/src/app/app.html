@@ -2,25 +2,13 @@
   <div class="content">
     <h1>{{ title() }}</h1>
     <h3>{{ subtitle() }}</h3>
-    <div>
-      <h4>{{ recipe().name }}</h4>
-      <p>{{ recipe().description }}</p>
-      <b>Scaled ingredients:</b>
-      <ul>
-        @for (ingredient of scaledIngredients(); track ingredient.name) {
-          <li>{{ ingredient.name }} ({{ ingredient.quantity }})</li>
-        }
-      </ul>
-    </div>
+
+    <app-recipe-list />
+
     <section>
       <p>Status: {{ status() }}</p>
       <button (click)="startCooking()">Start</button>
       <button (click)="resetStatus()">Reset</button>
-    </section>
-    <section>
-      <p>Servings: {{ servings() }}</p>
-      <button (click)="incrementServings()">Increment</button>
-      <button (click)="decrementServings()">Decrement</button>
     </section>
   </div>
 </main>
