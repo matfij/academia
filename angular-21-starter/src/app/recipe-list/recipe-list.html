@@ -1,18 +1,26 @@
 <section>
-  <section>
-    <h4>{{ recipe().name }}</h4>
-    <p>{{ recipe().description }}</p>
-    <img [src]="recipe().imgUrl" [alt]="recipe().name" />
+  @for (recipe of recipes(); track recipe.name) {
+    <button (click)="setRecipe(recipe)">{{ recipe.name }}</button>
+  }
+</section>
+
+<section>
+  <h4>{{ currentRecipe().name }}</h4>
+  <p>{{ currentRecipe().description }}</p>
+  <img [src]="currentRecipe().imgUrl" [alt]="currentRecipe().name" />
+  @if (showDetails()) {
     <b>Scaled ingredients:</b>
     <ul>
       @for (ingredient of adjustedIngredients(); track ingredient.name) {
         <li>{{ ingredient.name }} ({{ ingredient.quantity }})</li>
       }
     </ul>
-  </section>
-  <section>
-    <p>Servings: {{ servings() }}</p>
-    <button (click)="incrementServings()">Increment</button>
-    <button (click)="decrementServings()">Decrement</button>
-  </section>
+  }
+  <button (click)="toggleDetails()">Toggle details</button>
+</section>
+
+<section>
+  <p>Servings: {{ servings() }}</p>
+  <button (click)="incrementServings()">Increment</button>
+  <button (click)="decrementServings()">Decrement</button>
 </section>
