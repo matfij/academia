@@ -1,0 +1,12 @@
+<main class="main">
+  <div class="content">
+    <h1>{{ title() }}</h1>
+    <h3>{{ subtitle() }}</h3>
+
+    <section>
+      <p>Status: {{ status() }}</p>
+      <button (click)="startCooking()">Start</button>
+      <button (click)="resetStatus()">Reset</button>
+    </section>
+  </div>
+</main>

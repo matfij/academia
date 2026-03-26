@@ -1,16 +1,6 @@
-<main class="main">
-  <div class="content">
-    <h1>{{ title() }}</h1>
-    <h3>{{ subtitle() }}</h3>
-
-    <app-recipe-list />
-
-    <section>
-      <p>Status: {{ status() }}</p>
-      <button (click)="startCooking()">Start</button>
-      <button (click)="resetStatus()">Reset</button>
-    </section>
-  </div>
-</main>
+<nav>
+  <a routerLink="/">Home</a>
+  <a routerLink="/recipes">Recipes</a>
+</nav>
 
 <router-outlet />
