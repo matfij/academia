@@ -1,6 +1,11 @@
 <section>
-  @for (recipe of recipes(); track recipe.name) {
-    <button (click)="setRecipe(recipe)">{{ recipe.name }}</button>
+  <input [(ngModel)]="searchTerm" />
+  @if (filteredRecipes().length > 0) {
+    @for (recipe of filteredRecipes(); track recipe.name) {
+      <button (click)="setRecipe(recipe)">{{ recipe.name }}</button>
+    }
+  } @else {
+    <b>No recipes found</b>
   }
 </section>
 
