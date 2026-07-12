@@ -10,7 +10,7 @@
   position: fixed;
   top: 1rem;
   right: 1rem;
-  width: 16rem;
+  width: 24rem;
   padding: 1rem;
   text-align: center;
   color: var(--color-light);
@@ -59,4 +59,58 @@
 .main-wrapper button:hover {
   cursor: pointer;
   filter: none;
+}
+
+/* Battle results panel */
+#battle-results {
+  margin-top: 12px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-height: 300px;
+  overflow: auto;
+  width: 100%;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.battle-results-title {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-primary);
+}
+
+.battle-results-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.battle-results-table th {
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  padding: 4px 6px;
+}
+
+.battle-results-table td {
+  padding: 4px 6px;
+}
+
+.battle-results-messages {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.battle-message {
+  font-size: 13px;
+  color: var(--color-light);
+}
+
+.battle-message.info {
+  color: #bfe0b0;
+}
+.battle-message.error {
+  color: #ffb0b0;
 }
