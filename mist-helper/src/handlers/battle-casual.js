@@ -5,9 +5,61 @@
 
   const { wait, isVisible } = window.GreenHelper;
 
+  const CONFIG = {
+    restoreDragonName: "Symboli", // matched by name, not position - see getRestoreTarget
+    retryCount: 5,
+    baseDelay: 150,
+    backoffFactor: 2,
+    maxDelay: 3000,
+    debug: true, // set to false once everything works to quiet the console
+  };
+
   const battleResults = {};
   let battleCount = 0;
   let errorCount = 0;
+  let canRestore = true;
+
+  const getDelay = (attempt) =>
+    Math.min(
+      CONFIG.baseDelay * CONFIG.backoffFactor ** attempt,
+      CONFIG.maxDelay,
+    );
+
+  const retry = async (operation, label, retries = CONFIG.retryCount) => {
+    let lastError;
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        const result = await operation(attempt);
+        if (result) return result;
+      } catch (error) {
+        lastError = error;
+        console.warn(`${label} attempt ${attempt + 1} failed`, error);
+      }
+      await wait(getDelay(attempt));
+    }
+    if (lastError) console.warn(`${label} failed`, lastError);
+    return null;
+  };
+
+  const getVisibleElements = (selector) =>
+    [...document.querySelectorAll(selector)].filter(isVisible);
+
+  const getTextElement = (selector, text) =>
+    getVisibleElements(selector).find((element) =>
+      element.textContent.trim().includes(text),
+    );
+
+  const waitForElement = async (selector, text = "", retries) =>
+    retry(
+      () => {
+        const element = text
+          ? getTextElement(selector, text)
+          : getVisibleElements(selector)[0];
+        return element || null;
+      },
+      `Waiting for ${text || selector}`,
+      retries,
+    );
 
   const getResultsContainer = () => {
     const root = document.querySelector("#mist-helper") || document.body;
@@ -40,7 +92,7 @@
     const p = document.createElement("div");
     p.textContent = text;
     p.className = "battle-message" + (cls ? ` ${cls}` : "");
-    messages.appendChild(p);
+    messages.prepend(p);
     return p;
   };
 
@@ -52,7 +104,7 @@
     const table = document.createElement("table");
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    ["Dragon", "Battles", "Wins", "Losses", "Silver Earned"].forEach((h) => {
+    ["Dragon", "Battles", "Wins", "Losses", "Silver"].forEach((h) => {
       const th = document.createElement("th");
       th.textContent = h;
       headerRow.appendChild(th);
@@ -89,15 +141,15 @@
   };
 
   const getBattleResult = async () => {
-    const resultText = document.body.textContent;
-    let isWin = false;
-    let isLoss = false;
-
-    while (isWin || isLoss) {
-      isWin = resultText.includes("Wygrana!");
-      isLoss = resultText.includes("Przegrana.");
-      await wait(70);
-    }
+    const result = await retry(
+      () => {
+        const resultText = document.body.textContent;
+        if (resultText.includes("Wygrana!")) return "win";
+        if (resultText.includes("Przegrana.")) return "loss";
+        return null;
+      },
+      "Waiting for battle result",
+    );
 
     const silverSpan = document.querySelector(
       "span.mx-auto.flex.items-center.gap-1",
@@ -109,7 +161,7 @@
     }
 
     return {
-      result: isWin ? "win" : isLoss ? "loss" : "unknown",
+      result: result || "unknown",
       points: silver,
     };
   };
@@ -135,32 +187,27 @@
 
   const waitForButton = async (
     text,
-    maxRetries = 5,
+    maxRetries = CONFIG.retryCount,
     requireEnabled = false,
   ) => {
-    for (let i = 0; i < maxRetries; i++) {
-      const button = [...document.querySelectorAll("button")].find(
-        (el) =>
-          el.textContent.includes(text) &&
-          (requireEnabled ? !el.disabled : true) &&
-          isVisible(el),
-      );
-      if (button) return button;
-      await wait(150 * (i + 1));
-    }
-    return null;
+    return retry(
+      () =>
+        getVisibleElements("button").find(
+          (button) =>
+            button.textContent.trim().includes(text) &&
+            (!requireEnabled || !button.disabled),
+        ) || null,
+      `Waiting for button ${text}`,
+      maxRetries,
+    );
   };
 
-  const waitForLink = async (text, maxRetries = 10) => {
-    for (let i = 0; i < maxRetries; i++) {
-      const link = [...document.querySelectorAll("a")].find(
-        (el) => el.textContent.includes(text) && isVisible(el),
-      );
-      if (link) return link;
-      await wait(70 * (i + 1));
-    }
-    return null;
-  };
+  const waitForLink = async (text, maxRetries = CONFIG.retryCount) =>
+    retry(
+      () => getTextElement("a", text) || null,
+      `Waiting for link ${text}`,
+      maxRetries,
+    );
 
   const getOpponentRank = (button) => {
     try {
@@ -189,15 +236,202 @@
   };
 
   const goToArena = async () => {
-    const dragonsLink = await waitForLink("Smoki");
+    const dragonsLink = await retry(
+      () =>
+        getVisibleElements('a[href*="/dragons"]').find((link) =>
+          link.textContent.includes("Smoki"),
+        ) || null,
+      "Waiting for dragons link",
+    );
     if (dragonsLink) {
       dragonsLink.click();
+      await wait(getDelay(0));
     }
-    const arenaLink = await waitForLink("Arena");
+    const arenaLink = await retry(
+      () =>
+        getVisibleElements('a[href="/battles/casual"]').find((link) =>
+          link.textContent.includes("Arena"),
+        ) || null,
+      "Waiting for arena link",
+    );
     if (arenaLink) {
       arenaLink.click();
     }
-    await wait(1000);
+    await waitForElement('a[href^="/dragons/"]');
+  };
+
+  const findItemUseButton = () => {
+    const itemName = getVisibleElements("p").find(
+      (element) =>
+        element.textContent.trim() === "Eliksir Uzupełnienia Energii",
+    );
+    if (!itemName) return null;
+
+    let container = itemName;
+    for (let level = 0; level < 6 && container; level++) {
+      const useButton = [...container.querySelectorAll("button")].find(
+        (button) => isVisible(button) && !button.disabled,
+      );
+      if (useButton) return useButton;
+      container = container.parentElement;
+    }
+    return null;
+  };
+
+  const getDragonNameFromLink = (link) => {
+    if (!link) return null;
+    const inlineSpan = link.querySelector("span.inline");
+    return (inlineSpan ? inlineSpan.textContent : link.textContent).trim();
+  };
+
+  // Climb from a dragon <a> up to the surrounding card, up to `maxLevels`
+  // parents, and return the card if it contains an energy-percentage span
+  // (e.g. "0%", "56%"). Opponent dragons never show this badge, so this
+  // doubles as a filter for "is this actually one of MY dragons".
+  const getCardWithEnergyBadge = (link, maxLevels = 8) => {
+    let container = link;
+    for (let level = 0; level < maxLevels && container; level++) {
+      const hasEnergyBadge = [...container.querySelectorAll("span")].some(
+        (span) => /^\d+%$/.test(span.textContent.trim()),
+      );
+      if (hasEnergyBadge) return container;
+      container = container.parentElement;
+    }
+    return null;
+  };
+
+  // Only YOUR dragons show an energy badge, so filtering on that first
+  // (instead of indexing into every /dragons/ link on the page, which can
+  // include opponent profile links too) reliably isolates your own
+  // dragon cards, in DOM order.
+  const getOwnDragonCards = () => {
+    return getVisibleElements('a[href^="/dragons/"]')
+      .map((link) => {
+        const card = getCardWithEnergyBadge(link);
+        return card ? { link, card } : null;
+      })
+      .filter(Boolean);
+  };
+
+  const getRestoreTarget = () => {
+    const ownCards = getOwnDragonCards();
+    if (CONFIG.debug) {
+      console.log(
+        "[energy-check] own dragons found:",
+        ownCards.map(({ link, card }) => ({
+          name: getDragonNameFromLink(link),
+          energy:
+            [...card.querySelectorAll("span")]
+              .map((s) => s.textContent.trim())
+              .find((t) => /^\d+%$/.test(t)) || "?",
+        })),
+      );
+    }
+    // Match by NAME across whatever cards exist right now, rather than by
+    // position - the arena can re-sort this list (e.g. after a fight or
+    // an item use), so "index 0" can silently start pointing at a
+    // different dragon than the one we actually want to keep topped up.
+    return (
+      ownCards.find(({ link }) =>
+        getDragonNameFromLink(link)?.includes(CONFIG.restoreDragonName),
+      ) || null
+    );
+  };
+
+  const firstDragonHasNoEnergy = () => {
+    const target = getRestoreTarget();
+    if (!target) return false;
+    return [...target.card.querySelectorAll("span")].some(
+      (span) => /^0%$/.test(span.textContent.trim()),
+    );
+  };
+
+  const restoreEnergy = async () => {
+    if (!canRestore || !firstDragonHasNoEnergy()) return false;
+
+    canRestore = false;
+
+    const target = getRestoreTarget();
+    const restoreDragonName =
+      getDragonNameFromLink(target?.link) || CONFIG.restoreDragonName;
+
+    appendMessage(
+      `Dragon ${restoreDragonName} has no energy; checking inventory`,
+      "info",
+    );
+
+    try {
+      const inventoryLink = await retry(
+        () =>
+          getVisibleElements('a[href="/inventory"]').find((link) =>
+            link.textContent.includes("Przedmioty"),
+          ) || null,
+        "Waiting for inventory link",
+      );
+      if (!inventoryLink) return false;
+      inventoryLink.click();
+
+      const item = await waitForElement("p", "Eliksir Uzupełnienia Energii");
+      if (!item) {
+        await goToArena();
+        return false;
+      }
+
+      const useButton = await retry(
+        () => findItemUseButton(),
+        "Waiting for energy elixir button",
+      );
+      if (!useButton) {
+        await goToArena();
+        return false;
+      }
+      useButton.click();
+
+      const confirmation = await waitForElement(
+        "body",
+        "Czy na pewno chcesz użyć Eliksir Uzupełnienia Energii?",
+      );
+      if (!confirmation) {
+        await goToArena();
+        return false;
+      }
+
+      const dropdown = await waitForElement('button[role="combobox"]');
+      if (!dropdown) {
+        await goToArena();
+        return false;
+      }
+      dropdown.click();
+
+      // Match by NAME, not index — the dropdown's order does not
+      // necessarily match the arena list's order.
+      const dragonOption = await retry(
+        () =>
+          getVisibleElements('[role="option"]').find((option) =>
+            option.textContent.trim().includes(restoreDragonName),
+          ) || null,
+        `Waiting for ${restoreDragonName} option`,
+      );
+      if (!dragonOption) {
+        await goToArena();
+        return false;
+      }
+      dragonOption.click();
+
+      const submitButton = await waitForButton("Użyj", CONFIG.retryCount, true);
+      if (!submitButton) {
+        await goToArena();
+        return false;
+      }
+      submitButton.click();
+      await wait(getDelay(2));
+      await goToArena();
+      appendMessage(`Energy restored for ${restoreDragonName}`, "info");
+      return true;
+    } finally {
+      // Always runs: success, early return, or thrown error.
+      canRestore = true;
+    }
   };
 
   try {
@@ -205,7 +439,13 @@
 
     while (errorCount < 5) {
       try {
-        const fightButton = await waitForButton("Walcz", 5, true);
+        await restoreEnergy();
+
+        const fightButton = await waitForButton(
+          "Walcz",
+          CONFIG.retryCount,
+          true,
+        );
         if (!fightButton) {
           console.log("No more battles available");
           errorCount++;
@@ -226,19 +466,19 @@
 
         battleCount++;
         appendMessage(`Battle ${battleCount} started`, "info");
-        await wait(70);
+        await wait(getDelay(0));
 
         const skipButton = await waitForButton("Pomiń");
         if (skipButton) {
           skipButton.click();
-          await wait(70);
+          await wait(getDelay(0));
         }
 
         const dragonName = getDragonName();
         const { result, points } = await getBattleResult();
         updateDragonStats(dragonName, result, points);
         appendMessage(
-          `Battle result: ${result} (+${points} points) vs ${dragonName}`,
+          `Battle result: ${result} +${points} vs ${dragonName}`,
           "info",
         );
         renderResultsTable(battleResults);
@@ -246,7 +486,7 @@
         const returnButton = await waitForButton("Powrót");
         if (returnButton) {
           returnButton.click();
-          await wait(70);
+          await wait(getDelay(0));
         }
       } catch (error) {
         await goToArena();

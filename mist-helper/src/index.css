@@ -1,27 +1,62 @@
 :root {
-  --color-dark: #3a302f;
-  --color-light: #be9a66;
-  --color-primary: #e7a11e;
+  /* Deep slate-void, evoking the mist that gives the tool its name */
+  --color-void: #0a0e16;
+  --color-panel: #141b27;
+  --color-panel-raised: #1b2432;
+
+  /* Warm parchment ink, not stark white */
+  --color-parchment: #e8dbc0;
+  --color-ash: #7e8aa0;
+
+  /* Dragonfire accent - redder and warmer than a generic amber */
+  --color-ember: #d97b3f;
+  --color-ember-bright: #f2a568;
+  --color-ember-dim: rgba(217, 123, 63, 0.35);
+
+  /* Result colors: moss for wins, clay for losses - natural, not neon */
+  --color-moss: #83ae7c;
+  --color-clay: #c9695f;
+
+  --color-line: rgba(232, 219, 192, 0.1);
 }
 
 .main-wrapper {
-  margin: 0;
-  padding: 0;
   position: fixed;
   top: 1rem;
   right: 1rem;
-  width: 24rem;
-  padding: 1rem;
-  text-align: center;
-  color: var(--color-light);
-  background: var(--color-dark);
+  width: min(24rem, calc(100vw - 2rem));
+  margin: 0;
+  padding: 1.15rem 1.15rem 1.15rem 1.35rem;
+  text-align: left;
+  color: var(--color-parchment);
+  background: var(--color-void);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  /* Ledger spine instead of a uniform border - the one accent this panel spends its boldness on */
+  border-left: 3px solid var(--color-ember);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
   z-index: 100;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  border-radius: 8px;
-  opacity: 0.9;
+  align-items: stretch;
+  gap: 0.85rem;
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  isolation: isolate;
+}
+
+/* Faint atmospheric wisp in the corner - a nod to "mist" without extra markup */
+.main-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 120% 70% at 100% 0%,
+    rgba(217, 123, 63, 0.08),
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: -1;
 }
 
 .main-wrapper:hover {
@@ -33,84 +68,159 @@
 }
 
 .main-wrapper hr {
-  width: 80%;
-  border-top: 1px solid var(--color-primary);
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
 }
 
 .main-wrapper h2 {
-  margin-bottom: 0;
-  font-size: 18px;
+  width: 100%;
+  margin: 0;
+  color: var(--color-ember-bright);
+  font-size: 1.15rem;
   font-weight: 600;
-  color: var(--color-primary);
+  letter-spacing: 0.01em;
 }
 
 .main-wrapper button {
-  width: 80%;
-  font-size: 14px;
+  width: 100%;
+  padding: 0.68rem 0.8rem;
+  border: 1px solid var(--color-ember-dim);
+  border-radius: 7px;
+  color: #1a1108;
+  background: linear-gradient(160deg, var(--color-ember-bright), var(--color-ember));
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.25);
+  font-family: inherit;
+  font-size: 0.88rem;
   font-weight: 600;
-  padding: 6px;
-  border-radius: 8px;
-  border: none;
-  color: var(--color-dark);
-  background: var(--color-light);
-  filter: grayscale(20%);
+  transition: box-shadow 150ms ease;
 }
 
 .main-wrapper button:hover {
   cursor: pointer;
-  filter: none;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--color-ember-dim);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .main-wrapper button {
+    transition: box-shadow 150ms ease, transform 150ms ease;
+  }
+  .main-wrapper button:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.main-wrapper button:focus-visible {
+  outline: 2px solid var(--color-ember-bright);
+  outline-offset: 3px;
 }
 
 /* Battle results panel */
 #battle-results {
-  margin-top: 12px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  max-height: 300px;
-  overflow: auto;
   width: 100%;
+  max-height: 19rem;
+  margin-top: 0.1rem;
+  padding: 0.85rem 0.8rem 0.7rem;
+  overflow: auto;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
   text-align: left;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--color-panel);
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ember) transparent;
 }
 
+#battle-results::-webkit-scrollbar {
+  width: 6px;
+}
+#battle-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+#battle-results::-webkit-scrollbar-thumb {
+  background: var(--color-ember-dim);
+  border-radius: 3px;
+}
+#battle-results::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ember);
+}
+
+/* A proper small heading with an asymmetric underline, not an uppercase eyebrow */
 .battle-results-title {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--color-primary);
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.35rem;
+  color: var(--color-parchment);
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-ember);
 }
 
 .battle-results-table table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .battle-results-table th {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-line);
   text-align: left;
-  padding: 4px 6px;
+  padding: 0.4rem 0.4rem;
+  color: var(--color-ash);
+  font-size: 0.72rem;
+  font-weight: 600;
 }
 
 .battle-results-table td {
-  padding: 4px 6px;
+  padding: 0.4rem 0.4rem;
+  color: var(--color-parchment);
+  font-size: 0.78rem;
+}
+
+/* Faint zebra striping - a ledger cue, not a card-kit effect */
+.battle-results-table tbody tr:nth-child(even) td {
+  background: var(--color-panel-raised);
 }
 
 .battle-results-messages {
-  margin-top: 8px;
+  margin-top: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.3rem;
 }
 
 .battle-message {
-  font-size: 13px;
-  color: var(--color-light);
+  position: relative;
+  padding: 0.3rem 0.5rem 0.3rem 1rem;
+  color: var(--color-ash);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+/* Small dot marker instead of a full-height colored bar - reads faster at a glance */
+.battle-message::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.62rem;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-line);
 }
 
 .battle-message.info {
-  color: #bfe0b0;
+  color: var(--color-moss);
 }
+.battle-message.info::before {
+  background: var(--color-moss);
+}
+
 .battle-message.error {
-  color: #ffb0b0;
+  color: var(--color-clay);
+}
+.battle-message.error::before {
+  background: var(--color-clay);
 }
