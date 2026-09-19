@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Mist Helper",
   "description": "Utility tool for repetitive tasks",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "permissions": ["scripting", "activeTab", "tabs"],
   "host_permissions": ["https://mistwood.pl/*"],
   "content_scripts": [

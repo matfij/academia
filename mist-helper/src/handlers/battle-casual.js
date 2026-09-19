@@ -41,12 +41,14 @@
     return null;
   };
 
+  const normalizeText = (value) => (value ?? "").replace(/\s+/g, " ").trim();
+
   const getVisibleElements = (selector) =>
     [...document.querySelectorAll(selector)].filter(isVisible);
 
   const getTextElement = (selector, text) =>
     getVisibleElements(selector).find((element) =>
-      element.textContent.trim().includes(text),
+      normalizeText(element.textContent).includes(text),
     );
 
   const waitForElement = async (selector, text = "", retries) =>
@@ -260,14 +262,25 @@
     await waitForElement('a[href^="/dragons/"]');
   };
 
-  const findItemUseButton = () => {
-    const itemName = getVisibleElements("p").find(
-      (element) =>
-        element.textContent.trim() === "Eliksir Uzupełnienia Energii",
+  const getItemCardByName = (itemName) => {
+    const itemNode = [...document.querySelectorAll("li, [role='listitem'], article")].find(
+      (element) => normalizeText(element.textContent).includes(itemName),
     );
-    if (!itemName) return null;
+    if (itemNode) return itemNode;
 
-    let container = itemName;
+    const fallback = [...document.querySelectorAll("div")].find(
+      (element) =>
+        normalizeText(element.textContent).includes(itemName) &&
+        element.querySelector("button"),
+    );
+    return fallback || null;
+  };
+
+  const findItemUseButton = () => {
+    const item = getItemCardByName("Eliksir Uzupełnienia Energii");
+    if (!item) return null;
+
+    let container = item;
     for (let level = 0; level < 6 && container; level++) {
       const useButton = [...container.querySelectorAll("button")].find(
         (button) => isVisible(button) && !button.disabled,
@@ -338,12 +351,37 @@
     );
   };
 
+  const getDragonEnergyPercent = (card) => {
+    if (!card) return null;
+    const energyLabel = [...card.querySelectorAll("span")].find((span) =>
+      /^\d+%$/.test(span.textContent.trim()),
+    );
+    const energyText = energyLabel?.textContent.trim();
+    if (!energyText || !/^\d+%$/.test(energyText)) return null;
+    return Number.parseInt(energyText, 10);
+  };
+
   const firstDragonHasNoEnergy = () => {
     const target = getRestoreTarget();
     if (!target) return false;
-    return [...target.card.querySelectorAll("span")].some(
-      (span) => /^0%$/.test(span.textContent.trim()),
+    const energy = getDragonEnergyPercent(target.card);
+    return energy === 0;
+  };
+
+  const hasUsableEnergyElixir = () => {
+    const itemCard = getItemCardByName("Eliksir Uzupełnienia Energii");
+    if (!itemCard) return false;
+
+    const countText = [...itemCard.querySelectorAll("*")]
+      .map((node) => normalizeText(node.textContent))
+      .find((text) => /^\d+$/.test(text));
+
+    const count = Number.parseInt(countText || "0", 10);
+    const useButton = [...itemCard.querySelectorAll("button")].find(
+      (button) => isVisible(button) && !button.disabled,
     );
+
+    return count > 0 && Boolean(useButton);
   };
 
   const restoreEnergy = async () => {
@@ -371,8 +409,18 @@
       if (!inventoryLink) return false;
       inventoryLink.click();
 
-      const item = await waitForElement("p", "Eliksir Uzupełnienia Energii");
+      const item = await retry(
+        () => getItemCardByName("Eliksir Uzupełnienia Energii") || null,
+        "Waiting for energy elixir item in inventory",
+      );
       if (!item) {
+        await goToArena();
+        return false;
+      }
+      if (!hasUsableEnergyElixir()) {
+        console.log(
+          "[restore] no usable elixir available in inventory; skipping restore",
+        );
         await goToArena();
         return false;
       }
