@@ -259,7 +259,7 @@
     if (arenaLink) {
       arenaLink.click();
     }
-    await waitForElement('a[href^="/dragons/"]');
+    await waitForOwnDragonCards(5);
   };
 
   const getItemCardByName = (itemName) => {
@@ -326,6 +326,17 @@
       .filter(Boolean);
   };
 
+  const waitForOwnDragonCards = async (retries = CONFIG.retryCount) =>
+    retry(
+      () => {
+        const ownCards = getOwnDragonCards();
+        if (!ownCards.length) return null;
+        return ownCards;
+      },
+      "Waiting for own dragon cards",
+      retries,
+    );
+
   const getRestoreTarget = () => {
     const ownCards = getOwnDragonCards();
     if (CONFIG.debug) {
@@ -385,13 +396,25 @@
   };
 
   const restoreEnergy = async () => {
-    if (!canRestore || !firstDragonHasNoEnergy()) return false;
+    if (!canRestore) return false;
+
+    const target = await retry(
+      () => getRestoreTarget() || null,
+      "Waiting for restore target",
+      3,
+    );
+    if (!target) {
+      await goToArena();
+      return false;
+    }
+
+    const energy = getDragonEnergyPercent(target.card);
+    if (energy === null || energy !== 0) return false;
 
     canRestore = false;
 
-    const target = getRestoreTarget();
     const restoreDragonName =
-      getDragonNameFromLink(target?.link) || CONFIG.restoreDragonName;
+      getDragonNameFromLink(target.link) || CONFIG.restoreDragonName;
 
     appendMessage(
       `Dragon ${restoreDragonName} has no energy; checking inventory`,
