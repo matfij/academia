@@ -17,6 +17,17 @@ const main = async () => {
   document.body.appendChild(root);
 
   /*
+   * Energy restore setting
+   */
+  const restoreEnergyToggle = document.getElementById("restore-energy-toggle");
+  const saved = localStorage.getItem("mist-helper:restore-energy");
+  restoreEnergyToggle.checked = saved === null ? true : saved === "true";
+
+  restoreEnergyToggle.addEventListener("change", () => {
+    localStorage.setItem("mist-helper:restore-energy", String(restoreEnergyToggle.checked));
+  });
+
+  /*
    * Enable dialog drag & drop
    */
   let offsetX = 0;

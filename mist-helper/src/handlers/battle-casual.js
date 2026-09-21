@@ -6,18 +6,23 @@
   const { wait, isVisible } = window.GreenHelper;
 
   const CONFIG = {
-    restoreDragonName: "Symboli", // matched by name, not position - see getRestoreTarget
+    restoreDragonName: "Symboli",
+    get restoreEnergyEnabled() {
+      const toggle = document.getElementById("restore-energy-toggle");
+      return toggle ? toggle.checked : true;
+    },
     retryCount: 5,
-    baseDelay: 150,
+    baseDelay: 100,
     backoffFactor: 2,
     maxDelay: 3000,
-    debug: true, // set to false once everything works to quiet the console
+    debug: true,
   };
 
   const battleResults = {};
   let battleCount = 0;
   let errorCount = 0;
   let canRestore = true;
+  let elixirExhausted = false;
 
   const getDelay = (attempt) =>
     Math.min(
@@ -396,7 +401,7 @@
   };
 
   const restoreEnergy = async () => {
-    if (!canRestore) return false;
+    if (!CONFIG.restoreEnergyEnabled || !canRestore) return false;
 
     const target = await retry(
       () => getRestoreTarget() || null,
@@ -404,12 +409,16 @@
       3,
     );
     if (!target) {
+      elixirExhausted = false;
       await goToArena();
       return false;
     }
 
     const energy = getDragonEnergyPercent(target.card);
-    if (energy === null || energy !== 0) return false;
+    if (energy === null || energy !== 0) {
+      elixirExhausted = false;
+      return false;
+    }
 
     canRestore = false;
 
@@ -441,8 +450,9 @@
         return false;
       }
       if (!hasUsableEnergyElixir()) {
+        elixirExhausted = true;
         console.log(
-          "[restore] no usable elixir available in inventory; skipping restore",
+          "[restore] no usable elixir available in inventory; stopping battle loop",
         );
         await goToArena();
         return false;
@@ -497,6 +507,7 @@
       submitButton.click();
       await wait(getDelay(2));
       await goToArena();
+      elixirExhausted = false;
       appendMessage(`Energy restored for ${restoreDragonName}`, "info");
       return true;
     } finally {
@@ -510,7 +521,21 @@
 
     while (errorCount < 5) {
       try {
+        if (elixirExhausted) {
+          console.log(
+            "[battle] elixir exhaustion confirmed; skipping re-check for more fights",
+          );
+          break;
+        }
+
         await restoreEnergy();
+
+        if (elixirExhausted) {
+          console.log(
+            "[battle] elixir exhaustion confirmed after restore check; stopping",
+          );
+          break;
+        }
 
         const fightButton = await waitForButton(
           "Walcz",
