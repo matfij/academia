@@ -8,8 +8,6 @@ Utility Chrome extension for repetitive tasks.
 2. Enable "Developer mode" (top-right)
 3. Click "Load unpacked"
 4. Select the `mist-helper` folder
-5. Visit `https://mistwood.pl/` to test
-6. Open DevTools (F12) → Console to debug
 
 ## Development
 

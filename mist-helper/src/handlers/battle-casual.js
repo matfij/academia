@@ -7,6 +7,7 @@
 
   const CONFIG = {
     restoreDragonName: "Symboli",
+    potionName: "Wywar Energetyzujący",
     get restoreEnergyEnabled() {
       const toggle = document.getElementById("restore-energy-toggle");
       return toggle ? toggle.checked : true;
@@ -56,12 +57,12 @@
       normalizeText(element.textContent).includes(text),
     );
 
-  const waitForElement = async (selector, text = "", retries) =>
+  const waitForElement = async (selector, text = "", index = 0, retries) =>
     retry(
       () => {
         const element = text
           ? getTextElement(selector, text)
-          : getVisibleElements(selector)[0];
+          : getVisibleElements(selector)[index];
         return element || null;
       },
       `Waiting for ${text || selector}`,
@@ -282,7 +283,7 @@
   };
 
   const findItemUseButton = () => {
-    const item = getItemCardByName("Eliksir Uzupełnienia Energii");
+    const item = getItemCardByName(CONFIG.potionName);
     if (!item) return null;
 
     let container = item;
@@ -385,7 +386,7 @@
   };
 
   const hasUsableEnergyElixir = () => {
-    const itemCard = getItemCardByName("Eliksir Uzupełnienia Energii");
+    const itemCard = getItemCardByName(CONFIG.potionName);
     if (!itemCard) return false;
 
     const countText = [...itemCard.querySelectorAll("*")]
@@ -442,7 +443,7 @@
       inventoryLink.click();
 
       const item = await retry(
-        () => getItemCardByName("Eliksir Uzupełnienia Energii") || null,
+        () => getItemCardByName(CONFIG.potionName) || null,
         "Waiting for energy elixir item in inventory",
       );
       if (!item) {
@@ -470,14 +471,14 @@
 
       const confirmation = await waitForElement(
         "body",
-        "Czy na pewno chcesz użyć Eliksir Uzupełnienia Energii?",
+        `Czy na pewno chcesz użyć ${CONFIG.potionName}?`,
       );
       if (!confirmation) {
         await goToArena();
         return false;
       }
 
-      const dropdown = await waitForElement('button[role="combobox"]');
+      const dropdown = await waitForElement(`button[role="combobox"]`, "", 2);
       if (!dropdown) {
         await goToArena();
         return false;
