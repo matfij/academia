@@ -6,7 +6,7 @@
   const { wait, isVisible } = window.GreenHelper;
 
   const CONFIG = {
-    restoreDragonName: "Symboli",
+    restoreDragonName: "Carrera",
     potionName: "Wywar Energetyzujący",
     get restoreEnergyEnabled() {
       const toggle = document.getElementById("restore-energy-toggle");
