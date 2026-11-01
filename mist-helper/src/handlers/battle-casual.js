@@ -16,12 +16,15 @@
     baseDelay: 100,
     backoffFactor: 2,
     maxDelay: 3000,
+    maxEnemyPoints: 1100,
+    maxOpponentRerolls: 30,
     debug: true,
   };
 
   const battleResults = {};
   let battleCount = 0;
   let errorCount = 0;
+  let opponentRerolls = 0;
   let canRestore = true;
   let elixirExhausted = false;
 
@@ -217,30 +220,192 @@
       maxRetries,
     );
 
-  const getOpponentRank = (button) => {
-    try {
-      let el = button;
-      for (let i = 0; i < 6 && el; i++) {
-        const candidate = [...el.querySelectorAll("*")].find(
-          (n) => n.textContent && n.textContent.includes("Punkty"),
-        );
-        if (candidate) {
-          const m = candidate.textContent.match(/(\d[\d\s,.]*)/);
-          if (m) return parseInt(m[1].replace(/\D/g, "")) || 0;
-        }
-        el = el.parentElement;
-      }
-      const global = [...document.querySelectorAll("*")].find(
-        (n) => n.textContent && n.textContent.includes("Punkty"),
-      );
-      if (global) {
-        const m2 = global.textContent.match(/(\d[\d\s,.]*)/);
-        if (m2) return parseInt(m2[1].replace(/\D/g, "")) || 0;
-      }
-    } catch (e) {
-      return 0;
+  // The casual matchup is one grid: your dragon (energy badge) on the left,
+  // the rival (no energy badge) on the right, and Walcz overlaid on both.
+  // "Punkty" on the page is the elo value in span.text-light-300, not Poziom.
+  const getMatchupRoot = (button) => {
+    let el = button;
+    for (let i = 0; i < 12 && el; i++) {
+      const className = el.className?.toString?.() || "";
+      if (className.includes("max-w-3xl") && className.includes("grid")) return el;
+      el = el.parentElement;
     }
-    return 0;
+    return null;
+  };
+
+  const getPanels = (root) =>
+    [...root.children]
+      .filter((child) => {
+        const hasDragon = child.querySelector("a[href^='/dragons/']");
+        const hasPunkty = [...child.querySelectorAll("p")].some((p) =>
+          p.textContent.includes("Punkty"),
+        );
+        return hasDragon && hasPunkty;
+      })
+      .map((el) => ({
+        el,
+        hasEnergy: [...el.querySelectorAll("span")].some((span) =>
+          /^\d+%$/.test(span.textContent.trim()),
+        ),
+      }));
+
+  const readPunkty = (panel) => {
+    const line = [...panel.querySelectorAll("p")].find((p) =>
+      normalizeText(p.textContent).includes("Punkty"),
+    );
+    if (!line) return null;
+    const valueNode =
+      [...line.querySelectorAll("span")].find((span) =>
+        (span.className?.toString?.() || "").includes("text-light-300"),
+      ) || line.querySelector("span");
+    const digits = (valueNode?.textContent || "").replace(/\D/g, "");
+    if (!digits) return null;
+    const points = Number.parseInt(digits, 10);
+    return Number.isFinite(points) ? points : null;
+  };
+
+  const getRivalSignature = (root) => {
+    if (!root) return null;
+    const panels = getPanels(root);
+    const own = panels.find((panel) => panel.hasEnergy);
+    const rival = panels.find((panel) => !panel.hasEnergy);
+    if (!own || !rival) return null;
+    return {
+      ownHref: own.el.querySelector("a[href^='/dragons/']")?.getAttribute("href") || "",
+      rivalHref:
+        rival.el.querySelector("a[href^='/dragons/']")?.getAttribute("href") || "",
+      points: readPunkty(rival.el),
+    };
+  };
+
+  const sameSignature = (left, right) =>
+    Boolean(left) &&
+    Boolean(right) &&
+    left.ownHref === right.ownHref &&
+    left.rivalHref === right.rivalHref &&
+    left.points === right.points;
+
+  const getEnemyPoints = (button) => {
+    const signature = getRivalSignature(getMatchupRoot(button));
+    return signature ? signature.points : null;
+  };
+
+  const findMatchupSignature = (ownHref) => {
+    const roots = getVisibleElements(".grid.max-w-3xl");
+    for (const root of roots) {
+      const signature = getRivalSignature(root);
+      if (!signature) continue;
+      if (!ownHref || signature.ownHref === ownHref) return signature;
+    }
+    return null;
+  };
+
+  // battle.candidate is cached for an hour, so leaving the route alone
+  // shows the same rival. Drop that cache, then leave and come back.
+  const findQueryClient = (anchor) => {
+    const fiberKey = Object.keys(anchor).find((key) =>
+      key.startsWith("__reactFiber$"),
+    );
+    let fiber = fiberKey ? anchor[fiberKey] : null;
+    const seen = new Set();
+    while (fiber && !seen.has(fiber)) {
+      seen.add(fiber);
+      const candidates = [fiber.memoizedProps?.value, fiber.memoizedProps?.client];
+      const client = candidates.find(
+        (value) =>
+          value &&
+          typeof value.invalidateQueries === "function" &&
+          typeof value.getQueryCache === "function",
+      );
+      if (client) return client;
+      fiber = fiber.return;
+    }
+    return null;
+  };
+
+  const invalidateBattleCandidates = (anchor) => {
+    const client = findQueryClient(anchor);
+    if (!client) {
+      console.warn(
+        "[battle] query client not found; navigation may keep the same opponent",
+      );
+      return null;
+    }
+    return client.invalidateQueries({
+      predicate: (query) => {
+        try {
+          return JSON.stringify(query.queryKey).includes("candidate");
+        } catch {
+          return false;
+        }
+      },
+    });
+  };
+
+  const waitForPath = (predicate, label) =>
+    retry(
+      () => (predicate(location.pathname) ? location.pathname : null),
+      label,
+      20,
+    );
+
+  const leaveArena = async () => {
+    const dragonsLink = await retry(
+      () =>
+        getVisibleElements('a[href*="/dragons"]').find((link) =>
+          link.textContent.includes("Smoki"),
+        ) || null,
+      "Waiting for dragons link",
+    );
+    if (!dragonsLink) return false;
+    dragonsLink.click();
+    const arrived = await waitForPath(
+      (path) => path.startsWith("/dragons") && !path.startsWith("/battles"),
+      "Waiting to leave the arena",
+    );
+    return Boolean(arrived);
+  };
+
+  const openArena = async () => {
+    const arenaLink = await retry(
+      () =>
+        getVisibleElements('a[href="/battles/casual"]').find((link) =>
+          link.textContent.includes("Arena"),
+        ) || null,
+      "Waiting for arena link",
+    );
+    if (!arenaLink) return false;
+    arenaLink.click();
+    const arrived = await waitForPath(
+      (path) => path.startsWith("/battles"),
+      "Waiting to enter the arena",
+    );
+    if (!arrived) return false;
+    await waitForOwnDragonCards();
+    return true;
+  };
+
+  const rerollMatchup = async (fightButton) => {
+    const previous = getRivalSignature(getMatchupRoot(fightButton));
+    const invalidation = invalidateBattleCandidates(fightButton);
+    const left = await leaveArena();
+    if (!left) console.warn("[battle] did not confirm leaving the arena");
+    await openArena();
+    if (invalidation) {
+      await invalidation.catch((error) => {
+        console.warn("[battle] candidate refresh failed", error);
+      });
+    }
+    return retry(
+      () => {
+        const next = findMatchupSignature(previous?.ownHref);
+        if (!next || next.points == null) return null;
+        if (sameSignature(previous, next)) return null;
+        return next;
+      },
+      "Waiting for a new opponent",
+      12,
+    );
   };
 
   const goToArena = async () => {
@@ -549,15 +714,28 @@
           break;
         }
 
-        const opponentRank = getOpponentRank(fightButton);
-        if (opponentRank > 1000) {
+        const enemyPoints = getEnemyPoints(fightButton);
+        if (enemyPoints == null || enemyPoints > CONFIG.maxEnemyPoints) {
+          opponentRerolls++;
+          if (opponentRerolls > CONFIG.maxOpponentRerolls) {
+            appendMessage(
+              enemyPoints == null
+                ? "Could not read enemy Punkty. Stopping."
+                : `Enemy Punkty stayed above ${CONFIG.maxEnemyPoints} after ${CONFIG.maxOpponentRerolls} redraws. Stopping.`,
+              "info",
+            );
+            break;
+          }
           appendMessage(
-            `Detected Rank=${opponentRank} > 1000 - retry.`,
+            enemyPoints == null
+              ? "Could not read enemy Punkty. Leaving the arena to redraw."
+              : `Enemy Punkty ${enemyPoints} exceeds ${CONFIG.maxEnemyPoints}. Leaving the arena to redraw.`,
             "info",
           );
-          await goToArena();
+          await rerollMatchup(fightButton);
           continue;
         }
+        opponentRerolls = 0;
 
         fightButton.click();
 
