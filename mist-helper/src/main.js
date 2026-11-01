@@ -38,6 +38,7 @@ const main = async () => {
   const container = document.getElementById("mist-helper");
 
   container.onmousedown = (e) => {
+    if (e.target.closest("input, button, a, label, textarea, select")) return;
     e.preventDefault();
     startX = e.clientX;
     startY = e.clientY;
@@ -72,6 +73,15 @@ const main = async () => {
     .addEventListener("click", async () => {
       const script = document.createElement("script");
       script.src = chrome.runtime.getURL("src/handlers/battle-casual.js");
+      script.onload = () => script.remove();
+      (document.head || document.documentElement).appendChild(script);
+    });
+
+  document
+    .getElementById("feed-dragons-button")
+    .addEventListener("click", async () => {
+      const script = document.createElement("script");
+      script.src = chrome.runtime.getURL("src/handlers/feed-dragons.js");
       script.onload = () => script.remove();
       (document.head || document.documentElement).appendChild(script);
     });
