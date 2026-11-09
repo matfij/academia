@@ -1,16 +1,35 @@
 (async () => {
-  console.log(
-    "\n====================== BATTLE CASUAL STARTED ======================\n",
-  );
+  const { wait, isVisible, clickMean, pauseMean, setting } = window.GreenHelper;
 
-  const { wait, isVisible } = window.GreenHelper;
+  // Settles stay in proportion to the slider mean from the previous fixed ranges.
+  const TEMPO = {
+    nav: 0.94,
+    fight: 1.17,
+    skip: 0.94,
+    back: 1.53,
+    restoreNav: 1.15,
+    reroll: 1.15,
+    elixir: 1.7,
+  };
 
   const CONFIG = {
-    restoreDragonName: "Carrera",
     potionName: "Wywar Energetyzujący",
     get restoreEnergyEnabled() {
       const toggle = document.getElementById("restore-energy-toggle");
       return toggle ? toggle.checked : true;
+    },
+    get restoreDragonName() {
+      const select = document.getElementById("restore-dragon");
+      return select ? select.value : "";
+    },
+    get battleDelay() {
+      return setting("battle-delay", "maestro:battle-delay", 320);
+    },
+    get restoreDelay() {
+      return setting("restore-delay", "maestro:restore-delay", 600);
+    },
+    get rerollDelay() {
+      return setting("reroll-delay", "maestro:reroll-delay", 600);
     },
     retryCount: 5,
     baseDelay: 100,
@@ -18,11 +37,9 @@
     maxDelay: 3000,
     maxEnemyPoints: 1100,
     maxOpponentRerolls: 30,
-    debug: true,
   };
 
   const battleResults = {};
-  let battleCount = 0;
   let errorCount = 0;
   let opponentRerolls = 0;
   let canRestore = true;
@@ -34,23 +51,30 @@
       CONFIG.maxDelay,
     );
 
-  const retry = async (operation, label, retries = CONFIG.retryCount) => {
-    let lastError;
+  const retry = async (operation, _label, retries = CONFIG.retryCount) => {
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
         const result = await operation(attempt);
         if (result) return result;
-      } catch (error) {
-        lastError = error;
-        console.warn(`${label} attempt ${attempt + 1} failed`, error);
+      } catch {
+        // Wait and try again. A real failure is reported by the caller.
       }
       await wait(getDelay(attempt));
     }
-    if (lastError) console.warn(`${label} failed`, lastError);
     return null;
   };
 
   const normalizeText = (value) => (value ?? "").replace(/\s+/g, " ").trim();
+
+  const dragonIdFromHref = (href) => {
+    const match = String(href || "").match(/\/dragons\/(?:details\/)?([^/?#]+)/);
+    return match ? match[1] : "";
+  };
+
+  const nameFromDragonLink = (link) => {
+    const named = link?.querySelector("span.inline");
+    return named ? normalizeText(named.textContent) : "";
+  };
 
   const getVisibleElements = (selector) =>
     [...document.querySelectorAll(selector)].filter(isVisible);
@@ -73,10 +97,9 @@
     );
 
   const getResultsContainer = () => {
-    const root = document.querySelector("#mist-helper") || document.body;
+    const root = document.querySelector("#maestro") || document.body;
     let results = document.getElementById("battle-results");
     if (!results) {
-      // create minimal markup if host page doesn't include it
       results = document.createElement("div");
       results.id = "battle-results";
       results.className = "battle-results";
@@ -86,69 +109,43 @@
       const tableDiv = document.createElement("div");
       tableDiv.id = "battle-results-table";
       tableDiv.className = "battle-results-table";
-      const messagesDiv = document.createElement("div");
-      messagesDiv.id = "battle-results-messages";
-      messagesDiv.className = "battle-results-messages";
       results.appendChild(title);
       results.appendChild(tableDiv);
-      results.appendChild(messagesDiv);
       root.appendChild(results);
     }
     return results;
   };
 
-  const appendMessage = (text, cls) => {
-    getResultsContainer();
-    const messages = document.getElementById("battle-results-messages");
-    const p = document.createElement("div");
-    p.textContent = text;
-    p.className = "battle-message" + (cls ? ` ${cls}` : "");
-    messages.prepend(p);
-    return p;
-  };
-
   const renderResultsTable = (resultsObj) => {
     getResultsContainer();
     const tableContainer = document.getElementById("battle-results-table");
-    // clear previous table
-    tableContainer.innerHTML = "";
+    tableContainer.replaceChildren();
     const table = document.createElement("table");
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    ["Dragon", "Battles", "Wins", "Losses", "Silver"].forEach((h) => {
+    ["Dragon", "Wins", "Losses", "Silver"].forEach((label, index) => {
       const th = document.createElement("th");
-      th.textContent = h;
+      th.textContent = label;
+      if (index > 0) th.className = "num";
       headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
     const tbody = document.createElement("tbody");
-    Object.keys(resultsObj).forEach((dragon) => {
+    for (const dragon of Object.keys(resultsObj)) {
       const row = document.createElement("tr");
       const stats = resultsObj[dragon];
-      [
-        dragon,
-        stats.battles,
-        stats.wins,
-        stats.losses,
-        stats.silverEarned,
-      ].forEach((val) => {
+      [dragon, stats.wins, stats.losses, stats.silverEarned].forEach((val, index) => {
         const td = document.createElement("td");
         td.textContent = String(val);
+        if (index > 0) td.className = "num";
         row.appendChild(td);
       });
       tbody.appendChild(row);
-    });
+    }
     table.appendChild(tbody);
     tableContainer.appendChild(table);
-  };
-
-  const getDragonName = () => {
-    const dragonNameElement = document.querySelector("p.text-xl.text-green");
-    if (!dragonNameElement) {
-    }
-    return dragonNameElement.textContent.trim();
   };
 
   const getBattleResult = async () => {
@@ -179,21 +176,13 @@
 
   const updateDragonStats = (dragonName, result, silver) => {
     if (!battleResults[dragonName]) {
-      battleResults[dragonName] = {
-        battles: 0,
-        wins: 0,
-        losses: 0,
-        silverEarned: 0,
-      };
+      battleResults[dragonName] = { wins: 0, losses: 0, silverEarned: 0 };
     }
 
-    battleResults[dragonName].battles++;
-    if (result === "win") {
-      battleResults[dragonName].wins++;
-    } else if (result === "loss") {
-      battleResults[dragonName].losses++;
-    }
-    battleResults[dragonName].silverEarned += silver;
+    const stats = battleResults[dragonName];
+    if (result === "win") stats.wins++;
+    else if (result === "loss") stats.losses++;
+    stats.silverEarned += silver;
   };
 
   const waitForButton = async (
@@ -290,6 +279,14 @@
     return signature ? signature.points : null;
   };
 
+  const getOwnName = (button) => {
+    const root = getMatchupRoot(button);
+    if (!root) return "";
+    const own = getPanels(root).find((panel) => panel.hasEnergy);
+    if (!own) return "";
+    return nameFromDragonLink(own.el.querySelector("a[href^='/dragons/']"));
+  };
+
   const findMatchupSignature = (ownHref) => {
     const roots = getVisibleElements(".grid.max-w-3xl");
     for (const root of roots) {
@@ -325,12 +322,7 @@
 
   const invalidateBattleCandidates = (anchor) => {
     const client = findQueryClient(anchor);
-    if (!client) {
-      console.warn(
-        "[battle] query client not found; navigation may keep the same opponent",
-      );
-      return null;
-    }
+    if (!client) return null;
     return client.invalidateQueries({
       predicate: (query) => {
         try {
@@ -349,21 +341,49 @@
       20,
     );
 
+  // Mostly Szkolenia. Akademia about one leave in four.
+  const leaveDestinations = [
+    { href: "/dragons/activities/trainings", label: "Szkolenia", weight: 3 },
+    { href: "/dragons/academy", label: "Akademia", weight: 1 },
+  ];
+
+  const pickLeaveDestination = () => {
+    const total = leaveDestinations.reduce((sum, item) => sum + item.weight, 0);
+    let roll = Math.random() * total;
+    for (const destination of leaveDestinations) {
+      roll -= destination.weight;
+      if (roll < 0) return destination;
+    }
+    return leaveDestinations[0];
+  };
+
+  const findNavLink = (href, label) =>
+    getVisibleElements(`a[href="${href}"]`).find((link) =>
+      normalizeText(link.textContent).includes(label),
+    ) || null;
+
   const leaveArena = async () => {
-    const dragonsLink = await retry(
+    const primary = pickLeaveDestination();
+    const secondary = leaveDestinations.find((item) => item !== primary);
+    const link = await retry(
       () =>
-        getVisibleElements('a[href*="/dragons"]').find((link) =>
-          link.textContent.includes("Smoki"),
-        ) || null,
-      "Waiting for dragons link",
+        findNavLink(primary.href, primary.label) ||
+        findNavLink(secondary.href, secondary.label) ||
+        getVisibleElements('a[href="/dragons"]').find((item) =>
+          normalizeText(item.textContent).includes("Smoki"),
+        ) ||
+        null,
+      `Waiting for ${primary.label}`,
     );
-    if (!dragonsLink) return false;
-    dragonsLink.click();
+    if (!link) return false;
+    await clickMean(link, CONFIG.rerollDelay);
     const arrived = await waitForPath(
       (path) => path.startsWith("/dragons") && !path.startsWith("/battles"),
       "Waiting to leave the arena",
     );
-    return Boolean(arrived);
+    if (!arrived) return false;
+    await pauseMean(CONFIG.rerollDelay * TEMPO.reroll);
+    return true;
   };
 
   const openArena = async () => {
@@ -375,12 +395,13 @@
       "Waiting for arena link",
     );
     if (!arenaLink) return false;
-    arenaLink.click();
+    await clickMean(arenaLink, CONFIG.rerollDelay);
     const arrived = await waitForPath(
       (path) => path.startsWith("/battles"),
       "Waiting to enter the arena",
     );
     if (!arrived) return false;
+    await pauseMean(CONFIG.rerollDelay * TEMPO.reroll);
     await waitForOwnDragonCards();
     return true;
   };
@@ -388,14 +409,9 @@
   const rerollMatchup = async (fightButton) => {
     const previous = getRivalSignature(getMatchupRoot(fightButton));
     const invalidation = invalidateBattleCandidates(fightButton);
-    const left = await leaveArena();
-    if (!left) console.warn("[battle] did not confirm leaving the arena");
+    await leaveArena();
     await openArena();
-    if (invalidation) {
-      await invalidation.catch((error) => {
-        console.warn("[battle] candidate refresh failed", error);
-      });
-    }
+    if (invalidation) await invalidation.catch(() => {});
     return retry(
       () => {
         const next = findMatchupSignature(previous?.ownHref);
@@ -408,7 +424,9 @@
     );
   };
 
-  const goToArena = async () => {
+  const goToArena = async ({ slow = false } = {}) => {
+    const mean = slow ? CONFIG.restoreDelay : CONFIG.battleDelay;
+    const settle = mean * (slow ? TEMPO.restoreNav : TEMPO.nav);
     const dragonsLink = await retry(
       () =>
         getVisibleElements('a[href*="/dragons"]').find((link) =>
@@ -417,8 +435,8 @@
       "Waiting for dragons link",
     );
     if (dragonsLink) {
-      dragonsLink.click();
-      await wait(getDelay(0));
+      await clickMean(dragonsLink, mean);
+      await pauseMean(settle);
     }
     const arenaLink = await retry(
       () =>
@@ -428,7 +446,7 @@
       "Waiting for arena link",
     );
     if (arenaLink) {
-      arenaLink.click();
+      await clickMean(arenaLink, mean);
     }
     await waitForOwnDragonCards(5);
   };
@@ -462,36 +480,34 @@
     return null;
   };
 
-  const getDragonNameFromLink = (link) => {
-    if (!link) return null;
-    const inlineSpan = link.querySelector("span.inline");
-    return (inlineSpan ? inlineSpan.textContent : link.textContent).trim();
-  };
+  const getDragonNameFromLink = (link) => nameFromDragonLink(link);
 
-  // Climb from a dragon <a> up to the surrounding card, up to `maxLevels`
-  // parents, and return the card if it contains an energy-percentage span
-  // (e.g. "0%", "56%"). Opponent dragons never show this badge, so this
-  // doubles as a filter for "is this actually one of MY dragons".
-  const getCardWithEnergyBadge = (link, maxLevels = 8) => {
+  // The energy badge for your dragon sits in the same panel. A rival link
+  // only reaches that badge by climbing into the shared matchup grid, which
+  // also contains a second dragon id. Require a single id so rivals drop out.
+  const getOwnPanel = (link) => {
+    const ownId = dragonIdFromHref(link.getAttribute("href"));
+    if (!ownId) return null;
     let container = link;
-    for (let level = 0; level < maxLevels && container; level++) {
-      const hasEnergyBadge = [...container.querySelectorAll("span")].some(
-        (span) => /^\d+%$/.test(span.textContent.trim()),
+    for (let level = 0; level < 8 && container; level++) {
+      const ids = new Set(
+        [...container.querySelectorAll('a[href^="/dragons/"]')]
+          .map((anchor) => dragonIdFromHref(anchor.getAttribute("href")))
+          .filter(Boolean),
       );
-      if (hasEnergyBadge) return container;
+      const hasEnergy = [...container.querySelectorAll("span")].some((span) =>
+        /^\d+%$/.test(normalizeText(span.textContent)),
+      );
+      if (hasEnergy && ids.size === 1 && ids.has(ownId)) return container;
       container = container.parentElement;
     }
     return null;
   };
 
-  // Only YOUR dragons show an energy badge, so filtering on that first
-  // (instead of indexing into every /dragons/ link on the page, which can
-  // include opponent profile links too) reliably isolates your own
-  // dragon cards, in DOM order.
   const getOwnDragonCards = () => {
     return getVisibleElements('a[href^="/dragons/"]')
       .map((link) => {
-        const card = getCardWithEnergyBadge(link);
+        const card = getOwnPanel(link);
         return card ? { link, card } : null;
       })
       .filter(Boolean);
@@ -509,27 +525,15 @@
     );
 
   const getRestoreTarget = () => {
-    const ownCards = getOwnDragonCards();
-    if (CONFIG.debug) {
-      console.log(
-        "[energy-check] own dragons found:",
-        ownCards.map(({ link, card }) => ({
-          name: getDragonNameFromLink(link),
-          energy:
-            [...card.querySelectorAll("span")]
-              .map((s) => s.textContent.trim())
-              .find((t) => /^\d+%$/.test(t)) || "?",
-        })),
-      );
-    }
-    // Match by NAME across whatever cards exist right now, rather than by
-    // position - the arena can re-sort this list (e.g. after a fight or
-    // an item use), so "index 0" can silently start pointing at a
-    // different dragon than the one we actually want to keep topped up.
+    const name = CONFIG.restoreDragonName;
+    if (!name) return null;
+    const matches = getOwnDragonCards().filter(
+      ({ link }) => nameFromDragonLink(link) === name,
+    );
     return (
-      ownCards.find(({ link }) =>
-        getDragonNameFromLink(link)?.includes(CONFIG.restoreDragonName),
-      ) || null
+      matches.find(({ link }) => !link.getAttribute("href")?.includes("/details/")) ||
+      matches[0] ||
+      null
     );
   };
 
@@ -567,7 +571,7 @@
   };
 
   const restoreEnergy = async () => {
-    if (!CONFIG.restoreEnergyEnabled || !canRestore) return false;
+    if (!CONFIG.restoreEnergyEnabled || !canRestore || !CONFIG.restoreDragonName) return false;
 
     const target = await retry(
       () => getRestoreTarget() || null,
@@ -588,13 +592,7 @@
 
     canRestore = false;
 
-    const restoreDragonName =
-      getDragonNameFromLink(target.link) || CONFIG.restoreDragonName;
-
-    appendMessage(
-      `Dragon ${restoreDragonName} has no energy; checking inventory`,
-      "info",
-    );
+    const restoreDragonName = getDragonNameFromLink(target.link) || "Dragon";
 
     try {
       const inventoryLink = await retry(
@@ -605,22 +603,19 @@
         "Waiting for inventory link",
       );
       if (!inventoryLink) return false;
-      inventoryLink.click();
+      await clickMean(inventoryLink, CONFIG.restoreDelay);
 
       const item = await retry(
         () => getItemCardByName(CONFIG.potionName) || null,
         "Waiting for energy elixir item in inventory",
       );
       if (!item) {
-        await goToArena();
+        await goToArena({ slow: true });
         return false;
       }
       if (!hasUsableEnergyElixir()) {
         elixirExhausted = true;
-        console.log(
-          "[restore] no usable elixir available in inventory; stopping battle loop",
-        );
-        await goToArena();
+        await goToArena({ slow: true });
         return false;
       }
 
@@ -629,26 +624,26 @@
         "Waiting for energy elixir button",
       );
       if (!useButton) {
-        await goToArena();
+        await goToArena({ slow: true });
         return false;
       }
-      useButton.click();
+      await clickMean(useButton, CONFIG.restoreDelay);
 
       const confirmation = await waitForElement(
         "body",
         `Czy na pewno chcesz użyć ${CONFIG.potionName}?`,
       );
       if (!confirmation) {
-        await goToArena();
+        await goToArena({ slow: true });
         return false;
       }
 
       const dropdown = await waitForElement(`button[role="combobox"]`, "", 2);
       if (!dropdown) {
-        await goToArena();
+        await goToArena({ slow: true });
         return false;
       }
-      dropdown.click();
+      await clickMean(dropdown, CONFIG.restoreDelay);
 
       // Match by NAME, not index — the dropdown's order does not
       // necessarily match the arena list's order.
@@ -660,21 +655,20 @@
         `Waiting for ${restoreDragonName} option`,
       );
       if (!dragonOption) {
-        await goToArena();
+        await goToArena({ slow: true });
         return false;
       }
-      dragonOption.click();
+      await clickMean(dragonOption, CONFIG.restoreDelay);
 
       const submitButton = await waitForButton("Użyj", CONFIG.retryCount, true);
       if (!submitButton) {
-        await goToArena();
+        await goToArena({ slow: true });
         return false;
       }
-      submitButton.click();
-      await wait(getDelay(2));
-      await goToArena();
+      await clickMean(submitButton, CONFIG.restoreDelay);
+      await pauseMean(CONFIG.restoreDelay * TEMPO.elixir);
+      await goToArena({ slow: true });
       elixirExhausted = false;
-      appendMessage(`Energy restored for ${restoreDragonName}`, "info");
       return true;
     } finally {
       // Always runs: success, early return, or thrown error.
@@ -683,25 +677,16 @@
   };
 
   try {
+    renderResultsTable(battleResults);
     await goToArena();
 
     while (errorCount < 5) {
       try {
-        if (elixirExhausted) {
-          console.log(
-            "[battle] elixir exhaustion confirmed; skipping re-check for more fights",
-          );
-          break;
-        }
+        if (elixirExhausted) break;
 
         await restoreEnergy();
 
-        if (elixirExhausted) {
-          console.log(
-            "[battle] elixir exhaustion confirmed after restore check; stopping",
-          );
-          break;
-        }
+        if (elixirExhausted) break;
 
         const fightButton = await waitForButton(
           "Walcz",
@@ -709,76 +694,45 @@
           true,
         );
         if (!fightButton) {
-          console.log("No more battles available");
           errorCount++;
           break;
         }
 
+        const ownName = getOwnName(fightButton) || CONFIG.restoreDragonName || "Dragon";
         const enemyPoints = getEnemyPoints(fightButton);
         if (enemyPoints == null || enemyPoints > CONFIG.maxEnemyPoints) {
           opponentRerolls++;
-          if (opponentRerolls > CONFIG.maxOpponentRerolls) {
-            appendMessage(
-              enemyPoints == null
-                ? "Could not read enemy Punkty. Stopping."
-                : `Enemy Punkty stayed above ${CONFIG.maxEnemyPoints} after ${CONFIG.maxOpponentRerolls} redraws. Stopping.`,
-              "info",
-            );
-            break;
-          }
-          appendMessage(
-            enemyPoints == null
-              ? "Could not read enemy Punkty. Leaving the arena to redraw."
-              : `Enemy Punkty ${enemyPoints} exceeds ${CONFIG.maxEnemyPoints}. Leaving the arena to redraw.`,
-            "info",
-          );
+          if (opponentRerolls > CONFIG.maxOpponentRerolls) break;
           await rerollMatchup(fightButton);
           continue;
         }
         opponentRerolls = 0;
 
-        fightButton.click();
-
-        battleCount++;
-        appendMessage(`Battle ${battleCount} started`, "info");
-        await wait(getDelay(0));
+        await clickMean(fightButton, CONFIG.battleDelay);
+        await pauseMean(CONFIG.battleDelay * TEMPO.fight);
 
         const skipButton = await waitForButton("Pomiń");
         if (skipButton) {
-          skipButton.click();
-          await wait(getDelay(0));
+          await clickMean(skipButton, CONFIG.battleDelay);
+          await pauseMean(CONFIG.battleDelay * TEMPO.skip);
         }
 
-        const dragonName = getDragonName();
         const { result, points } = await getBattleResult();
-        updateDragonStats(dragonName, result, points);
-        appendMessage(
-          `Battle result: ${result} +${points} vs ${dragonName}`,
-          "info",
-        );
+        updateDragonStats(ownName, result, points);
         renderResultsTable(battleResults);
 
         const returnButton = await waitForButton("Powrót");
         if (returnButton) {
-          returnButton.click();
-          await wait(getDelay(0));
+          await clickMean(returnButton, CONFIG.battleDelay);
+          await pauseMean(CONFIG.battleDelay * TEMPO.back);
         }
-      } catch (error) {
+      } catch {
         await goToArena();
         errorCount++;
       }
     }
     renderResultsTable(battleResults);
-  } catch (error) {
-    console.error("Error in battle casual handler:", error);
-    appendMessage(
-      `Error in battle casual handler: ${error?.message || error}`,
-      "error",
-    );
+  } catch {
+    renderResultsTable(battleResults);
   }
-
-  appendMessage(
-    `\n====================== BATTLE CASUAL COMPLETE (${battleCount} battles) ======================\n`,
-    "info",
-  );
 })();

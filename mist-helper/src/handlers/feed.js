@@ -1,18 +1,21 @@
 (async () => {
-  if (window.__mistHelperFeeding) {
-    console.warn("[feed] already running");
-    return;
-  }
-  window.__mistHelperFeeding = true;
+  if (window.__maestroFeeding) return;
+  window.__maestroFeeding = true;
 
-  console.log(
-    "\n====================== FEED DRAGONS STARTED ======================\n",
-  );
-
-  const { wait, isVisible } = window.GreenHelper;
+  const { wait, isVisible, clickMean, pauseMean, setting, choice } = window.GreenHelper;
+  const feedClick = (element) => clickMean(element, CONFIG.feedDelay);
+  const BETWEEN_DRAGONS = 1.9;
 
   const CONFIG = {
     foodName: "Ziarna",
+    get feedDelay() {
+      return setting("feed-delay", "maestro:feed-delay", 600);
+    },
+    get trainStat() {
+      return choice("feed-stat", "maestro:feed-stat", "attack") === "kondycja"
+        ? "kondycja"
+        : "attack";
+    },
     retryCount: 8,
     baseDelay: 150,
     backoffFactor: 2,
@@ -25,19 +28,16 @@
       CONFIG.maxDelay,
     );
 
-  const retry = async (operation, label, retries = CONFIG.retryCount) => {
-    let lastError;
+  const retry = async (operation, _label, retries = CONFIG.retryCount) => {
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
         const result = await operation(attempt);
         if (result) return result;
-      } catch (error) {
-        lastError = error;
-        console.warn(`${label} attempt ${attempt + 1} failed`, error);
+      } catch {
+        // Wait and try again. Feeding has no panel log of its own yet.
       }
       await wait(getDelay(attempt));
     }
-    if (lastError) console.warn(`${label} failed`, lastError);
     return null;
   };
 
@@ -137,11 +137,9 @@
       if (!name) return null;
       if (expectedName && name !== expectedName) return null;
       const combo = getFoodCombo();
-      const strength = readStat("Siła");
-      const intelligence = readStat("Inteligencja");
-      if (!combo || !strength || strength.value == null) return null;
-      if (!intelligence || intelligence.value == null) return null;
-      return { name, combo, strength, intelligence };
+      const target = trainingChoice();
+      if (!combo || !target) return null;
+      return { name, combo, target };
     }, "Waiting for the dragon page", 20);
 
   const openDragon = async (href) => {
@@ -151,7 +149,7 @@
     const expectedName = linkLabel(link);
     if (location.pathname !== href) {
       if (!link) return null;
-      link.click();
+      await feedClick(link);
       const arrived = await waitForPath(
         (path) => path === href,
         "Waiting to open the dragon",
@@ -166,7 +164,7 @@
     if (!combo) return false;
     if (selectedFoodName(combo) === CONFIG.foodName) return true;
 
-    combo.click();
+    await feedClick(combo);
     const option = await retry(
       () =>
         getVisibleElements('[role="option"]').find((element) =>
@@ -178,7 +176,7 @@
       12,
     );
     if (!option) return false;
-    option.click();
+    await feedClick(option);
 
     const selected = await retry(() => {
       const current = getFoodCombo();
@@ -189,7 +187,16 @@
     return Boolean(selected);
   };
 
-  const chooseOffense = (strength, intelligence) => {
+  const trainingChoice = () => {
+    if (CONFIG.trainStat === "kondycja") {
+      const kondycja = readStat("Kondycja");
+      if (!kondycja || kondycja.value == null) return null;
+      return { stat: "Kondycja", value: kondycja.value };
+    }
+    const strength = readStat("Siła");
+    const intelligence = readStat("Inteligencja");
+    if (!strength || strength.value == null) return null;
+    if (!intelligence || intelligence.value == null) return null;
     if (intelligence.value > strength.value) {
       return { stat: "Inteligencja", value: intelligence.value };
     }
@@ -202,7 +209,7 @@
       const dragonsLink = getVisibleElements('a[href="/dragons"]').find((link) =>
         link.textContent.includes("Smoki"),
       );
-      if (dragonsLink) dragonsLink.click();
+      if (dragonsLink) await feedClick(dragonsLink);
       await waitForPath((path) => path === "/dragons", "Waiting for the dragon list");
       hrefs = await retry(() => {
         const found = getDragonHrefs();
@@ -230,8 +237,8 @@
         : null;
       if (!nakarm) continue;
 
-      const before = chooseOffense(page.strength, page.intelligence);
-      nakarm.click();
+      const before = page.target;
+      await feedClick(nakarm);
 
       const trained = await retry(() => {
         const current = readStat(before.stat);
@@ -242,7 +249,7 @@
       if (!trained) continue;
 
       const valueBefore = trained.value;
-      trained.plus.click();
+      await feedClick(trained.plus);
       await retry(() => {
         const current = readStat(before.stat);
         if (!current || current.value == null) return null;
@@ -250,11 +257,11 @@
         return null;
       }, `Waiting for ${before.stat} to increase`);
 
-      await wait(getDelay(0));
+      await pauseMean(CONFIG.feedDelay * BETWEEN_DRAGONS);
     }
-  } catch (error) {
-    console.error("Error in feed dragons handler:", error);
+  } catch {
+    // Swallow so the running flag is always cleared.
   } finally {
-    window.__mistHelperFeeding = false;
+    window.__maestroFeeding = false;
   }
 })();

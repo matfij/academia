@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Mist Helper",
+  "name": "Maestro",
   "description": "Utility tool for repetitive tasks",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
@@ -10,7 +10,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "Mist Helper",
+    "default_title": "Maestro",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
@@ -19,11 +19,11 @@
     }
   },
   "permissions": ["scripting", "activeTab", "tabs"],
-  "host_permissions": ["https://mistwood.pl/*"],
+  "host_permissions": ["https://CHANGE_ME.example/*"],
   "content_scripts": [
     {
-      "js": ["src/main.js"],
-      "matches": ["https://mistwood.pl/*"]
+      "js": ["config.js", "src/main.js"],
+      "matches": ["https://CHANGE_ME.example/*"]
     }
   ],
   "web_accessible_resources": [
@@ -35,7 +35,7 @@
         "src/stock-prices.js",
         "src/handlers/*"
       ],
-      "matches": ["https://mistwood.pl/*"]
+      "matches": ["https://CHANGE_ME.example/*"]
     }
   ]
 }

@@ -1,15 +1,111 @@
-<section id="mist-helper" class="main-wrapper">
-  <h2>Mist Helper 1.3.2</h2>
-  <hr />
-  <button id="feed-dragons-button" type="button">Feed dragons</button>
-  <label class="toggle-row" for="restore-energy-toggle">
-    <input id="restore-energy-toggle" type="checkbox" checked />
-    <span>Restore energy automatically</span>
-  </label>
-  <button id="battle-casual-button">Casual battle</button>
-  <div id="battle-results" class="battle-results">
-    <strong class="battle-results-title">Battle Results</strong>
-    <div id="battle-results-table" class="battle-results-table"></div>
-    <div id="battle-results-messages" class="battle-results-messages"></div>
+<section id="maestro" class="main-wrapper">
+  <header class="panel-head">
+    <h2>Maestro</h2>
+    <span class="version">2.0.1</span>
+  </header>
+  <div class="tabs" role="tablist">
+    <button id="tab-battle-btn" class="tab is-active" type="button" role="tab" data-tab="battle" aria-selected="true" aria-controls="tab-battle">Battle</button>
+    <button id="tab-feed-btn" class="tab" type="button" role="tab" data-tab="feed" aria-selected="false" aria-controls="tab-feed">Feed</button>
+    <button id="tab-train-btn" class="tab" type="button" role="tab" data-tab="train" aria-selected="false" aria-controls="tab-train">Train</button>
+  </div>
+
+  <div id="tab-battle" class="tab-panel" role="tabpanel" data-panel="battle" aria-labelledby="tab-battle-btn">
+    <div class="settings">
+      <label class="toggle-row" for="restore-energy-toggle">
+        <input id="restore-energy-toggle" type="checkbox" checked />
+        <span>Restore energy</span>
+      </label>
+      <label class="toggle-row" for="restore-dragon">
+        <span>Dragon</span>
+        <select id="restore-dragon">
+          <option value="">Choose</option>
+        </select>
+      </label>
+      <label class="slider-row" for="battle-delay">
+        <span class="slider-label">
+          <span>Battle delay</span>
+          <span class="slider-value" id="battle-delay-value">320 ms</span>
+        </span>
+        <input id="battle-delay" type="range" min="80" max="1200" step="10" value="320" />
+      </label>
+      <label class="slider-row" for="restore-delay">
+        <span class="slider-label">
+          <span>Restore delay</span>
+          <span class="slider-value" id="restore-delay-value">600 ms</span>
+        </span>
+        <input id="restore-delay" type="range" min="150" max="2500" step="10" value="600" />
+      </label>
+      <label class="slider-row" for="reroll-delay">
+        <span class="slider-label">
+          <span>Reroll delay</span>
+          <span class="slider-value" id="reroll-delay-value">600 ms</span>
+        </span>
+        <input id="reroll-delay" type="range" min="150" max="2500" step="10" value="600" />
+      </label>
+      <p class="hint">The number is the average wait. Each pause still varies around it.</p>
+    </div>
+    <button id="battle-button" class="action" type="button">Battle</button>
+    <div id="battle-results" class="battle-results">
+      <strong class="battle-results-title">Battle Results</strong>
+      <div id="battle-results-table" class="battle-results-table"></div>
+    </div>
+  </div>
+
+  <div id="tab-feed" class="tab-panel" role="tabpanel" data-panel="feed" aria-labelledby="tab-feed-btn" hidden>
+    <div class="settings">
+      <fieldset class="choice">
+        <legend>Attribute</legend>
+        <div class="choice-options">
+          <label class="choice-option">
+            <input type="radio" name="feed-stat" value="attack" checked />
+            <span>Offense</span>
+          </label>
+          <label class="choice-option">
+            <input type="radio" name="feed-stat" value="kondycja" />
+            <span>Defense</span>
+          </label>
+        </div>
+      </fieldset>
+      <label class="slider-row" for="feed-delay">
+        <span class="slider-label">
+          <span>Feeding delay</span>
+          <span class="slider-value" id="feed-delay-value">600 ms</span>
+        </span>
+        <input id="feed-delay" type="range" min="150" max="2500" step="10" value="600" />
+      </label>
+      <p class="hint">The number is the average wait. Each pause still varies around it.</p>
+    </div>
+    <button id="feed-button" class="action" type="button">Feed</button>
+  </div>
+
+  <div id="tab-train" class="tab-panel" role="tabpanel" data-panel="train" aria-labelledby="tab-train-btn" hidden>
+    <div class="settings">
+      <fieldset class="choice">
+        <legend>Attribute</legend>
+        <div class="choice-options">
+          <label class="choice-option">
+            <input type="radio" name="train-stat" value="attack" checked />
+            <span>Offense</span>
+          </label>
+          <label class="choice-option">
+            <input type="radio" name="train-stat" value="kondycja" />
+            <span>Condition</span>
+          </label>
+          <label class="choice-option">
+            <input type="radio" name="train-stat" value="agility" />
+            <span>Agility</span>
+          </label>
+        </div>
+      </fieldset>
+      <label class="slider-row" for="train-delay">
+        <span class="slider-label">
+          <span>Training delay</span>
+          <span class="slider-value" id="train-delay-value">600 ms</span>
+        </span>
+        <input id="train-delay" type="range" min="150" max="2500" step="10" value="600" />
+      </label>
+      <p class="hint">The number is the average wait. Each pause still varies around it.</p>
+    </div>
+    <button id="train-button" class="action" type="button">Train</button>
   </div>
 </section>
