@@ -35,7 +35,7 @@
     baseDelay: 100,
     backoffFactor: 2,
     maxDelay: 3000,
-    maxEnemyPoints: 1100,
+    maxEnemyPoints: 1190,
     maxOpponentRerolls: 30,
   };
 
@@ -209,40 +209,30 @@
       maxRetries,
     );
 
-  // The casual matchup is one grid: your dragon (energy badge) on the left,
-  // the rival (no energy badge) on the right, and Walcz overlaid on both.
-  // "Punkty" on the page is the elo value in span.text-light-300, not Poziom.
-  const getMatchupRoot = (button) => {
-    let el = button;
-    for (let i = 0; i < 12 && el; i++) {
-      const className = el.className?.toString?.() || "";
-      if (className.includes("max-w-3xl") && className.includes("grid")) return el;
-      el = el.parentElement;
-    }
-    return null;
+  // Walcz sits between the two dragons. Own Punkty is on the left and is
+  // about as close to the button as the rival's, so the rival is the closest
+  // Punkty to the right of that button. The same split picks the two links.
+  const centerOf = (el) => {
+    const rect = el.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   };
 
-  const getPanels = (root) =>
-    [...root.children]
-      .filter((child) => {
-        const hasDragon = child.querySelector("a[href^='/dragons/']");
-        const hasPunkty = [...child.querySelectorAll("p")].some((p) =>
-          p.textContent.includes("Punkty"),
-        );
-        return hasDragon && hasPunkty;
-      })
-      .map((el) => ({
-        el,
-        hasEnergy: [...el.querySelectorAll("span")].some((span) =>
-          /^\d+%$/.test(span.textContent.trim()),
-        ),
-      }));
+  const nearest = (origin, items) => {
+    let best = null;
+    let bestDist = Infinity;
+    for (const item of items) {
+      const dx = item.center.x - origin.x;
+      const dy = item.center.y - origin.y;
+      const dist = dx * dx + dy * dy;
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = item;
+      }
+    }
+    return best;
+  };
 
-  const readPunkty = (panel) => {
-    const line = [...panel.querySelectorAll("p")].find((p) =>
-      normalizeText(p.textContent).includes("Punkty"),
-    );
-    if (!line) return null;
+  const parsePunkty = (line) => {
     const valueNode =
       [...line.querySelectorAll("span")].find((span) =>
         (span.className?.toString?.() || "").includes("text-light-300"),
@@ -253,17 +243,41 @@
     return Number.isFinite(points) ? points : null;
   };
 
-  const getRivalSignature = (root) => {
-    if (!root) return null;
-    const panels = getPanels(root);
-    const own = panels.find((panel) => panel.hasEnergy);
-    const rival = panels.find((panel) => !panel.hasEnergy);
-    if (!own || !rival) return null;
+  const punktyReadouts = () =>
+    getVisibleElements("p")
+      .filter((line) => normalizeText(line.textContent).includes("Punkty"))
+      .map((line) => {
+        const points = parsePunkty(line);
+        return points == null ? null : { points, center: centerOf(line) };
+      })
+      .filter(Boolean);
+
+  const arenaDragonLinks = () =>
+    getVisibleElements("a[href^='/dragons/']").filter((link) => {
+      const href = link.getAttribute("href") || "";
+      if (!/^\/dragons\/(?:details\/)?[^/?#]+$/.test(href)) return false;
+      if (/^\/dragons\/(?:activities|academy)(?:\/|$)/.test(href)) return false;
+      return Boolean(link.querySelector("span.inline"));
+    });
+
+  const sideItems = (items, origin, side) =>
+    items.filter((item) =>
+      side === "right" ? item.center.x > origin.x + 12 : item.center.x < origin.x - 12,
+    );
+
+  const readMatchupNear = (button) => {
+    if (!button?.isConnected) return null;
+    const origin = centerOf(button);
+    const links = arenaDragonLinks().map((link) => ({ link, center: centerOf(link) }));
+    const own = nearest(origin, sideItems(links, origin, "left"));
+    const rival = nearest(origin, sideItems(links, origin, "right"));
+    const enemy = nearest(origin, sideItems(punktyReadouts(), origin, "right"));
+    if (!own?.link || enemy?.points == null) return null;
     return {
-      ownHref: own.el.querySelector("a[href^='/dragons/']")?.getAttribute("href") || "",
-      rivalHref:
-        rival.el.querySelector("a[href^='/dragons/']")?.getAttribute("href") || "",
-      points: readPunkty(rival.el),
+      ownHref: own.link.getAttribute("href") || "",
+      ownName: nameFromDragonLink(own.link),
+      rivalHref: rival?.link.getAttribute("href") || "",
+      points: enemy.points,
     };
   };
 
@@ -274,31 +288,50 @@
     left.rivalHref === right.rivalHref &&
     left.points === right.points;
 
-  const getEnemyPoints = (button) => {
-    const signature = getRivalSignature(getMatchupRoot(button));
-    return signature ? signature.points : null;
+  const fightButtons = () =>
+    getVisibleElements("button").filter((button) =>
+      normalizeText(button.textContent).includes("Walcz"),
+    );
+
+  const buttonNearLink = (link) => {
+    if (!link) return null;
+    const origin = centerOf(link);
+    return (
+      nearest(
+        origin,
+        fightButtons().map((button) => ({ button, center: centerOf(button) })),
+      )?.button || null
+    );
   };
 
-  const getOwnName = (button) => {
-    const root = getMatchupRoot(button);
-    if (!root) return "";
-    const own = getPanels(root).find((panel) => panel.hasEnergy);
-    if (!own) return "";
-    return nameFromDragonLink(own.el.querySelector("a[href^='/dragons/']"));
+  const buttonForDragon = (ownHref) => {
+    if (!ownHref) return null;
+    return (
+      fightButtons().find((button) => readMatchupNear(button)?.ownHref === ownHref) ||
+      null
+    );
   };
 
-  const findMatchupSignature = (ownHref) => {
-    const roots = getVisibleElements(".grid.max-w-3xl");
-    for (const root of roots) {
-      const signature = getRivalSignature(root);
-      if (!signature) continue;
-      if (!ownHref || signature.ownHref === ownHref) return signature;
-    }
-    return null;
+  // The button that can fight now. A chosen dragon is used only while its
+  // Walcz is enabled. A disabled one, such as the first dragon at 0% energy,
+  // must not stop the run: the next enabled Walcz is the active button.
+  const activeFightButton = () => {
+    const enabled = fightButtons().filter((button) => !button.disabled);
+    if (!enabled.length) return null;
+    const name = CONFIG.restoreDragonName;
+    if (!name) return enabled[0];
+    const links = arenaDragonLinks();
+    const owned = links[0] ? readOwnedDragons(links[0]) : null;
+    const ownedDragon = owned?.find((dragon) => dragon.name === name);
+    const link = ownedDragon?.uid
+      ? links.find((item) => dragonIdFromHref(item.getAttribute("href")) === ownedDragon.uid)
+      : links.find((item) => nameFromDragonLink(item) === name);
+    const chosen = buttonNearLink(link);
+    return chosen && !chosen.disabled ? chosen : enabled[0];
   };
 
-  // battle.candidate is cached for an hour, so leaving the route alone
-  // shows the same rival. Drop that cache, then leave and come back.
+  // Each dragon has its own battle.candidate, cached for an hour. Leaving the
+  // route keeps a fresh cache, so drop only the dragon about to fight.
   const findQueryClient = (anchor) => {
     const fiberKey = Object.keys(anchor).find((key) =>
       key.startsWith("__reactFiber$"),
@@ -320,18 +353,45 @@
     return null;
   };
 
-  const invalidateBattleCandidates = (anchor) => {
+  // Drop the cached rival and do not wait for the refetch. invalidateQueries
+  // resolves only when that refetch finishes, and the second reroll leaves
+  // the arena while the first refetch is still running, so the promise hangs.
+  const dropBattleCandidate = (anchor, dragonUid) => {
     const client = findQueryClient(anchor);
-    if (!client) return null;
-    return client.invalidateQueries({
+    if (!client || !dragonUid) return;
+    const filters = {
       predicate: (query) => {
         try {
-          return JSON.stringify(query.queryKey).includes("candidate");
+          const key = JSON.stringify(query.queryKey);
+          return key.includes('"candidate"') && key.includes(dragonUid);
         } catch {
           return false;
         }
       },
-    });
+    };
+    const pending = client.cancelQueries?.(filters);
+    if (pending && typeof pending.catch === "function") pending.catch(() => {});
+    client.removeQueries?.(filters);
+    const invalidation = client.invalidateQueries(filters);
+    if (invalidation && typeof invalidation.catch === "function") invalidation.catch(() => {});
+  };
+
+  const waitForNewOpponent = async (previous) => {
+    let sameStreak = 0;
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const next = readMatchupNear(buttonForDragon(previous.ownHref));
+      if (next?.ownHref === previous.ownHref && next.points != null) {
+        if (!sameSignature(previous, next)) return next;
+        sameStreak += 1;
+        // The old rival is already on screen. Sitting here does not change
+        // it; the next leave-and-return does.
+        if (sameStreak >= 5) return null;
+      } else {
+        sameStreak = 0;
+      }
+      await wait(200);
+    }
+    return null;
   };
 
   const waitForPath = (predicate, label) =>
@@ -401,27 +461,19 @@
       "Waiting to enter the arena",
     );
     if (!arrived) return false;
-    await pauseMean(CONFIG.rerollDelay * TEMPO.reroll);
+    await pauseMean(0.4 * CONFIG.rerollDelay * TEMPO.reroll);
     await waitForOwnDragonCards();
     return true;
   };
 
   const rerollMatchup = async (fightButton) => {
-    const previous = getRivalSignature(getMatchupRoot(fightButton));
-    const invalidation = invalidateBattleCandidates(fightButton);
+    const previous = readMatchupNear(fightButton);
+    if (!previous?.ownHref) return null;
+    if (previous.points != null && !(previous.points > CONFIG.maxEnemyPoints)) return null;
+    dropBattleCandidate(fightButton, dragonIdFromHref(previous.ownHref));
     await leaveArena();
     await openArena();
-    if (invalidation) await invalidation.catch(() => {});
-    return retry(
-      () => {
-        const next = findMatchupSignature(previous?.ownHref);
-        if (!next || next.points == null) return null;
-        if (sameSignature(previous, next)) return null;
-        return next;
-      },
-      "Waiting for a new opponent",
-      12,
-    );
+    return waitForNewOpponent(previous);
   };
 
   const goToArena = async ({ slow = false } = {}) => {
@@ -480,8 +532,6 @@
     return null;
   };
 
-  const getDragonNameFromLink = (link) => nameFromDragonLink(link);
-
   // The energy badge for your dragon sits in the same panel. A rival link
   // only reaches that badge by climbing into the shared matchup grid, which
   // also contains a second dragon id. Require a single id so rivals drop out.
@@ -513,6 +563,70 @@
       .filter(Boolean);
   };
 
+  const getOwnDragons = () =>
+    getOwnDragonCards()
+      .map((entry) => ({
+        ...entry,
+        id: dragonIdFromHref(entry.link.getAttribute("href")),
+        name: nameFromDragonLink(entry.link),
+      }))
+      .filter((entry) => entry.id);
+
+  // The elixir dropdown is getOwnedDragons(), same order as the arena cards.
+  const readOwnedDragons = (anchor) => {
+    const client = findQueryClient(anchor);
+    if (!client) return null;
+    const query = client.getQueryCache().getAll().find((item) => {
+      try {
+        return JSON.stringify(item.queryKey).includes("getOwnedList");
+      } catch {
+        return false;
+      }
+    });
+    const data = query?.state?.data;
+    return Array.isArray(data) ? data : null;
+  };
+
+  const resolveBattleDragon = () => {
+    const name = CONFIG.restoreDragonName;
+    if (!name) return null;
+    const cards = getOwnDragons();
+    const owned = cards[0] ? readOwnedDragons(cards[0].link) : null;
+    const ownedIndex = owned?.findIndex((dragon) => dragon.name === name) ?? -1;
+    const uid = ownedIndex >= 0 ? owned[ownedIndex].uid : "";
+    const matches = cards.filter((item) => (uid && item.id === uid) || item.name === name);
+    const card = matches.find((item) => getCardFightButton(item.card)) || matches[0] || null;
+    if (!card) return null;
+    if (ownedIndex >= 0) return { ...card, index: ownedIndex };
+    const seen = new Set();
+    let index = -1;
+    for (const item of cards) {
+      if (seen.has(item.id)) continue;
+      seen.add(item.id);
+      if (item.id === card.id) {
+        index = seen.size - 1;
+        break;
+      }
+    }
+    return index >= 0 ? { ...card, index } : null;
+  };
+
+  const getCardFightButton = (panel) => {
+    let root = panel;
+    for (let level = 0; level < 8 && root; level++) {
+      const className = root.className?.toString?.() || "";
+      if (className.includes("max-w-3xl") && className.includes("grid")) {
+        return (
+          [...root.querySelectorAll("button")].find((button) =>
+            normalizeText(button.textContent).includes("Walcz"),
+          ) || null
+        );
+      }
+      root = root.parentElement;
+    }
+    return null;
+  };
+
   const waitForOwnDragonCards = async (retries = CONFIG.retryCount) =>
     retry(
       () => {
@@ -524,18 +638,7 @@
       retries,
     );
 
-  const getRestoreTarget = () => {
-    const name = CONFIG.restoreDragonName;
-    if (!name) return null;
-    const matches = getOwnDragonCards().filter(
-      ({ link }) => nameFromDragonLink(link) === name,
-    );
-    return (
-      matches.find(({ link }) => !link.getAttribute("href")?.includes("/details/")) ||
-      matches[0] ||
-      null
-    );
-  };
+  const getRestoreTarget = () => resolveBattleDragon();
 
   const getDragonEnergyPercent = (card) => {
     if (!card) return null;
@@ -547,11 +650,19 @@
     return Number.parseInt(energyText, 10);
   };
 
-  const firstDragonHasNoEnergy = () => {
-    const target = getRestoreTarget();
-    if (!target) return false;
-    const energy = getDragonEnergyPercent(target.card);
-    return energy === 0;
+  // The arena is finished when every Walcz is disabled, or every energy
+  // badge on screen is 0%. A page that has not rendered its cards is not
+  // finished. With restore off, this alone ends the run. With restore on,
+  // the run ends here only after the elixir is also gone.
+  const arenaIsSpent = () => {
+    const buttons = fightButtons();
+    const energies = getOwnDragonCards()
+      .map(({ card }) => getDragonEnergyPercent(card))
+      .filter((energy) => energy != null);
+    if (!buttons.length && !energies.length) return false;
+    const buttonsSpent = buttons.length > 0 && buttons.every((button) => button.disabled);
+    const energySpent = energies.length > 0 && energies.every((energy) => energy === 0);
+    return buttonsSpent || energySpent;
   };
 
   const hasUsableEnergyElixir = () => {
@@ -572,6 +683,8 @@
 
   const restoreEnergy = async () => {
     if (!CONFIG.restoreEnergyEnabled || !canRestore || !CONFIG.restoreDragonName) return false;
+    // Potions are already gone. Other dragons may still have a Walcz.
+    if (elixirExhausted) return false;
 
     const target = await retry(
       () => getRestoreTarget() || null,
@@ -592,7 +705,7 @@
 
     canRestore = false;
 
-    const restoreDragonName = getDragonNameFromLink(target.link) || "Dragon";
+    const restoreIndex = target.index;
 
     try {
       const inventoryLink = await retry(
@@ -638,22 +751,26 @@
         return false;
       }
 
-      const dropdown = await waitForElement(`button[role="combobox"]`, "", 2);
+      const dropdown = await retry(
+        () =>
+          getVisibleElements('button[role="combobox"]').find((button) =>
+            normalizeText(button.textContent).includes("Wybierz smoka"),
+          ) || null,
+        "Waiting for dragon select",
+      );
       if (!dropdown) {
         await goToArena({ slow: true });
         return false;
       }
       await clickMean(dropdown, CONFIG.restoreDelay);
 
-      // Match by NAME, not index — the dropdown's order does not
-      // necessarily match the arena list's order.
-      const dragonOption = await retry(
-        () =>
-          getVisibleElements('[role="option"]').find((option) =>
-            option.textContent.trim().includes(restoreDragonName),
-          ) || null,
-        `Waiting for ${restoreDragonName} option`,
-      );
+      const dragonOption = await retry(() => {
+        const lists = document.querySelectorAll('[role="listbox"]');
+        const list = lists[lists.length - 1];
+        const option = list?.querySelectorAll('[role="option"]')[restoreIndex];
+        if (!option || option.getAttribute("aria-disabled") === "true") return null;
+        return option;
+      }, "Waiting for dragon option");
       if (!dragonOption) {
         await goToArena({ slow: true });
         return false;
@@ -682,28 +799,48 @@
 
     while (errorCount < 5) {
       try {
-        if (elixirExhausted) break;
+        const restored = await restoreEnergy();
+        // The elixir click returns to the arena. Read Walcz on the next pass
+        // so a button that was disabled at 0% is not treated as spent.
+        if (restored) continue;
 
-        await restoreEnergy();
+        // All Walcz disabled and energies at 0%. Restore off stops here.
+        // Restore on stops only after the elixir is gone. A failed restore
+        // that did not prove the elixir is gone retries, then the error cap ends it.
+        if (arenaIsSpent()) {
+          if (!CONFIG.restoreEnergyEnabled || elixirExhausted) break;
+          errorCount++;
+          continue;
+        }
 
-        if (elixirExhausted) break;
-
-        const fightButton = await waitForButton(
-          "Walcz",
+        const fightButton = await retry(
+          () => {
+            const button = activeFightButton();
+            return button && !button.disabled ? button : null;
+          },
+          "Waiting for button Walcz",
           CONFIG.retryCount,
-          true,
         );
         if (!fightButton) {
           errorCount++;
-          break;
+          await goToArena();
+          continue;
         }
 
-        const ownName = getOwnName(fightButton) || CONFIG.restoreDragonName || "Dragon";
-        const enemyPoints = getEnemyPoints(fightButton);
-        if (enemyPoints == null || enemyPoints > CONFIG.maxEnemyPoints) {
+        const near = await retry(
+          () => {
+            const button = fightButton.isConnected ? fightButton : activeFightButton();
+            if (!button || button.disabled) return null;
+            return readMatchupNear(button);
+          },
+          "Waiting for enemy points",
+          3,
+        );
+        const ownName = near?.ownName || CONFIG.restoreDragonName || "Dragon";
+        if (!near || near.points == null || near.points > CONFIG.maxEnemyPoints) {
           opponentRerolls++;
           if (opponentRerolls > CONFIG.maxOpponentRerolls) break;
-          await rerollMatchup(fightButton);
+          await rerollMatchup(fightButton.isConnected ? fightButton : activeFightButton());
           continue;
         }
         opponentRerolls = 0;
